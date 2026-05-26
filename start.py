@@ -1,4 +1,4 @@
-from lemond_pygame.game import run
+from lemond_pygame.__main__ import main
 
-if __name__=='__main__':
-    run()
+if __name__ == "__main__":
+    main()
