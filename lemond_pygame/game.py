@@ -29,6 +29,7 @@ from .ui_stats import skills_window, stats_window
 
 MOVE_DURATION = 0.12  # seconds to slide between two tiles
 FLASH_DURATION = 0.22  # seconds the red damage flash lingers
+ATTACK_COOLDOWN = 0.16  # min seconds between attacks (so holding into a foe is paced)
 
 _DIR_KEYS = {
     pg.K_UP: (0, -1),
@@ -65,6 +66,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
     world = pg.Surface((cfg.SCREEN_W, cfg.MAP_H * cfg.TILE))
     shake = Shake()
     flash_t = 0.0
+    attack_cd = 0.0
 
     def set_msg(text: str):
         nonlocal msg
@@ -114,6 +116,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         if not d.inside(nx, ny):
             return None
         if (nx, ny) in monsters:  # monsters live in this dict, not on the grid
+            if attack_cd > 0:
+                return None
             return _attack(nx, ny)
         tile = d.grid[ny][nx]
         if tile == WALL:
@@ -130,7 +134,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         return None
 
     def _attack(nx, ny):
-        nonlocal flash_t
+        nonlocal flash_t, attack_cd
+        attack_cd = ATTACK_COOLDOWN
         m = monsters[(nx, ny)]
         a = monsters_anim[id(m)]
         if nx < hx:
@@ -232,6 +237,17 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                 if on_arrival():
                     return True
 
+        if attack_cd > 0:
+            attack_cd = max(0.0, attack_cd - dt)
+        if not moving:  # hold a direction to keep stepping that way
+            pressed = pg.key.get_pressed()
+            for key, (dx, dy) in _DIR_KEYS.items():
+                if pressed[key]:
+                    hero.last_dir = (dx, dy)
+                    if try_start_move(dx, dy) == "dead":
+                        return False
+                    break
+
         shake.update(dt)
         if flash_t > 0:
             flash_t = max(0.0, flash_t - dt)
@@ -264,12 +280,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                     pg.quit()
                     sys.exit(0)
                 continue
-            if e.key in _DIR_KEYS and not moving:
-                dx, dy = _DIR_KEYS[e.key]
-                hero.last_dir = (dx, dy)
-                if try_start_move(dx, dy) == "dead":
-                    return False
-            elif e.key == pg.K_g and not moving:
+            if e.key == pg.K_g and not moving:
                 if d.grid[hy][hx] == LOOT and apply_pickup(from_chest=False):
                     d.grid[hy][hx] = FLOOR
             elif e.key == pg.K_i:
