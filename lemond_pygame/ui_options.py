@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 from .ui_common import line, panel
 
@@ -16,7 +16,7 @@ NUMERIC = [
 
 
 def options_screen(screen, options: dict, apply_fn) -> str:
-    font = pg.font.SysFont(None, 20)
+    font = fonts.get_font(20)
     rect = pg.Rect(70, 70, cfg.SCREEN_W - 140, cfg.SCREEN_H - 180)
     idx = 0
     row_count = len(NUMERIC) + 1  # numeric rows + language row

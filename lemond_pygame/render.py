@@ -11,7 +11,7 @@ import random
 
 import pygame as pg
 
-from . import i18n, lighting
+from . import fonts, i18n, lighting
 from .core import config as cfg
 from .core.combat import dodge_chance
 from .core.dungeon import CHEST, EXIT, LOOT, WALL, Dungeon
@@ -134,7 +134,7 @@ def draw_hud(screen, hero: Hero) -> None:
     top = cfg.MAP_H * cfg.TILE
     pg.draw.rect(screen, cfg.C_PANEL, (0, top, cfg.SCREEN_W, cfg.HUD_H))
     pg.draw.rect(screen, cfg.C_PANEL_BORDER, (0, top, cfg.SCREEN_W, cfg.HUD_H), 2)
-    font = pg.font.SysFont(None, 20)
+    font = fonts.get_font(20)
     draw_hp_bar(screen, 10, top + 10, 260, 18, hero.hp, hero.max_hp)
     _line(screen, font, f"HP: {hero.hp}/{hero.max_hp}", 16, top + 11, (0, 0, 0))
     dmg_min, dmg_max = hero.weapon_damage()
@@ -150,7 +150,7 @@ def draw_hud(screen, hero: Hero) -> None:
 
 
 def draw_msg(screen, text: str) -> None:
-    font = pg.font.SysFont(None, 20)
+    font = fonts.get_font(20)
     _line(screen, font, text, 10, cfg.MAP_H * cfg.TILE + 64, (200, 200, 160))
 
 
@@ -203,7 +203,7 @@ def draw_map(
 
 
 def _line(screen, font, text, x, y, col=(220, 220, 220)) -> None:
-    screen.blit(font.render(text, True, col), (x, y))
+    fonts.draw_text(screen, font, text, x, y, col)
 
 
 class Shake:

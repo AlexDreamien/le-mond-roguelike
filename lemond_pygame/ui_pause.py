@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL
 from .ui_common import line, panel
@@ -47,8 +47,8 @@ def _draw_minimap_surface(d, hero_pos, monsters, size):
 
 
 def pause_screen(screen, d, hero, hero_pos, monsters, last_msg, event_log, on_save=None) -> str:
-    font = pg.font.SysFont(None, 20)
-    title_font = pg.font.SysFont(None, 24)
+    font = fonts.get_font(20)
+    title_font = fonts.get_font(24, bold=True)
     outer = pg.Rect(30, 30, cfg.SCREEN_W - 60, cfg.SCREEN_H - 120)
     left = pg.Rect(outer.x + 14, outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 80)
     right = pg.Rect(

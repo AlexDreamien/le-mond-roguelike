@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 from .core.dungeon import WALL
 from .ui_common import line, panel
@@ -18,7 +18,7 @@ _DIR_KEYS = {
 
 
 def do_cast(screen, draw_map_cb, draw_hud_cb, d, hero, hx, hy, monsters, visible) -> str:
-    font = pg.font.SysFont(None, 20)
+    font = fonts.get_font(20)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, 120)
     while True:
         draw_map_cb(visible)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 from .core.entities import Hero, Item
 from .storage import DEFAULT_OPTIONS, delete_save, list_saves, load_hero, save_hero
@@ -64,7 +64,7 @@ def _toggle_language():
 
 
 def class_select(screen):
-    font = pg.font.SysFont(None, 24)
+    font = fonts.get_font(24)
     rect = pg.Rect(60, 60, cfg.SCREEN_W - 120, cfg.SCREEN_H - 160)
     while True:
         screen.fill(cfg.C_BG)
@@ -135,8 +135,8 @@ def create_hero_for_class(class_kind: str) -> Hero:
 
 
 def start_menu(screen, sounds):
-    font = pg.font.SysFont(None, 24)
-    title_font = pg.font.SysFont(None, 36)
+    font = fonts.get_font(24)
+    title_font = fonts.get_font(36, bold=True)
     while True:
         screen.fill(cfg.C_BG)
         line(screen, title_font, i18n.t("ui.start.title"), 60, 16, (210, 210, 240))

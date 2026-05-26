@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 from .ui_common import line, panel
 
 
 def stats_window(screen, hero) -> str:
-    font = pg.font.SysFont(None, 22)
+    font = fonts.get_font(22)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, cfg.SCREEN_H - 180)
     while True:
         screen.fill(cfg.C_BG)

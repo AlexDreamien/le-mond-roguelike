@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 from .core.entities import EQUIP_SLOTS
 from .ui_common import line, panel
 
 
 def inventory_screen(screen, hero) -> str:
-    font = pg.font.SysFont(None, 20)
+    font = fonts.get_font(20)
     rect = pg.Rect(60, 60, cfg.SCREEN_W - 120, cfg.SCREEN_H - 140)
     sel = 0
 

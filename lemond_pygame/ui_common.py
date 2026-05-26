@@ -4,25 +4,24 @@ from __future__ import annotations
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .core import config as cfg
 
 
 def line(screen, font, text, x, y, col=(220, 220, 220)) -> None:
-    surf = font.render(text, True, col)
-    screen.blit(surf, (x, y))
+    fonts.draw_text(screen, font, text, x, y, col)
 
 
 def panel(screen, rect, title=None) -> None:
     pg.draw.rect(screen, cfg.C_PANEL, rect, border_radius=8)
     pg.draw.rect(screen, cfg.C_PANEL_BORDER, rect, 1, border_radius=8)
     if title:
-        font = pg.font.SysFont(None, 22)
+        font = fonts.get_font(22, bold=True)
         line(screen, font, title, rect.x + 10, rect.y + 8, (200, 200, 240))
 
 
 def message_box(screen, lines) -> None:
-    font = pg.font.SysFont(None, 22)
+    font = fonts.get_font(22)
     w = max(400, max(font.size(s)[0] for s in lines) + 40)
     h = 60 + 26 * len(lines)
     rect = pg.Rect((cfg.SCREEN_W - w) // 2, (cfg.SCREEN_H - h) // 2, w, h)
@@ -50,7 +49,7 @@ def message_box(screen, lines) -> None:
 
 
 def prompt_yes_no(screen, text: str) -> bool:
-    font = pg.font.SysFont(None, 22)
+    font = fonts.get_font(22)
     w = max(420, font.size(text)[0] + 60)
     h = 140
     rect = pg.Rect((cfg.SCREEN_W - w) // 2, (cfg.SCREEN_H - h) // 2, w, h)
