@@ -16,6 +16,7 @@ from .core.combat import extra_attack_chance, generate_monster, try_attack
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, resolve_pickup
+from .core.progression import auto_assign
 from .drawing import build_animsets_from_atlas, build_tiles
 from .magic import do_cast
 from .particles import ParticleSystem
@@ -164,6 +165,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             if hero.level > prev:
                 spawn_scaled("spawn_levelup", hx, hy, n=36)
                 sounds["levelup"].play()
+                auto_assign(hero, options["auto_stats"], options["auto_skills"])
             spawn_scaled("spawn_burst", nx, ny, n=22, base_col=(200, 60, 60))
             d.grid[ny][nx] = FLOOR
             del monsters[(nx, ny)]
@@ -286,9 +288,9 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             elif e.key == pg.K_i:
                 set_msg(inventory_screen(screen, hero))
             elif e.key == pg.K_s:
-                set_msg(stats_window(screen, hero))
+                stats_window(screen, hero, options)
             elif e.key == pg.K_k:
-                set_msg(skills_window(screen, hero))
+                skills_window(screen, hero, options)
             elif e.key == pg.K_o:
 
                 def apply_opts(opts):
@@ -336,7 +338,17 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                 def _save_cb():
                     save_hero(current_slot, hero, options)
 
-                pause_screen(screen, d, hero, (hx, hy), monsters, msg, event_log, on_save=_save_cb)
+                pause_screen(
+                    screen,
+                    d,
+                    hero,
+                    (hx, hy),
+                    monsters,
+                    msg,
+                    event_log,
+                    on_save=_save_cb,
+                    options=options,
+                )
 
 
 def _init_pygame() -> str:

@@ -38,6 +38,7 @@
   "stat.int": "ИНТ",
 
   "hud.potions": "Зелья",
+  "hud.gold": "Золото",
 
   "msg.wall": "Стена.",
   "msg.level_intro": "Уровень {depth}. Найдите выход.",
@@ -79,6 +80,9 @@
   "ui.stats.int": "Интеллект: {value}",
   "ui.stats.hp": "Здоровье: {hp}/{max}",
   "ui.stats.skills": "Навыки: Ближний бой {melee}, Уворот {dodge}, Магия {magic}",
+  "ui.stats.points": "Свободные очки: {n}   (1 СИЛ  2 ЛОВ  3 ИНТ)",
+  "ui.skills.title": "Навыки",
+  "ui.skills.points": "Свободные очки: {n}   (1 Бл.бой  2 Уворот  3 Магия)",
   "ui.skills.auto": "Навыки пока изменяются автоматически при уровне.",
 
   "ui.inventory.title": "Инвентарь",
@@ -96,7 +100,9 @@
 
   "ui.pause.title": "Пауза",
   "ui.pause.header": "{name} — {cls} | Ур.{level} | Подземелье {depth} | Зелья: {potions}",
-  "ui.pause.hint": "↑/↓ PgUp/PgDn Home/End — прокрутка   S — сохранить   Esc/Enter/P — закрыть",
+  "ui.pause.auto_stats": "Авто-распределение статов",
+  "ui.pause.auto_skills": "Авто-распределение навыков",
+  "ui.pause.hint": "1/2 — авто-распределение   S — сохранить   ↑/↓ — прокрутка   Esc/Enter/P — закрыть",
 
   "ui.start.title": "Le-Mond — Рогалик",
   "ui.start.panel": "Стартовое меню (5 слотов)",

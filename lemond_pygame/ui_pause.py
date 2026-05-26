@@ -6,6 +6,7 @@ import pygame as pg
 
 from . import fonts, i18n
 from .core import config as cfg
+from .core import progression
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL
 from .ui_common import line, panel
 
@@ -46,14 +47,21 @@ def _draw_minimap_surface(d, hero_pos, monsters, size):
     return surf
 
 
-def pause_screen(screen, d, hero, hero_pos, monsters, last_msg, event_log, on_save=None) -> str:
+def pause_screen(
+    screen, d, hero, hero_pos, monsters, last_msg, event_log, on_save=None, options=None
+) -> str:
     font = fonts.get_font(20)
     title_font = fonts.get_font(24, bold=True)
     outer = pg.Rect(30, 30, cfg.SCREEN_W - 60, cfg.SCREEN_H - 120)
-    left = pg.Rect(outer.x + 14, outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 80)
+    left = pg.Rect(outer.x + 14, outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 124)
     right = pg.Rect(
-        outer.x + int(outer.w * 0.52), outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 80
+        outer.x + int(outer.w * 0.52), outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 124
     )
+
+    def _checkbox(value, label_key, key_label):
+        mark = "x" if value else " "
+        return f"[{mark}] {i18n.t(label_key)} ({key_label})"
+
     lines = list(event_log) if event_log else []
     max_rows = max(4, (right.h - 20) // 18)
     offset = max(0, len(lines) - max_rows)
@@ -81,6 +89,27 @@ def pause_screen(screen, d, hero, hero_pos, monsters, last_msg, event_log, on_sa
         for s in view:
             line(screen, font, s, right.x + 10, y, (220, 220, 230))
             y += 18
+        if options is not None:
+            on = (200, 240, 200)
+            off = (170, 170, 180)
+            cb1 = _checkbox(options["auto_stats"], "ui.pause.auto_stats", "1")
+            cb2 = _checkbox(options["auto_skills"], "ui.pause.auto_skills", "2")
+            line(
+                screen,
+                font,
+                cb1,
+                outer.x + 16,
+                outer.bottom - 62,
+                on if options["auto_stats"] else off,
+            )
+            line(
+                screen,
+                font,
+                cb2,
+                outer.x + 16,
+                outer.bottom - 44,
+                on if options["auto_skills"] else off,
+            )
         line(
             screen, font, i18n.t("ui.pause.hint"), outer.x + 16, outer.bottom - 24, (160, 160, 200)
         )
@@ -99,6 +128,16 @@ def pause_screen(screen, d, hero, hero_pos, monsters, last_msg, event_log, on_sa
                     return "resume"
                 if e.key == pg.K_s and on_save:
                     on_save()
+                if options is not None and e.key == pg.K_1:
+                    options["auto_stats"] = not options["auto_stats"]
+                    if options["auto_stats"]:
+                        progression.auto_assign(hero, do_stats=True, do_skills=False)
+                    redraw()
+                if options is not None and e.key == pg.K_2:
+                    options["auto_skills"] = not options["auto_skills"]
+                    if options["auto_skills"]:
+                        progression.auto_assign(hero, do_stats=False, do_skills=True)
+                    redraw()
                 if e.key == pg.K_UP:
                     offset = max(0, offset - 1)
                     redraw()

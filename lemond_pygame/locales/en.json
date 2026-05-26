@@ -38,6 +38,7 @@
   "stat.int": "INT",
 
   "hud.potions": "Potions",
+  "hud.gold": "Gold",
 
   "msg.wall": "A wall.",
   "msg.level_intro": "Level {depth}. Find the exit.",
@@ -79,6 +80,9 @@
   "ui.stats.int": "Intelligence: {value}",
   "ui.stats.hp": "Health: {hp}/{max}",
   "ui.stats.skills": "Skills: Melee {melee}, Dodge {dodge}, Magic {magic}",
+  "ui.stats.points": "Unspent points: {n}   (1 STR  2 DEX  3 INT)",
+  "ui.skills.title": "Skills",
+  "ui.skills.points": "Unspent points: {n}   (1 Melee  2 Dodge  3 Magic)",
   "ui.skills.auto": "Skills currently improve automatically on level up.",
 
   "ui.inventory.title": "Inventory",
@@ -96,7 +100,9 @@
 
   "ui.pause.title": "Paused",
   "ui.pause.header": "{name} - {cls} | Lv.{level} | Dungeon {depth} | Potions: {potions}",
-  "ui.pause.hint": "Up/Down PgUp/PgDn Home/End - scroll   S - save   Esc/Enter/P - close",
+  "ui.pause.auto_stats": "Auto-distribute stats",
+  "ui.pause.auto_skills": "Auto-distribute skills",
+  "ui.pause.hint": "1/2 - toggle auto-distribute   S - save   Up/Down - scroll   Esc/Enter/P - close",
 
   "ui.start.title": "Le-Mond - Roguelike",
   "ui.start.panel": "Start menu (5 slots)",

@@ -146,7 +146,8 @@ def draw_hud(screen, hero: Hero) -> None:
         f"{i18n.t('stat.str')}:{hero.str_} {i18n.t('stat.dex')}:{hero.dex} "
         f"{i18n.t('stat.int')}:{hero.int_}  "
         f"ARM:{hero.total_armor()}  DMG:{dmg_min}-{dmg_max}  DODGE:{dodge}%  "
-        f"XP:{hero.xp}/{hero.xp_to_next()}  {i18n.t('hud.potions')}:{hero.potions}"
+        f"XP:{hero.xp}/{hero.xp_to_next()}  {i18n.t('hud.potions')}:{hero.potions}  "
+        f"{i18n.t('hud.gold')}:{hero.gold}"
     )
     _line(screen, font, hud, 10, top + 36, cfg.C_TEXT)
 

@@ -63,6 +63,7 @@ class Hero(Creature):
     skill_points: int = 0
     skills: dict = field(default_factory=lambda: {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
     potions: int = 0
+    gold: int = 0
     depth: int = 1
     unlocked_depth: int = 1
     last_dir: tuple[int, int] = (1, 0)

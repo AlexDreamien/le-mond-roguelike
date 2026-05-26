@@ -9,7 +9,14 @@ from pathlib import Path
 
 from .core.entities import EQUIP_SLOTS, Hero, Item
 
-DEFAULT_OPTIONS = {"anim_speed": 1.0, "particles": 1.0, "volume": 0.7, "language": "en"}
+DEFAULT_OPTIONS = {
+    "anim_speed": 1.0,
+    "particles": 1.0,
+    "volume": 0.7,
+    "language": "en",
+    "auto_stats": True,
+    "auto_skills": True,
+}
 SAVE_SLOTS = 5
 
 
@@ -82,6 +89,7 @@ def save_hero(slot: int, hero: Hero, options: dict) -> None:
         "unlocked_depth": hero.unlocked_depth,
         "skills": hero.skills,
         "potions": hero.potions,
+        "gold": hero.gold,
         "inventory": [_item_to_dict(it) for it in hero.inventory],
         "equipment": {
             s: (None if it is None else _item_to_dict(it)) for s, it in hero.equipment.items()
@@ -122,6 +130,7 @@ def load_hero(slot: int) -> tuple[Hero | None, dict]:
         h.unlocked_depth = data.get("unlocked_depth", h.depth)
         h.skills = data.get("skills", {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
         h.potions = data.get("potions", 0)
+        h.gold = data.get("gold", 0)
         h.inventory = [_item_from_dict(it) for it in data.get("inventory", [])]
         h.equipment = {s: None for s in EQUIP_SLOTS}
         for slot_key, it in data.get("equipment", {}).items():
