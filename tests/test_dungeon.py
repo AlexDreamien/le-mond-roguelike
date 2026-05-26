@@ -1,0 +1,63 @@
+from collections import deque
+
+from lemond_pygame.core.dungeon import (
+    CHEST,
+    ENTRY,
+    EXIT,
+    FLOOR,
+    LOOT,
+    WALL,
+    Dungeon,
+)
+
+WALKABLE = {FLOOR, ENTRY, EXIT, CHEST, LOOT}
+
+
+def _generated(depth=1):
+    d = Dungeon(32, 20, depth)
+    d.generate()
+    return d
+
+
+def test_generation_is_deterministic_for_a_depth():
+    a = _generated(3)
+    b = _generated(3)
+    assert a.grid == b.grid
+    assert a.entry == b.entry
+    assert a.exit == b.exit
+    assert a.monsters == b.monsters
+
+
+def test_entry_and_exit_tiles_are_marked():
+    d = _generated(2)
+    ex, ey = d.entry
+    xx, xy = d.exit
+    assert d.grid[ey][ex] == ENTRY
+    assert d.grid[xy][xx] == EXIT
+    assert d.entry != d.exit
+
+
+def test_exit_is_reachable_from_entry():
+    d = _generated(4)
+    seen = {d.entry}
+    q = deque([d.entry])
+    while q:
+        x, y = q.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if d.inside(nx, ny) and (nx, ny) not in seen and d.grid[ny][nx] != WALL:
+                seen.add((nx, ny))
+                q.append((nx, ny))
+    assert d.exit in seen
+
+
+def test_monsters_are_on_walkable_in_bounds_tiles():
+    d = _generated(5)
+    assert len(d.monsters) > 0
+    for x, y in d.monsters:
+        assert d.inside(x, y)
+        assert d.grid[y][x] != WALL
+
+
+def test_different_depths_differ():
+    assert _generated(1).grid != _generated(2).grid
