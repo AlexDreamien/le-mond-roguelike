@@ -54,6 +54,7 @@ def main(out_path: str) -> None:
     hero.level = 2
     hero.xp = 10
     hero.potions = 2
+    hero.gold = 120
 
     hero_anim = AnimState(animsets["hero"])
     monsters_anim = {

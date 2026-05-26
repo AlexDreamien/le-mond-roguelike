@@ -17,7 +17,14 @@ Russian** localization with an in-game language switch.
   armor reduces incoming damage; directional magic bolts scale with intellect.
 - **Loot & equipment** — six equipment slots, two-handed/shield rules, tiered
   weapons and armor, an inventory screen, and healing potions.
-- **Progression** — XP and levels, three starting classes (Warrior, Thief, Mage).
+- **Progression** — XP, levels, and three classes (Warrior, Thief, Mage). Stat
+  and skill points auto-distribute by class, or you can spend them by hand once
+  auto-distribution is switched off in the pause menu.
+- **Merchant & trainer NPCs** — levels may spawn a merchant (sell loot, buy
+  next-tier gear) or a trainer (buy stat/skill points for gold). Walk into them
+  to trade instead of fighting.
+- **Atmospheric lighting** — smooth radial torchlight, a vignette, drop shadows,
+  glowing particles, and screen shake on impact.
 - **Field of view** — line-of-sight fog with remembered ("seen") tiles and a
   pause-screen minimap.
 - **Five save slots** — saves persist to `%LOCALAPPDATA%` and survive restarts.
@@ -30,15 +37,15 @@ Russian** localization with an in-game language switch.
 
 | Key | Action |
 | --- | --- |
-| Arrow keys | Move / attack adjacent enemy |
+| Arrow keys | Move / attack adjacent enemy / talk to an NPC (hold to keep moving) |
 | `G` | Grab loot on the current tile |
 | `Z` | Drink a healing potion |
 | `F` | Cast a directional magic bolt |
 | `I` | Inventory (equip / drop) |
-| `S` | Stats · `K` Skills |
+| `S` | Stats · `K` Skills (spend points with `1`/`2`/`3` when auto-distribute is off) |
 | `O` | Options (animation speed, particles, volume, language) |
-| `P` | Pause (minimap + event log) |
-| `Q` | Save and quit |
+| `P` | Pause (minimap, event log, auto-distribute toggles `1`/`2`) |
+| `Q` | Quit (asks to save first) |
 | `L` | Switch language (start menu) |
 
 ## Installation & running
