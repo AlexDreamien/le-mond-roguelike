@@ -10,11 +10,28 @@ import math
 
 import pygame as pg
 
-from . import i18n
+from . import i18n, lighting
 from .core import config as cfg
 from .core.combat import dodge_chance
-from .core.dungeon import CHEST, EXIT, WALL, Dungeon
+from .core.dungeon import CHEST, EXIT, LOOT, WALL, Dungeon
 from .core.entities import Hero
+
+_shadow_cache: pg.Surface | None = None
+
+
+def _entity_shadow() -> pg.Surface:
+    global _shadow_cache
+    if _shadow_cache is None:
+        t = cfg.TILE
+        s = pg.Surface((t, t // 3), pg.SRCALPHA)
+        pg.draw.ellipse(s, (0, 0, 0, 90), (2, 0, t - 4, t // 3))
+        _shadow_cache = s
+    return _shadow_cache
+
+
+def _blit_shadow(surface, px, py) -> None:
+    s = _entity_shadow()
+    surface.blit(s, (px, py + cfg.TILE - s.get_height() + 2))
 
 
 class AnimState:
@@ -137,7 +154,7 @@ def draw_msg(screen, text: str) -> None:
 
 
 def draw_map(
-    screen,
+    surface,
     tiles,
     hero_anim,
     monsters_anim,
@@ -149,20 +166,22 @@ def draw_map(
     visible,
     mon_slide,
 ) -> None:
+    floors = tiles["floor_variants"]
+    nfloor = len(floors)
     for y in range(d.h):
         for x in range(d.w):
             r = pg.Rect(x * cfg.TILE, y * cfg.TILE, cfg.TILE, cfg.TILE)
-            screen.blit(tiles["floor"], r)
+            surface.blit(floors[(x * 7 + y * 13) % nfloor], r)
             t = d.grid[y][x]
             if t == WALL:
-                screen.blit(tiles["wall"], r)
+                surface.blit(tiles["wall"], r)
             elif t == CHEST:
-                screen.blit(tiles["chest"], r)
+                surface.blit(tiles["chest"], r)
             elif t == EXIT:
-                screen.blit(tiles["exit"], r)
-            if (x, y) not in visible:
-                screen.blit(tiles["shadow_hard"] if not d.seen[y][x] else tiles["shadow_soft"], r)
-            else:
+                surface.blit(tiles["exit"], r)
+            elif t == LOOT:
+                surface.blit(tiles["loot"], r)
+            if (x, y) in visible:
                 d.seen[y][x] = True
     for (x, y), m in list(monsters.items()):
         if (x, y) in visible:
@@ -171,11 +190,15 @@ def draw_map(
             fx = mon_slide.get(id(m))
             offx = int((fx.ox if fx else 0.0) * cfg.TILE)
             offy = int((fx.oy if fx else 0.0) * cfg.TILE)
-            r = pg.Rect(x * cfg.TILE + offx, y * cfg.TILE + offy, cfg.TILE, cfg.TILE)
+            _blit_shadow(surface, x * cfg.TILE, y * cfg.TILE)
             if frame:
-                screen.blit(frame, r)
-    r = pg.Rect(int(render_px * cfg.TILE), int(render_py * cfg.TILE), cfg.TILE, cfg.TILE)
-    screen.blit(hero_anim.get_frame(), r)
+                surface.blit(frame, (x * cfg.TILE + offx, y * cfg.TILE + offy))
+    hpx, hpy = int(render_px * cfg.TILE), int(render_py * cfg.TILE)
+    _blit_shadow(surface, hpx, hpy)
+    hero_frame = hero_anim.get_frame()
+    if hero_frame:
+        surface.blit(hero_frame, (hpx, hpy))
+    lighting.apply(surface, d, visible, render_px, render_py, cfg.FOV_RADIUS)
 
 
 def _line(screen, font, text, x, y, col=(220, 220, 220)) -> None:
