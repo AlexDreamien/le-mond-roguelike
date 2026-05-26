@@ -60,6 +60,23 @@ def test_monsters_are_on_walkable_in_bounds_tiles():
         assert d.grid[y][x] != WALL
 
 
+def test_all_floor_is_reachable_from_entry():
+    # No sealed-off rooms: every walkable cell must be reachable from the entry.
+    for depth in range(1, 8):
+        d = _generated(depth)
+        reachable = {d.entry}
+        q = deque([d.entry])
+        while q:
+            x, y = q.popleft()
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if d.inside(nx, ny) and (nx, ny) not in reachable and d.grid[ny][nx] != WALL:
+                    reachable.add((nx, ny))
+                    q.append((nx, ny))
+        all_floor = {(x, y) for y in range(d.h) for x in range(d.w) if d.grid[y][x] != WALL}
+        assert all_floor == reachable, f"depth {depth}: {len(all_floor - reachable)} sealed cells"
+
+
 def test_monsters_are_tracked_in_the_list_not_the_grid():
     # Monster cells stay FLOOR; the game loop keys combat off d.monsters, so the
     # MONSTER tile id must never be written into the grid.

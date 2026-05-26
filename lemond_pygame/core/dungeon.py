@@ -162,6 +162,10 @@ class Dungeon:
             ):
                 self.grid[y][x] = FLOOR
 
+        # 5b) Guarantee every carved area is reachable: connect stray pockets to
+        # the main region so no room is ever sealed off.
+        self._ensure_connected()
+
         # 6) Place entry and exit as far apart as possible.
         floors = [
             (x, y) for y in range(1, h - 1) for x in range(1, w - 1) if self.grid[y][x] == FLOOR
@@ -221,3 +225,57 @@ class Dungeon:
         rng.shuffle(keep)
         for x, y in keep[:mons_cnt]:
             self.monsters.append((x, y))
+
+    def _components(self) -> list[list[tuple[int, int]]]:
+        w, h = self.w, self.h
+        seen = [[False] * w for _ in range(h)]
+        comps = []
+        for sy in range(h):
+            for sx in range(w):
+                if self.grid[sy][sx] != FLOOR or seen[sy][sx]:
+                    continue
+                cells = []
+                stack = [(sx, sy)]
+                seen[sy][sx] = True
+                while stack:
+                    x, y = stack.pop()
+                    cells.append((x, y))
+                    for dx, dy in DIRS:
+                        nx, ny = x + dx, y + dy
+                        if (
+                            0 <= nx < w
+                            and 0 <= ny < h
+                            and self.grid[ny][nx] == FLOOR
+                            and not seen[ny][nx]
+                        ):
+                            seen[ny][nx] = True
+                            stack.append((nx, ny))
+                comps.append(cells)
+        return comps
+
+    def _carve_corridor(self, x0, y0, x1, y1) -> None:
+        x = x0
+        sx = 1 if x1 >= x0 else -1
+        while x != x1:
+            self.grid[y0][x] = FLOOR
+            x += sx
+        y = y0
+        sy = 1 if y1 >= y0 else -1
+        while y != y1:
+            self.grid[y][x1] = FLOOR
+            y += sy
+        self.grid[y1][x1] = FLOOR
+
+    def _ensure_connected(self) -> None:
+        comps = self._components()
+        if len(comps) <= 1:
+            return
+        main_idx = max(range(len(comps)), key=lambda i: len(comps[i]))
+        main = set(comps[main_idx])
+        for i, cells in enumerate(comps):
+            if i == main_idx:
+                continue
+            ax, ay = cells[0]
+            bx, by = min(main, key=lambda c: abs(c[0] - ax) + abs(c[1] - ay))
+            self._carve_corridor(ax, ay, bx, by)
+            main.update(cells)
