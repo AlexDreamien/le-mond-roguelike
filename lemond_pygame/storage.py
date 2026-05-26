@@ -34,11 +34,32 @@ def _item_to_dict(it: Item) -> dict:
     }
 
 
+# Legacy saves (pre-i18n) stored localized item names and a localized class.
+# Map them to the stable keys used since the refactor.
+_LEGACY_NAME_TO_KIND = {
+    "меч": "sword", "кинжал": "dagger", "топор": "axe", "посох": "staff",
+    "щит": "shield", "шлем": "helmet", "броня": "armor", "перчатки": "gloves", "сапоги": "boots",
+}  # fmt: skip
+_SLOT_DEFAULT_KIND = {
+    "MAIN": "sword", "OFF": "shield", "HEAD": "helmet",
+    "BODY": "armor", "HANDS": "gloves", "FEET": "boots",
+}  # fmt: skip
+_LEGACY_CLASS_TO_KIND = {"Воин": "warrior", "Вор": "thief", "Маг": "mage"}
+
+
 def _item_from_dict(d: dict) -> Item:
+    kind = d.get("kind")
+    tier = d.get("tier", 1)
+    if kind is None:  # migrate legacy {"name": "Меч 2", ...}
+        parts = (d.get("name") or "").split()
+        base = parts[0].lower() if parts else ""
+        if len(parts) >= 2 and parts[-1].isdigit():
+            tier = int(parts[-1])
+        kind = _LEGACY_NAME_TO_KIND.get(base) or _SLOT_DEFAULT_KIND.get(d.get("slot"), "sword")
     return Item(
-        kind=d["kind"],
+        kind=kind,
         slot=d.get("slot"),
-        tier=d.get("tier", 1),
+        tier=tier,
         power=d.get("power", 0),
         two_handed=d.get("two_handed", False),
     )
@@ -76,32 +97,38 @@ def load_hero(slot: int) -> tuple[Hero | None, dict]:
     opts = dict(DEFAULT_OPTIONS)
     if not os.path.exists(p):
         return None, opts
-    with open(p, encoding="utf-8") as f:
-        data = json.load(f)
-    h = Hero(
-        kind="hero",
-        max_hp=data.get("max_hp", 20),
-        hp=data.get("hp", 20),
-        str_=data.get("str_", 5),
-        dex=data.get("dex", 5),
-        int_=data.get("int_", 5),
-        glyph="hero",
-        name=data.get("name", "Gustav"),
-        class_kind=data.get("class_kind", "warrior"),
-    )
-    h.level = data.get("level", 1)
-    h.xp = data.get("xp", 0)
-    h.stat_points = data.get("stat_points", 0)
-    h.skill_points = data.get("skill_points", 0)
-    h.depth = data.get("depth", 1)
-    h.unlocked_depth = data.get("unlocked_depth", h.depth)
-    h.skills = data.get("skills", {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
-    h.potions = data.get("potions", 0)
-    h.inventory = [_item_from_dict(it) for it in data.get("inventory", [])]
-    h.equipment = {s: None for s in EQUIP_SLOTS}
-    for slot_key, it in data.get("equipment", {}).items():
-        h.equipment[slot_key] = None if it is None else _item_from_dict(it)
-    opts.update(data.get("options", {}))
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = json.load(f)
+        class_kind = data.get("class_kind") or _LEGACY_CLASS_TO_KIND.get(
+            data.get("class"), "warrior"
+        )
+        h = Hero(
+            kind="hero",
+            max_hp=data.get("max_hp", 20),
+            hp=data.get("hp", 20),
+            str_=data.get("str_", 5),
+            dex=data.get("dex", 5),
+            int_=data.get("int_", 5),
+            glyph="hero",
+            name=data.get("name", "Gustav"),
+            class_kind=class_kind,
+        )
+        h.level = data.get("level", 1)
+        h.xp = data.get("xp", 0)
+        h.stat_points = data.get("stat_points", 0)
+        h.skill_points = data.get("skill_points", 0)
+        h.depth = data.get("depth", 1)
+        h.unlocked_depth = data.get("unlocked_depth", h.depth)
+        h.skills = data.get("skills", {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
+        h.potions = data.get("potions", 0)
+        h.inventory = [_item_from_dict(it) for it in data.get("inventory", [])]
+        h.equipment = {s: None for s in EQUIP_SLOTS}
+        for slot_key, it in data.get("equipment", {}).items():
+            h.equipment[slot_key] = None if it is None else _item_from_dict(it)
+        opts.update(data.get("options", {}))
+    except (OSError, ValueError, KeyError, TypeError):
+        return None, opts
     return h, opts
 
 
@@ -119,7 +146,8 @@ def list_saves() -> list[dict]:
                 {
                     "slot": i,
                     "name": d.get("name", "Gustav"),
-                    "class_kind": d.get("class_kind", "warrior"),
+                    "class_kind": d.get("class_kind")
+                    or _LEGACY_CLASS_TO_KIND.get(d.get("class"), "warrior"),
                     "level": d.get("level", 1),
                     "depth": d.get("depth", 1),
                     "exists": True,
