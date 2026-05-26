@@ -2,7 +2,12 @@
 from PyInstaller.utils.hooks import collect_submodules
 from PyInstaller.utils.hooks import collect_all
 
-datas = []
+# Bundle game resources under lemond_pygame/ so respath.resource_path finds
+# them via sys._MEIPASS in the frozen build.
+datas = [
+    ('lemond_pygame/assets', 'lemond_pygame/assets'),
+    ('lemond_pygame/locales', 'lemond_pygame/locales'),
+]
 binaries = []
 hiddenimports = []
 hiddenimports += collect_submodules('lemond_pygame')
