@@ -6,6 +6,7 @@ from lemond_pygame.core.dungeon import (
     EXIT,
     FLOOR,
     LOOT,
+    MONSTER,
     WALL,
     Dungeon,
 )
@@ -57,6 +58,15 @@ def test_monsters_are_on_walkable_in_bounds_tiles():
     for x, y in d.monsters:
         assert d.inside(x, y)
         assert d.grid[y][x] != WALL
+
+
+def test_monsters_are_tracked_in_the_list_not_the_grid():
+    # Monster cells stay FLOOR; the game loop keys combat off d.monsters, so the
+    # MONSTER tile id must never be written into the grid.
+    d = _generated(3)
+    assert all(MONSTER not in row for row in d.grid)
+    for x, y in d.monsters:
+        assert d.grid[y][x] == FLOOR
 
 
 def test_different_depths_differ():

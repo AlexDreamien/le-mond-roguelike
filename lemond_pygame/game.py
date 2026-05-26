@@ -13,7 +13,7 @@ from . import i18n
 from .audio import make_sounds
 from .core import config as cfg
 from .core.combat import extra_attack_chance, generate_monster, try_attack
-from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, MONSTER, WALL, Dungeon
+from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, resolve_pickup
 from .drawing import build_animsets_from_atlas, build_tiles
@@ -105,6 +105,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         nx, ny = hx + dx, hy + dy
         if not d.inside(nx, ny):
             return None
+        if (nx, ny) in monsters:  # monsters live in this dict, not on the grid
+            return _attack(nx, ny)
         tile = d.grid[ny][nx]
         if tile == WALL:
             set_msg(i18n.t("msg.wall"))
@@ -117,8 +119,6 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             hero_anim.set("walk", one_shot=True, queue_to="idle")
             sounds["step"].play()
             return None
-        if tile == MONSTER:
-            return _attack(nx, ny)
         return None
 
     def _attack(nx, ny):
