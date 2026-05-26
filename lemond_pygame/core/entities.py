@@ -114,10 +114,9 @@ class Hero(Creature):
         return "equip.ok"
 
 
-def random_loot(depth: int, rng: random.Random | None = None) -> Item:
+def random_item(tier: int, rng: random.Random | None = None) -> Item:
     r = rng or random
     roll = r.random()
-    tier = 1 + min(5, depth // 2)
     for threshold, kind, slot, power_offset, two_handed in LOOT_TABLE:
         if roll < threshold:
             return Item(
@@ -125,3 +124,7 @@ def random_loot(depth: int, rng: random.Random | None = None) -> Item:
             )
     last = LOOT_TABLE[-1]
     return Item(kind=last[1], slot=last[2], tier=tier, power=tier + last[3], two_handed=last[4])
+
+
+def random_loot(depth: int, rng: random.Random | None = None) -> Item:
+    return random_item(1 + min(5, depth // 2), rng)

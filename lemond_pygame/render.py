@@ -35,6 +35,24 @@ def _blit_shadow(surface, px, py) -> None:
     surface.blit(s, (px, py + cfg.TILE - s.get_height() + 2))
 
 
+_npc_cache: dict[str, pg.Surface] = {}
+
+
+def _npc_marker(kind: str) -> pg.Surface:
+    s = _npc_cache.get(kind)
+    if s is None:
+        t = cfg.TILE
+        s = pg.Surface((t, t), pg.SRCALPHA)
+        color = (235, 205, 95) if kind == "merchant" else (110, 200, 235)
+        pg.draw.circle(s, color, (t // 2, t // 2), t // 2 - 3)
+        pg.draw.circle(s, (20, 20, 28), (t // 2, t // 2), t // 2 - 3, 2)
+        symbol = "$" if kind == "merchant" else "+"
+        glyph = fonts.get_font(22, bold=True).render(symbol, True, (30, 30, 40))
+        s.blit(glyph, glyph.get_rect(center=(t // 2, t // 2)))
+        _npc_cache[kind] = s
+    return s
+
+
 class AnimState:
     def __init__(self, sheets: dict, fps: int = 8, speed_scale: float = 1.0):
         self.sheets = sheets
@@ -169,6 +187,7 @@ def draw_map(
     monsters,
     visible,
     mon_slide,
+    npcs=None,
 ) -> None:
     floors = tiles["floor_variants"]
     nfloor = len(floors)
@@ -197,6 +216,11 @@ def draw_map(
             _blit_shadow(surface, x * cfg.TILE, y * cfg.TILE)
             if frame:
                 surface.blit(frame, (x * cfg.TILE + offx, y * cfg.TILE + offy))
+    if npcs:
+        for (x, y), kind in npcs.items():
+            if (x, y) in visible:
+                _blit_shadow(surface, x * cfg.TILE, y * cfg.TILE)
+                surface.blit(_npc_marker(kind), (x * cfg.TILE, y * cfg.TILE))
     hpx, hpy = int(render_px * cfg.TILE), int(render_py * cfg.TILE)
     _blit_shadow(surface, hpx, hpy)
     hero_frame = hero_anim.get_frame()

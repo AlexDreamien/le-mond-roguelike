@@ -26,11 +26,15 @@ from .ui_common import message_box, prompt_yes_no
 from .ui_inventory import inventory_screen
 from .ui_options import options_screen
 from .ui_pause import pause_screen
+from .ui_shop import shop_screen
 from .ui_stats import skills_window, stats_window
+from .ui_trainer import trainer_screen
 
 MOVE_DURATION = 0.12  # seconds to slide between two tiles
 FLASH_DURATION = 0.22  # seconds the red damage flash lingers
 ATTACK_COOLDOWN = 0.16  # min seconds between attacks (so holding into a foe is paced)
+MERCHANT_CHANCE = 0.35  # chance a merchant appears on a level
+TRAINER_CHANCE = 0.25  # chance a trainer appears on a level
 
 _DIR_KEYS = {
     pg.K_UP: (0, -1),
@@ -55,6 +59,19 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
     mon_slide = {id(m): SlideFX() for m in monsters.values()}
     ps = ParticleSystem()
 
+    npcs = {}  # pos -> "merchant" | "trainer"; collide to open a menu instead of attacking
+    free = [
+        (x, y)
+        for y in range(d.h)
+        for x in range(d.w)
+        if d.grid[y][x] == FLOOR and (x, y) not in monsters and (x, y) != d.entry
+    ]
+    random.shuffle(free)
+    if free and random.random() < MERCHANT_CHANCE:
+        npcs[free.pop()] = "merchant"
+    if free and random.random() < TRAINER_CHANCE:
+        npcs[free.pop()] = "trainer"
+
     hx, hy = d.entry
     rx, ry = float(hx), float(hy)
     moving = False
@@ -68,6 +85,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
     shake = Shake()
     flash_t = 0.0
     attack_cd = 0.0
+    npc_block = False  # set after opening an NPC; cleared when no direction is held
 
     def set_msg(text: str):
         nonlocal msg
@@ -107,14 +125,27 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             set_msg(i18n.t("pickup.stored", item=i18n.item_describe(result.item)))
         return True
 
+    def _open_npc(nx, ny):
+        kind = npcs[(nx, ny)]
+        if kind == "merchant":
+            shop_screen(screen, hero, hero.depth)
+        else:
+            trainer_screen(screen, hero, options)
+        save_hero(current_slot, hero, options)
+
     def try_start_move(dx, dy):
-        nonlocal moving, move_from, move_to, move_acc, hx, hy, rx, ry
+        nonlocal moving, move_from, move_to, move_acc, hx, hy, rx, ry, npc_block
         if dx < 0:
             hero_anim.set_facing("left")
         if dx > 0:
             hero_anim.set_facing("right")
         nx, ny = hx + dx, hy + dy
         if not d.inside(nx, ny):
+            return None
+        if (nx, ny) in npcs:  # talk, do not attack or step onto them
+            if not npc_block:
+                npc_block = True
+                _open_npc(nx, ny)
             return None
         if (nx, ny) in monsters:  # monsters live in this dict, not on the grid
             if attack_cd > 0:
@@ -243,12 +274,15 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             attack_cd = max(0.0, attack_cd - dt)
         if not moving:  # hold a direction to keep stepping that way
             pressed = pg.key.get_pressed()
-            for key, (dx, dy) in _DIR_KEYS.items():
-                if pressed[key]:
-                    hero.last_dir = (dx, dy)
-                    if try_start_move(dx, dy) == "dead":
-                        return False
-                    break
+            if not any(pressed[k] for k in _DIR_KEYS):
+                npc_block = False  # released: allow re-opening an NPC on the next press
+            else:
+                for key, (dx, dy) in _DIR_KEYS.items():
+                    if pressed[key]:
+                        hero.last_dir = (dx, dy)
+                        if try_start_move(dx, dy) == "dead":
+                            return False
+                        break
 
         shake.update(dt)
         if flash_t > 0:
@@ -257,7 +291,18 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         visible = compute_fov(d, hx, hy, cfg.FOV_RADIUS)
         world.fill(cfg.C_BG)
         draw_map(
-            world, tiles, hero_anim, monsters_anim, d, hero, rx, ry, monsters, visible, mon_slide
+            world,
+            tiles,
+            hero_anim,
+            monsters_anim,
+            d,
+            hero,
+            rx,
+            ry,
+            monsters,
+            visible,
+            mon_slide,
+            npcs,
         )
         ps.draw(world)
         sx, sy = shake.offset()
