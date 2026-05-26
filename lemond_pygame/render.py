@@ -135,8 +135,10 @@ def draw_hud(screen, hero: Hero) -> None:
     pg.draw.rect(screen, cfg.C_PANEL, (0, top, cfg.SCREEN_W, cfg.HUD_H))
     pg.draw.rect(screen, cfg.C_PANEL_BORDER, (0, top, cfg.SCREEN_W, cfg.HUD_H), 2)
     font = fonts.get_font(20)
-    draw_hp_bar(screen, 10, top + 10, 260, 18, hero.hp, hero.max_hp)
-    _line(screen, font, f"HP: {hero.hp}/{hero.max_hp}", 16, top + 11, (0, 0, 0))
+    bar_y, bar_h = top + 10, 18
+    draw_hp_bar(screen, 10, bar_y, 260, bar_h, hero.hp, hero.max_hp)
+    hp_y = bar_y + (bar_h - font.get_height()) // 2
+    _line(screen, font, f"HP: {hero.hp}/{hero.max_hp}", 16, hp_y, (0, 0, 0))
     dmg_min, dmg_max = hero.weapon_damage()
     dodge = int(dodge_chance(hero, hero.skills["DODGE"]) * 100)
     hud = (

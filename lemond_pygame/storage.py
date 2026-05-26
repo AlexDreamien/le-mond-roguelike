@@ -150,6 +150,7 @@ def list_saves() -> list[dict]:
                     or _LEGACY_CLASS_TO_KIND.get(d.get("class"), "warrior"),
                     "level": d.get("level", 1),
                     "depth": d.get("depth", 1),
+                    "unlocked_depth": d.get("unlocked_depth", d.get("depth", 1)),
                     "exists": True,
                 }
             )

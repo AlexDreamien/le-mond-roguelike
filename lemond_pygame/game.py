@@ -21,7 +21,7 @@ from .magic import do_cast
 from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
-from .ui_common import message_box
+from .ui_common import message_box, prompt_yes_no
 from .ui_inventory import inventory_screen
 from .ui_options import options_screen
 from .ui_pause import pause_screen
@@ -88,8 +88,12 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             return
         getattr(ps, func)(tx, ty, n=count, **kw)
 
-    def apply_pickup(from_chest=False):
+    def apply_pickup(from_chest=False) -> bool:
+        """Return True if the item was taken; False leaves it on the ground."""
         result = resolve_pickup(hero, hero.depth)
+        if result.outcome == "inventory_full":
+            set_msg(i18n.t("pickup.inventory_full", limit=INVENTORY_LIMIT))
+            return False
         sounds["pickup"].play()
         if result.outcome == "potion":
             set_msg(i18n.t("pickup.chest_potion" if from_chest else "pickup.potion"))
@@ -98,8 +102,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             set_msg(i18n.t("pickup.equipped", status=status))
         elif result.outcome == "stored":
             set_msg(i18n.t("pickup.stored", item=i18n.item_describe(result.item)))
-        else:
-            set_msg(i18n.t("pickup.inventory_full", limit=INVENTORY_LIMIT))
+        return True
 
     def try_start_move(dx, dy):
         nonlocal moving, move_from, move_to, move_acc, hx, hy, rx, ry
@@ -202,8 +205,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         nonlocal hx, hy, rx, ry
         tile = d.grid[hy][hx]
         if tile in (LOOT, CHEST):
-            apply_pickup(from_chest=(tile == CHEST))
-            d.grid[hy][hx] = FLOOR
+            if apply_pickup(from_chest=(tile == CHEST)):
+                d.grid[hy][hx] = FLOOR
         elif tile == EXIT:
             sounds["open"].play()
             hero.depth += 1
@@ -256,17 +259,18 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             if e.type != pg.KEYDOWN:
                 continue
             if e.key == pg.K_q:
-                save_hero(current_slot, hero, options)
-                pg.quit()
-                sys.exit(0)
+                if prompt_yes_no(screen, i18n.t("ui.quit_confirm")):
+                    save_hero(current_slot, hero, options)
+                    pg.quit()
+                    sys.exit(0)
+                continue
             if e.key in _DIR_KEYS and not moving:
                 dx, dy = _DIR_KEYS[e.key]
                 hero.last_dir = (dx, dy)
                 if try_start_move(dx, dy) == "dead":
                     return False
             elif e.key == pg.K_g and not moving:
-                if d.grid[hy][hx] == LOOT:
-                    apply_pickup(from_chest=False)
+                if d.grid[hy][hx] == LOOT and apply_pickup(from_chest=False):
                     d.grid[hy][hx] = FLOOR
             elif e.key == pg.K_i:
                 set_msg(inventory_screen(screen, hero))

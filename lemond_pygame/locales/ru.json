@@ -100,7 +100,7 @@
 
   "ui.start.title": "Le-Mond — Рогалик",
   "ui.start.panel": "Стартовое меню (5 слотов)",
-  "ui.start.slot": "Слот {slot}: {name} — {cls} — Ур.{level} — Подземелье {depth}",
+  "ui.start.slot": "Слот {slot}: {name} — {cls} — Ур.{level} — Подземелье {depth} (макс. {unlocked})",
   "ui.start.new_slot": "Слот {slot}: Новая игра",
   "ui.start.delete": "Удалить",
   "ui.start.delete_confirm": "Удалить слот {slot}?",
@@ -111,5 +111,7 @@
   "ui.class.hint": "Клик на карточке. Esc — назад",
 
   "ui.magic.title": "Магия: Выберите направление",
-  "ui.magic.hint": "Стрелки: направление, Esc — отмена"
+  "ui.magic.hint": "Стрелки: направление, Esc — отмена",
+
+  "ui.quit_confirm": "Сохранить и выйти?"
 }

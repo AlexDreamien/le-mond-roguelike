@@ -100,7 +100,7 @@
 
   "ui.start.title": "Le-Mond - Roguelike",
   "ui.start.panel": "Start menu (5 slots)",
-  "ui.start.slot": "Slot {slot}: {name} - {cls} - Lv.{level} - Dungeon {depth}",
+  "ui.start.slot": "Slot {slot}: {name} - {cls} - Lv.{level} - Dungeon {depth} (deepest {unlocked})",
   "ui.start.new_slot": "Slot {slot}: New game",
   "ui.start.delete": "Delete",
   "ui.start.delete_confirm": "Delete slot {slot}?",
@@ -111,5 +111,7 @@
   "ui.class.hint": "Click a card. Esc - back",
 
   "ui.magic.title": "Magic: choose a direction",
-  "ui.magic.hint": "Arrows - direction, Esc - cancel"
+  "ui.magic.hint": "Arrows - direction, Esc - cancel",
+
+  "ui.quit_confirm": "Save and exit?"
 }

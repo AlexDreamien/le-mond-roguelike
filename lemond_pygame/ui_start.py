@@ -42,6 +42,7 @@ def _draw_slot(screen, font, info):
             cls=i18n.class_name(info["class_kind"]),
             level=info["level"],
             depth=info["depth"],
+            unlocked=info["unlocked_depth"],
         )
         line(screen, font, text, r.x + 12, r.y + 12)
         dr = _del_rect(r)
