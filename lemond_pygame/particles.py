@@ -4,6 +4,23 @@ import pygame as pg
 
 from .core import config as cfg
 
+_glow_cache: dict[int, pg.Surface] = {}
+
+
+def _glow(radius: int) -> pg.Surface:
+    """A cached white radial-falloff sprite, blitted additively for a glow."""
+    surf = _glow_cache.get(radius)
+    if surf is None:
+        size = radius * 2
+        surf = pg.Surface((size, size), pg.SRCALPHA)
+        for y in range(size):
+            for x in range(size):
+                d = ((x - radius + 0.5) ** 2 + (y - radius + 0.5) ** 2) ** 0.5
+                v = max(0, 255 - int(255 * (d / radius)))
+                surf.set_at((x, y), (v, v, v, v))
+        _glow_cache[radius] = surf
+    return surf
+
 
 class Particle:
     __slots__ = ("x", "y", "vx", "vy", "life", "t", "col", "size", "grav")
@@ -82,8 +99,11 @@ class ParticleSystem:
 
     def draw(self, screen):
         for p in self.p:
-            a = max(0, 255 - int(255 * (p.t / p.life)))
-            col = (p.col[0], p.col[1], p.col[2], a)
-            s = pg.Surface((p.size, p.size), pg.SRCALPHA)
-            s.fill(col)
-            screen.blit(s, (int(p.x), int(p.y)))
+            fade = max(0.0, 1.0 - p.t / p.life)
+            radius = max(2, int(p.size * 3))
+            glow = _glow(radius).copy()
+            tint = (int(p.col[0] * fade), int(p.col[1] * fade), int(p.col[2] * fade), 255)
+            glow.fill(tint, special_flags=pg.BLEND_RGB_MULT)
+            screen.blit(
+                glow, (int(p.x) - radius, int(p.y) - radius), special_flags=pg.BLEND_RGB_ADD
+            )

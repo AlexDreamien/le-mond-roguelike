@@ -7,6 +7,7 @@ loop feeds it state each frame.
 from __future__ import annotations
 
 import math
+import random
 
 import pygame as pg
 
@@ -203,3 +204,42 @@ def draw_map(
 
 def _line(screen, font, text, x, y, col=(220, 220, 220)) -> None:
     screen.blit(font.render(text, True, col), (x, y))
+
+
+class Shake:
+    """Decaying camera shake. trigger() on impact, offset() each frame."""
+
+    def __init__(self):
+        self.t = 0.0
+        self.dur = 0.0
+        self.mag = 0.0
+
+    def trigger(self, mag: float = 6.0, dur: float = 0.18) -> None:
+        self.mag = max(self.mag if self.t > 0 else 0.0, mag)
+        self.dur = dur
+        self.t = dur
+
+    def update(self, dt: float) -> None:
+        if self.t > 0:
+            self.t = max(0.0, self.t - dt)
+            if self.t == 0:
+                self.mag = 0.0
+
+    def offset(self) -> tuple[int, int]:
+        if self.t <= 0:
+            return (0, 0)
+        amp = self.mag * (self.t / self.dur)
+        return (random.randint(-int(amp), int(amp)), random.randint(-int(amp), int(amp)))
+
+
+_flash_cache: pg.Surface | None = None
+
+
+def draw_damage_flash(screen, frac: float) -> None:
+    """Red full-screen flash; ``frac`` in (0, 1] is the remaining intensity."""
+    global _flash_cache
+    if _flash_cache is None:
+        _flash_cache = pg.Surface((cfg.SCREEN_W, cfg.SCREEN_H))
+        _flash_cache.fill((150, 20, 20))
+    _flash_cache.set_alpha(int(110 * max(0.0, min(1.0, frac))))
+    screen.blit(_flash_cache, (0, 0))

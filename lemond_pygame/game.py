@@ -19,7 +19,7 @@ from .core.loot import INVENTORY_LIMIT, resolve_pickup
 from .drawing import build_animsets_from_atlas, build_tiles
 from .magic import do_cast
 from .particles import ParticleSystem
-from .render import AnimState, SlideFX, draw_hud, draw_map, draw_msg
+from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
 from .ui_common import message_box
 from .ui_inventory import inventory_screen
@@ -28,6 +28,7 @@ from .ui_pause import pause_screen
 from .ui_stats import skills_window, stats_window
 
 MOVE_DURATION = 0.12  # seconds to slide between two tiles
+FLASH_DURATION = 0.22  # seconds the red damage flash lingers
 
 _DIR_KEYS = {
     pg.K_UP: (0, -1),
@@ -60,6 +61,10 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
     move_acc = 0.0
     msg = i18n.t("msg.level_intro", depth=hero.depth)
     event_log = []
+
+    world = pg.Surface((cfg.SCREEN_W, cfg.MAP_H * cfg.TILE))
+    shake = Shake()
+    flash_t = 0.0
 
     def set_msg(text: str):
         nonlocal msg
@@ -122,6 +127,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         return None
 
     def _attack(nx, ny):
+        nonlocal flash_t
         m = monsters[(nx, ny)]
         a = monsters_anim[id(m)]
         if nx < hx:
@@ -141,6 +147,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             total += dd
             spawn_scaled("spawn_hit", nx, ny, n=8, col=(255, 255, 180))
         sounds["hit"].play()
+        if total > 0:
+            shake.trigger(mag=3.0, dur=0.10)  # light shake when the hero lands a blow
         if m.hp <= 0:
             set_msg(i18n.t("msg.killed", name=i18n.monster_name(m), xp=m.xp_reward))
             prev = hero.level
@@ -176,6 +184,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         if md_total > 0:
             sounds["hurt"].play()
             spawn_scaled("spawn_burst", hx, hy, n=10, base_col=(200, 70, 70))
+            shake.trigger(mag=7.0, dur=0.20)  # stronger shake + red flash on taking damage
+            flash_t = FLASH_DURATION
         hit_part = i18n.t("msg.you_hit", name=i18n.monster_name(m), total=total)
         tail = (
             i18n.t("msg.you_dodged")
@@ -219,14 +229,23 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                 if on_arrival():
                     return True
 
+        shake.update(dt)
+        if flash_t > 0:
+            flash_t = max(0.0, flash_t - dt)
+
         visible = compute_fov(d, hx, hy, cfg.FOV_RADIUS)
-        screen.fill(cfg.C_BG)
+        world.fill(cfg.C_BG)
         draw_map(
-            screen, tiles, hero_anim, monsters_anim, d, hero, rx, ry, monsters, visible, mon_slide
+            world, tiles, hero_anim, monsters_anim, d, hero, rx, ry, monsters, visible, mon_slide
         )
-        ps.draw(screen)
+        ps.draw(world)
+        sx, sy = shake.offset()
+        screen.fill((0, 0, 0))
+        screen.blit(world, (sx, sy))
         draw_hud(screen, hero)
         draw_msg(screen, msg)
+        if flash_t > 0:
+            draw_damage_flash(screen, flash_t / FLASH_DURATION)
         pg.display.flip()
 
         for e in pg.event.get():
