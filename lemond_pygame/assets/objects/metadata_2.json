@@ -1,0 +1,908 @@
+{
+  "objects": [
+    {
+      "id": "5b87cb2c-2246-4758-91c6-534d45ac532b",
+      "name": null,
+      "prompt": "selection pointer / cursor",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "60a26a88-3f4e-4753-bf4e-06babbef47f1",
+      "name": null,
+      "prompt": "boot silhouette in a slot frame (feet)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "619dd098-8eaa-48f5-9ae0-2c676739ff92",
+      "name": null,
+      "prompt": "dungeon wall, cracked stone bricks variant",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "6354c663-845e-4294-a830-2c8d8addf877",
+      "name": null,
+      "prompt": "small pile of scattered shiny gold coins",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "6d94503b-e1b1-4d06-9a10-5743151aea38",
+      "name": null,
+      "prompt": "small red potion bottle icon (potions count)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "70183b8e-e1c6-4d08-9af2-e27fb54de223",
+      "name": null,
+      "prompt": "glove silhouette in a slot frame (hands)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "706b11a6-39a8-4c9f-bbb3-b1c5cfa229de",
+      "name": null,
+      "prompt": "chestplate silhouette in a slot frame (body)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "70859173-4861-4511-90a4-144f551b626a",
+      "name": null,
+      "prompt": "swirling magic sparkle / wand (cast magic)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "76a10dec-7ee3-4774-8b16-a5cda86bcbc6",
+      "name": null,
+      "prompt": "down arrow",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "7c314bf9-80e5-42ea-9ba4-133f996cfbf1",
+      "name": null,
+      "prompt": "dungeon wall, dark grey-blue stone blocks, mortar lines",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "7f64e030-d25b-45ad-af37-facd080c31a9",
+      "name": null,
+      "prompt": "open dark doorway / stone archway",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "871e73d2-1b4f-44cf-b9aa-518ac505f617",
+      "name": null,
+      "prompt": "round glass flask with glowing red healing potion and cork",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "8c2af2e8-5a78-469c-9b71-2944a6818a98",
+      "name": null,
+      "prompt": "winged boot or feather (dexterity)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "8e94cedb-6c71-4172-ac07-5f1f1c6a5d63",
+      "name": null,
+      "prompt": "stone staircase descending into black (stairs down)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "91902bd3-fc32-46ad-b805-ce94525bae35",
+      "name": null,
+      "prompt": "sword silhouette in a slot frame (main hand)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "92a9f3a1-f785-4300-ae21-f173fbb86796",
+      "name": null,
+      "prompt": "open spellbook with sparkle (intelligence)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "970652f6-3d55-4100-b313-6e765f43cfed",
+      "name": null,
+      "prompt": "door with an exit arrow (quit)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "97aabb3b-484d-457f-948f-f9e909400df3",
+      "name": null,
+      "prompt": "steel helmet",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "9f88f09b-6fbc-4c90-b990-560ef370771f",
+      "name": null,
+      "prompt": "shield silhouette in a slot frame (off hand)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "a50cb094-aa04-4e3f-be87-9834b6e561bb",
+      "name": null,
+      "prompt": "dungeon floor, dark cobblestone variant, faint speckle",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "a54159aa-c94a-4d29-88b6-457468ae8b38",
+      "name": null,
+      "prompt": "wooden magic staff with a glowing crystal tip",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "a752e901-1000-4ad5-8bb3-eeb78aa6d45c",
+      "name": null,
+      "prompt": "closed wooden dungeon door with iron bands",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "b10ff30c-7211-46d2-bf36-b79cc82e0001",
+      "name": null,
+      "prompt": "two crossed swords (damage)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "b5c84283-e6c8-4dc0-bc5d-2c19730b2eac",
+      "name": null,
+      "prompt": "up arrow",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "bd04e012-8d9e-4550-9454-9b8e90b8d103",
+      "name": null,
+      "prompt": "dungeon wall, stone with embedded skull/bones",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    }
+  ],
+  "groups": [
+    {
+      "group_id": null,
+      "folder": "objects/selection_pointer_cursor",
+      "objects": [
+        {
+          "id": "5b87cb2c-2246-4758-91c6-534d45ac532b",
+          "name": null,
+          "prompt": "selection pointer / cursor",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/boot_silhouette_in_a_slot_fram",
+      "objects": [
+        {
+          "id": "60a26a88-3f4e-4753-bf4e-06babbef47f1",
+          "name": null,
+          "prompt": "boot silhouette in a slot frame (feet)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_wall_cracked_stone_br",
+      "objects": [
+        {
+          "id": "619dd098-8eaa-48f5-9ae0-2c676739ff92",
+          "name": null,
+          "prompt": "dungeon wall, cracked stone bricks variant",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/small_pile_of_scattered_shiny",
+      "objects": [
+        {
+          "id": "6354c663-845e-4294-a830-2c8d8addf877",
+          "name": null,
+          "prompt": "small pile of scattered shiny gold coins",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/small_red_potion_bottle_icon",
+      "objects": [
+        {
+          "id": "6d94503b-e1b1-4d06-9a10-5743151aea38",
+          "name": null,
+          "prompt": "small red potion bottle icon (potions count)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/glove_silhouette_in_a_slot_fra",
+      "objects": [
+        {
+          "id": "70183b8e-e1c6-4d08-9af2-e27fb54de223",
+          "name": null,
+          "prompt": "glove silhouette in a slot frame (hands)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/chestplate_silhouette_in_a_slo",
+      "objects": [
+        {
+          "id": "706b11a6-39a8-4c9f-bbb3-b1c5cfa229de",
+          "name": null,
+          "prompt": "chestplate silhouette in a slot frame (body)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/swirling_magic_sparkle_wand",
+      "objects": [
+        {
+          "id": "70859173-4861-4511-90a4-144f551b626a",
+          "name": null,
+          "prompt": "swirling magic sparkle / wand (cast magic)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/down_arrow",
+      "objects": [
+        {
+          "id": "76a10dec-7ee3-4774-8b16-a5cda86bcbc6",
+          "name": null,
+          "prompt": "down arrow",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_wall_dark_grey-blue_s",
+      "objects": [
+        {
+          "id": "7c314bf9-80e5-42ea-9ba4-133f996cfbf1",
+          "name": null,
+          "prompt": "dungeon wall, dark grey-blue stone blocks, mortar lines",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/open_dark_doorway_stone_arch",
+      "objects": [
+        {
+          "id": "7f64e030-d25b-45ad-af37-facd080c31a9",
+          "name": null,
+          "prompt": "open dark doorway / stone archway",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/round_glass_flask_with_glowing",
+      "objects": [
+        {
+          "id": "871e73d2-1b4f-44cf-b9aa-518ac505f617",
+          "name": null,
+          "prompt": "round glass flask with glowing red healing potion and cork",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/winged_boot_or_feather_dexter",
+      "objects": [
+        {
+          "id": "8c2af2e8-5a78-469c-9b71-2944a6818a98",
+          "name": null,
+          "prompt": "winged boot or feather (dexterity)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/stone_staircase_descending_int",
+      "objects": [
+        {
+          "id": "8e94cedb-6c71-4172-ac07-5f1f1c6a5d63",
+          "name": null,
+          "prompt": "stone staircase descending into black (stairs down)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/sword_silhouette_in_a_slot_fra",
+      "objects": [
+        {
+          "id": "91902bd3-fc32-46ad-b805-ce94525bae35",
+          "name": null,
+          "prompt": "sword silhouette in a slot frame (main hand)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/open_spellbook_with_sparkle_i",
+      "objects": [
+        {
+          "id": "92a9f3a1-f785-4300-ae21-f173fbb86796",
+          "name": null,
+          "prompt": "open spellbook with sparkle (intelligence)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/door_with_an_exit_arrow_quit",
+      "objects": [
+        {
+          "id": "970652f6-3d55-4100-b313-6e765f43cfed",
+          "name": null,
+          "prompt": "door with an exit arrow (quit)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/steel_helmet",
+      "objects": [
+        {
+          "id": "97aabb3b-484d-457f-948f-f9e909400df3",
+          "name": null,
+          "prompt": "steel helmet",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/shield_silhouette_in_a_slot_fr",
+      "objects": [
+        {
+          "id": "9f88f09b-6fbc-4c90-b990-560ef370771f",
+          "name": null,
+          "prompt": "shield silhouette in a slot frame (off hand)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_floor_dark_cobbleston",
+      "objects": [
+        {
+          "id": "a50cb094-aa04-4e3f-be87-9834b6e561bb",
+          "name": null,
+          "prompt": "dungeon floor, dark cobblestone variant, faint speckle",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/wooden_magic_staff_with_a_glow",
+      "objects": [
+        {
+          "id": "a54159aa-c94a-4d29-88b6-457468ae8b38",
+          "name": null,
+          "prompt": "wooden magic staff with a glowing crystal tip",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/closed_wooden_dungeon_door_wit",
+      "objects": [
+        {
+          "id": "a752e901-1000-4ad5-8bb3-eeb78aa6d45c",
+          "name": null,
+          "prompt": "closed wooden dungeon door with iron bands",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/two_crossed_swords_damage",
+      "objects": [
+        {
+          "id": "b10ff30c-7211-46d2-bf36-b79cc82e0001",
+          "name": null,
+          "prompt": "two crossed swords (damage)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/up_arrow",
+      "objects": [
+        {
+          "id": "b5c84283-e6c8-4dc0-bc5d-2c19730b2eac",
+          "name": null,
+          "prompt": "up arrow",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_wall_stone_with_embed",
+      "objects": [
+        {
+          "id": "bd04e012-8d9e-4550-9454-9b8e90b8d103",
+          "name": null,
+          "prompt": "dungeon wall, stone with embedded skull/bones",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    }
+  ],
+  "export_version": "1.0",
+  "export_date": "2026-05-27T11:08:07.644310"
+}

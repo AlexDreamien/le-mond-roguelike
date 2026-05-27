@@ -14,7 +14,7 @@ import pygame as pg
 from . import fonts, i18n, lighting
 from .core import config as cfg
 from .core.combat import dodge_chance
-from .core.dungeon import CHEST, EXIT, LOOT, WALL, Dungeon
+from .core.dungeon import CHEST, ENTRY, EXIT, LOOT, POTION, WALL, Dungeon
 from .core.entities import Hero
 
 _shadow_cache: pg.Surface | None = None
@@ -193,19 +193,26 @@ def draw_map(
 ) -> None:
     floors = tiles["floor_variants"]
     nfloor = len(floors)
+    walls = tiles["wall_variants"]
+    nwall = len(walls)
+    stairs_up = tiles.get("stairs_up")
     for y in range(d.h):
         for x in range(d.w):
             r = pg.Rect(x * cfg.TILE, y * cfg.TILE, cfg.TILE, cfg.TILE)
             surface.blit(floors[(x * 7 + y * 13) % nfloor], r)
             t = d.grid[y][x]
             if t == WALL:
-                surface.blit(tiles["wall"], r)
+                surface.blit(walls[(x * 5 + y * 11) % nwall], r)
             elif t == CHEST:
                 surface.blit(tiles["chest"], r)
             elif t == EXIT:
-                surface.blit(tiles["exit"], r)
+                surface.blit(tiles["stairs_down"], r)
+            elif t == ENTRY and stairs_up:
+                surface.blit(stairs_up, r)
             elif t == LOOT:
-                surface.blit(tiles["loot"], r)
+                surface.blit(tiles["coins"], r)
+            elif t == POTION:
+                surface.blit(tiles["potion"], r)
             if (x, y) in visible:
                 d.seen[y][x] = True
     for (x, y), m in list(monsters.items()):

@@ -88,14 +88,36 @@ def _make_loot() -> pg.Surface:
     return surf
 
 
+def build_object_sprites() -> dict[str, pg.Surface]:
+    """Load the packed objects atlas into ``{key: Surface}`` (empty if missing)."""
+    png = resource_path("assets", "objects_atlas.png")
+    meta = resource_path("assets", "objects_atlas.json")
+    if not (Path(png).exists() and Path(meta).exists()):
+        return {}
+    atlas = pg.image.load(png).convert_alpha()
+    with open(meta, encoding="utf-8") as f:
+        index = json.load(f)
+    out: dict[str, pg.Surface] = {}
+    for key, (x, y, w, h) in index.items():
+        sprite = pg.Surface((w, h), pg.SRCALPHA)
+        sprite.blit(atlas, (0, 0), (x, y, w, h))
+        out[key] = sprite
+    return out
+
+
 def build_tiles() -> dict[str, object]:
+    """Tile/sprite set, sourced from the objects atlas with a procedural fallback."""
+    obj = build_object_sprites()
+    walls = [obj[k] for k in ("wall_0", "wall_1", "wall_2", "wall_3") if k in obj]
+    floors = [obj[k] for k in ("floor_0", "floor_1", "floor_2") if k in obj]
     return {
-        "wall": _make_wall(),
-        "floor": _make_floor(0),
-        "floor_variants": [_make_floor(i) for i in range(FLOOR_VARIANTS)],
-        "chest": _make_chest(),
-        "exit": _make_exit(),
-        "loot": _make_loot(),
+        "wall_variants": walls or [_make_wall()],
+        "floor_variants": floors or [_make_floor(i) for i in range(FLOOR_VARIANTS)],
+        "chest": obj.get("chest") or _make_chest(),
+        "stairs_down": obj.get("stairs_down") or _make_exit(),
+        "stairs_up": obj.get("stairs_up"),  # None -> entry shows plain floor
+        "coins": obj.get("coins") or _make_loot(),
+        "potion": obj.get("potion") or _make_loot(),
     }
 
 

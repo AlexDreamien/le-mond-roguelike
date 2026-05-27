@@ -1,0 +1,908 @@
+{
+  "objects": [
+    {
+      "id": "01237cf8-d991-4d5a-b2e8-73f6d7ca0161",
+      "name": null,
+      "prompt": "gear/cog (options)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "01f3d797-9495-4460-b340-aef633e22627",
+      "name": null,
+      "prompt": "musical note with a slash through it (music off)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "051ba5d2-7d80-4268-8b34-08696afdd11b",
+      "name": null,
+      "prompt": "open grabbing hand (pick up)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "0b26190e-314a-4dfb-b64b-6dd4c988f767",
+      "name": null,
+      "prompt": "short steel sword, simple crossguard",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "0be23696-03eb-4d05-9eb1-e3bd71a85d56",
+      "name": null,
+      "prompt": "helmet silhouette in a slot frame (head)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "114a162a-e39a-47f8-93d8-b8788244f2e4",
+      "name": null,
+      "prompt": "dungeon floor, dark stone flagstones, low contrast",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "12d52f18-7741-4719-b310-1fa02b420cd8",
+      "name": null,
+      "prompt": "dungeon floor, cracked tiles with tiny rubble",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "132bc5cb-a39b-4cc9-82af-e3ed0408bb7f",
+      "name": null,
+      "prompt": "pair of leather boots",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "138988fc-ef20-4ad7-a80f-fd9fc71ff82c",
+      "name": null,
+      "prompt": "dungeon wall, mossy stone with green patches",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "1b5c0b6b-5ec7-49b3-8da9-3dcdd59848df",
+      "name": null,
+      "prompt": "small steel shield (armor)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "1cce0597-0a99-4821-a7fb-dd999c7453f0",
+      "name": null,
+      "prompt": "floppy disk / save icon (save)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "2086193f-8fdf-4f62-946e-81085f43a6f3",
+      "name": null,
+      "prompt": "flexed muscular arm (strength)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "2259d65b-c86a-4b51-a709-5e8c267ba5b6",
+      "name": null,
+      "prompt": "single gold coin (gold)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "266c8a47-9bf4-4d13-8977-8ba5aa9ce50b",
+      "name": null,
+      "prompt": "closed wooden treasure chest with gold iron bands and lock",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "2bc361ab-6f2a-4208-bc57-5791cc28640f",
+      "name": null,
+      "prompt": "musical note (music on)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "2f499b17-abb9-4ea0-ac01-74bcdacf9efa",
+      "name": null,
+      "prompt": "character stat scroll/sheet (stats)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "2fc14dff-f7b1-4d24-a151-be76c236efc7",
+      "name": null,
+      "prompt": "red heart (health/HP)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "354152c9-b956-4b08-ad18-cace6551426b",
+      "name": null,
+      "prompt": "wizard hat with a star (mage)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "40241ebe-6994-4207-a4b0-bc48be0f8d53",
+      "name": null,
+      "prompt": "crossed sword and shield (warrior)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "4ebf9c33-2869-413b-b874-00af3827a821",
+      "name": null,
+      "prompt": "branching skill tree (skills)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "55d53f87-e2b2-4a29-a724-150eee915051",
+      "name": null,
+      "prompt": "leather backpack (inventory)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "5770fea3-6d7a-4461-812f-40152fad0bc7",
+      "name": null,
+      "prompt": "lit wall torch with warm flame on a bracket",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "57a77652-43a9-4877-b72a-e125782f2272",
+      "name": null,
+      "prompt": "globe (language)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "586da6cb-253b-4a76-ae8a-40d06bd6c894",
+      "name": null,
+      "prompt": "right arrow",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "58c29203-8570-45ea-9c6c-b571b8f6766b",
+      "name": null,
+      "prompt": "dodging figure with motion lines (dodge)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    }
+  ],
+  "groups": [
+    {
+      "group_id": null,
+      "folder": "objects/gear_cog_options",
+      "objects": [
+        {
+          "id": "01237cf8-d991-4d5a-b2e8-73f6d7ca0161",
+          "name": null,
+          "prompt": "gear/cog (options)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/musical_note_with_a_slash_thro",
+      "objects": [
+        {
+          "id": "01f3d797-9495-4460-b340-aef633e22627",
+          "name": null,
+          "prompt": "musical note with a slash through it (music off)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/open_grabbing_hand_pick_up",
+      "objects": [
+        {
+          "id": "051ba5d2-7d80-4268-8b34-08696afdd11b",
+          "name": null,
+          "prompt": "open grabbing hand (pick up)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/short_steel_sword_simple_cros",
+      "objects": [
+        {
+          "id": "0b26190e-314a-4dfb-b64b-6dd4c988f767",
+          "name": null,
+          "prompt": "short steel sword, simple crossguard",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/helmet_silhouette_in_a_slot_fr",
+      "objects": [
+        {
+          "id": "0be23696-03eb-4d05-9eb1-e3bd71a85d56",
+          "name": null,
+          "prompt": "helmet silhouette in a slot frame (head)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_floor_dark_stone_flag",
+      "objects": [
+        {
+          "id": "114a162a-e39a-47f8-93d8-b8788244f2e4",
+          "name": null,
+          "prompt": "dungeon floor, dark stone flagstones, low contrast",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_floor_cracked_tiles_w",
+      "objects": [
+        {
+          "id": "12d52f18-7741-4719-b310-1fa02b420cd8",
+          "name": null,
+          "prompt": "dungeon floor, cracked tiles with tiny rubble",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/pair_of_leather_boots",
+      "objects": [
+        {
+          "id": "132bc5cb-a39b-4cc9-82af-e3ed0408bb7f",
+          "name": null,
+          "prompt": "pair of leather boots",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dungeon_wall_mossy_stone_with",
+      "objects": [
+        {
+          "id": "138988fc-ef20-4ad7-a80f-fd9fc71ff82c",
+          "name": null,
+          "prompt": "dungeon wall, mossy stone with green patches",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/small_steel_shield_armor",
+      "objects": [
+        {
+          "id": "1b5c0b6b-5ec7-49b3-8da9-3dcdd59848df",
+          "name": null,
+          "prompt": "small steel shield (armor)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/floppy_disk_save_icon_save",
+      "objects": [
+        {
+          "id": "1cce0597-0a99-4821-a7fb-dd999c7453f0",
+          "name": null,
+          "prompt": "floppy disk / save icon (save)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/flexed_muscular_arm_strength",
+      "objects": [
+        {
+          "id": "2086193f-8fdf-4f62-946e-81085f43a6f3",
+          "name": null,
+          "prompt": "flexed muscular arm (strength)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/single_gold_coin_gold",
+      "objects": [
+        {
+          "id": "2259d65b-c86a-4b51-a709-5e8c267ba5b6",
+          "name": null,
+          "prompt": "single gold coin (gold)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/closed_wooden_treasure_chest_w",
+      "objects": [
+        {
+          "id": "266c8a47-9bf4-4d13-8977-8ba5aa9ce50b",
+          "name": null,
+          "prompt": "closed wooden treasure chest with gold iron bands and lock",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/musical_note_music_on",
+      "objects": [
+        {
+          "id": "2bc361ab-6f2a-4208-bc57-5791cc28640f",
+          "name": null,
+          "prompt": "musical note (music on)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/character_stat_scroll_sheet_s",
+      "objects": [
+        {
+          "id": "2f499b17-abb9-4ea0-ac01-74bcdacf9efa",
+          "name": null,
+          "prompt": "character stat scroll/sheet (stats)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/red_heart_health_HP",
+      "objects": [
+        {
+          "id": "2fc14dff-f7b1-4d24-a151-be76c236efc7",
+          "name": null,
+          "prompt": "red heart (health/HP)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/wizard_hat_with_a_star_mage",
+      "objects": [
+        {
+          "id": "354152c9-b956-4b08-ad18-cace6551426b",
+          "name": null,
+          "prompt": "wizard hat with a star (mage)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/crossed_sword_and_shield_warr",
+      "objects": [
+        {
+          "id": "40241ebe-6994-4207-a4b0-bc48be0f8d53",
+          "name": null,
+          "prompt": "crossed sword and shield (warrior)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/branching_skill_tree_skills",
+      "objects": [
+        {
+          "id": "4ebf9c33-2869-413b-b874-00af3827a821",
+          "name": null,
+          "prompt": "branching skill tree (skills)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/leather_backpack_inventory",
+      "objects": [
+        {
+          "id": "55d53f87-e2b2-4a29-a724-150eee915051",
+          "name": null,
+          "prompt": "leather backpack (inventory)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/lit_wall_torch_with_warm_flame",
+      "objects": [
+        {
+          "id": "5770fea3-6d7a-4461-812f-40152fad0bc7",
+          "name": null,
+          "prompt": "lit wall torch with warm flame on a bracket",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/globe_language",
+      "objects": [
+        {
+          "id": "57a77652-43a9-4877-b72a-e125782f2272",
+          "name": null,
+          "prompt": "globe (language)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/right_arrow",
+      "objects": [
+        {
+          "id": "586da6cb-253b-4a76-ae8a-40d06bd6c894",
+          "name": null,
+          "prompt": "right arrow",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/dodging_figure_with_motion_lin",
+      "objects": [
+        {
+          "id": "58c29203-8570-45ea-9c6c-b571b8f6766b",
+          "name": null,
+          "prompt": "dodging figure with motion lines (dodge)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    }
+  ],
+  "export_version": "1.0",
+  "export_date": "2026-05-27T11:07:20.655947"
+}

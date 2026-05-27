@@ -7,7 +7,7 @@ import pygame as pg
 from . import fonts, i18n
 from .core import config as cfg
 from .core import progression
-from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL
+from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL
 from .ui_common import line, panel
 
 
@@ -38,6 +38,8 @@ def _draw_minimap_surface(d, hero_pos, monsters, size):
                 color = (210, 170, 40)
             elif t == LOOT:
                 color = (200, 200, 120)
+            elif t == POTION:
+                color = (200, 110, 110)
             pg.draw.rect(surf, color, (ox + x * tw, oy + y * th, tw, th))
     for (mx, my), _m in monsters.items():
         if 0 <= mx < w and 0 <= my < h and d.seen[my][mx]:

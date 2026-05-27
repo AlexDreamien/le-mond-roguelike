@@ -1,0 +1,512 @@
+{
+  "objects": [
+    {
+      "id": "bea19103-4ccd-4185-8fb3-bf283521fb87",
+      "name": null,
+      "prompt": "hooded mask with a dagger (thief)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "c3a43e4c-46b3-49f9-8b96-e3982598ccf4",
+      "name": null,
+      "prompt": "stone staircase going up (stairs up / entrance)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "c8e18f97-b035-4bf9-8546-508ef9427977",
+      "name": null,
+      "prompt": "glowing blue star/orb (experience XP)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "cb87d634-73dd-4e6e-b71b-a8d19e809185",
+      "name": null,
+      "prompt": "empty checkbox square",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "cbc9c78b-eb14-4c31-8f2b-55fea4f356bf",
+      "name": null,
+      "prompt": "round wooden shield with iron rim",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "d1df8247-1b13-4a58-8f46-5b7dfc1ecebe",
+      "name": null,
+      "prompt": "steel chestplate / body armor",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "dc9e9a50-f810-4cbf-add2-56825fac185e",
+      "name": null,
+      "prompt": "upward golden chevron burst (level up)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "e176746f-efe0-4a96-bcdc-8ecba13913e7",
+      "name": null,
+      "prompt": "small curved dagger",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "ef212dcd-466c-4f78-b19a-5ca044794a53",
+      "name": null,
+      "prompt": "checked checkbox square",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "ef9f4493-3d9a-4c80-8193-6ffa0c9bda75",
+      "name": null,
+      "prompt": "potion tipped to drink (drink potion)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "f3981e30-fac9-4ab3-8463-8b8d75d66537",
+      "name": null,
+      "prompt": "pause symbol, two vertical bars (pause)",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "f6ae1a04-dd35-45ea-b905-04c95262c7a6",
+      "name": null,
+      "prompt": "heavy two-handed battle axe",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "fe8edffa-1ec5-406f-b9d3-705dedbf3180",
+      "name": null,
+      "prompt": "pair of leather gloves",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "ff83b9a2-de15-4de2-bf72-29f854f6a887",
+      "name": null,
+      "prompt": "left arrow",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    }
+  ],
+  "groups": [
+    {
+      "group_id": null,
+      "folder": "objects/hooded_mask_with_a_dagger_thi",
+      "objects": [
+        {
+          "id": "bea19103-4ccd-4185-8fb3-bf283521fb87",
+          "name": null,
+          "prompt": "hooded mask with a dagger (thief)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/stone_staircase_going_up_stai",
+      "objects": [
+        {
+          "id": "c3a43e4c-46b3-49f9-8b96-e3982598ccf4",
+          "name": null,
+          "prompt": "stone staircase going up (stairs up / entrance)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/glowing_blue_star_orb_experie",
+      "objects": [
+        {
+          "id": "c8e18f97-b035-4bf9-8546-508ef9427977",
+          "name": null,
+          "prompt": "glowing blue star/orb (experience XP)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/empty_checkbox_square",
+      "objects": [
+        {
+          "id": "cb87d634-73dd-4e6e-b71b-a8d19e809185",
+          "name": null,
+          "prompt": "empty checkbox square",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/round_wooden_shield_with_iron",
+      "objects": [
+        {
+          "id": "cbc9c78b-eb14-4c31-8f2b-55fea4f356bf",
+          "name": null,
+          "prompt": "round wooden shield with iron rim",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/steel_chestplate_body_armor",
+      "objects": [
+        {
+          "id": "d1df8247-1b13-4a58-8f46-5b7dfc1ecebe",
+          "name": null,
+          "prompt": "steel chestplate / body armor",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/upward_golden_chevron_burst_l",
+      "objects": [
+        {
+          "id": "dc9e9a50-f810-4cbf-add2-56825fac185e",
+          "name": null,
+          "prompt": "upward golden chevron burst (level up)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/small_curved_dagger",
+      "objects": [
+        {
+          "id": "e176746f-efe0-4a96-bcdc-8ecba13913e7",
+          "name": null,
+          "prompt": "small curved dagger",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/checked_checkbox_square",
+      "objects": [
+        {
+          "id": "ef212dcd-466c-4f78-b19a-5ca044794a53",
+          "name": null,
+          "prompt": "checked checkbox square",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/potion_tipped_to_drink_drink",
+      "objects": [
+        {
+          "id": "ef9f4493-3d9a-4c80-8193-6ffa0c9bda75",
+          "name": null,
+          "prompt": "potion tipped to drink (drink potion)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/pause_symbol_two_vertical_bar",
+      "objects": [
+        {
+          "id": "f3981e30-fac9-4ab3-8463-8b8d75d66537",
+          "name": null,
+          "prompt": "pause symbol, two vertical bars (pause)",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/heavy_two-handed_battle_axe",
+      "objects": [
+        {
+          "id": "f6ae1a04-dd35-45ea-b905-04c95262c7a6",
+          "name": null,
+          "prompt": "heavy two-handed battle axe",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/pair_of_leather_gloves",
+      "objects": [
+        {
+          "id": "fe8edffa-1ec5-406f-b9d3-705dedbf3180",
+          "name": null,
+          "prompt": "pair of leather gloves",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/left_arrow",
+      "objects": [
+        {
+          "id": "ff83b9a2-de15-4de2-bf72-29f854f6a887",
+          "name": null,
+          "prompt": "left arrow",
+          "size": {
+            "width": 32,
+            "height": 32
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    }
+  ],
+  "export_version": "1.0",
+  "export_date": "2026-05-27T11:08:38.149287"
+}

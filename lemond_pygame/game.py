@@ -13,9 +13,9 @@ from . import i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
 from .core.combat import extra_attack_chance, generate_monster, try_attack
-from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL, Dungeon
+from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL, Dungeon
 from .core.fov import compute_fov
-from .core.loot import INVENTORY_LIMIT, resolve_pickup
+from .core.loot import INVENTORY_LIMIT, floor_gold_amount, resolve_chest
 from .core.progression import auto_assign
 from .drawing import (
     build_animsets_from_atlas,
@@ -135,18 +135,28 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             return
         getattr(ps, func)(tx, ty, n=count, **kw)
 
-    def apply_pickup(from_chest=False) -> bool:
-        """Return True if the item was taken; False leaves it on the ground."""
-        result = resolve_pickup(hero, hero.depth, from_chest)
+    def take_floor(tile) -> None:
+        """Pick up a floor reward: coins (LOOT) give gold, POTION gives a potion."""
+        sounds["pickup"].play()
+        hero_anim.set("pickup", one_shot=True, queue_to="idle")
+        if tile == POTION:
+            hero.potions += 1
+            set_msg(i18n.t("pickup.potion"))
+        else:
+            amount = floor_gold_amount(hero.depth)
+            hero.gold += amount
+            set_msg(i18n.t("pickup.gold", gold=amount))
+
+    def open_chest() -> bool:
+        """Open a chest. Returns False (leaves it) when the inventory is full."""
+        result = resolve_chest(hero, hero.depth)
         if result.outcome == "inventory_full":
             set_msg(i18n.t("pickup.inventory_full", limit=INVENTORY_LIMIT))
             return False
         sounds["pickup"].play()
         hero_anim.set("pickup", one_shot=True, queue_to="idle")
-        if result.outcome == "gold":
-            set_msg(i18n.t("pickup.gold", gold=result.gold))
-        elif result.outcome == "potion":
-            set_msg(i18n.t("pickup.chest_potion" if from_chest else "pickup.potion"))
+        if result.outcome == "potion":
+            set_msg(i18n.t("pickup.chest_potion"))
         elif result.outcome == "equipped":
             status = i18n.t(result.equip_status, item=i18n.item_name(result.item))
             set_msg(i18n.t("pickup.equipped", status=status))
@@ -181,7 +191,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         if tile == WALL:
             set_msg(i18n.t("msg.wall"))
             return None
-        if tile in (FLOOR, ENTRY, LOOT, CHEST, EXIT):
+        if tile in (FLOOR, ENTRY, LOOT, POTION, CHEST, EXIT):
             moving = True
             move_from = (hx, hy)
             move_to = (nx, ny)
@@ -224,7 +234,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             del monsters_anim[id(m)]
             del mon_slide[id(m)]
             if random.random() < 0.4:
-                d.grid[ny][nx] = LOOT
+                d.grid[ny][nx] = LOOT if random.random() < 0.5 else POTION
             return None
         a.set("attack", one_shot=True, queue_to="idle")
         if hx < nx:
@@ -263,9 +273,12 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
     def on_arrival():
         nonlocal hx, hy, rx, ry
         tile = d.grid[hy][hx]
-        if tile in (LOOT, CHEST):
-            if apply_pickup(from_chest=(tile == CHEST)):
+        if tile == CHEST:
+            if open_chest():
                 d.grid[hy][hx] = FLOOR
+        elif tile in (LOOT, POTION):
+            take_floor(tile)
+            d.grid[hy][hx] = FLOOR
         elif tile == EXIT:
             sounds["open"].play()
             hero.depth += 1
@@ -355,7 +368,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
                     sys.exit(0)
                 continue
             if e.key == pg.K_g and not moving:
-                if d.grid[hy][hx] == LOOT and apply_pickup(from_chest=False):
+                if d.grid[hy][hx] in (LOOT, POTION):
+                    take_floor(d.grid[hy][hx])
                     d.grid[hy][hx] = FLOOR
             elif e.key == pg.K_i:
                 set_msg(inventory_screen(screen, hero))

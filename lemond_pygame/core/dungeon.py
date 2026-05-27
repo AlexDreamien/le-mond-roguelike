@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 from collections import deque
 
-WALL, FLOOR, ENTRY, EXIT, CHEST, MONSTER, LOOT = 1, 0, 2, 3, 4, 5, 6
+WALL, FLOOR, ENTRY, EXIT, CHEST, MONSTER, LOOT, POTION = 1, 0, 2, 3, 4, 5, 6, 7
 DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
 
@@ -211,7 +211,7 @@ class Dungeon:
         for x, y in free_floors[:ch_cnt]:
             self.grid[y][x] = CHEST
         for x, y in free_floors[ch_cnt : ch_cnt + lt_cnt]:
-            self.grid[y][x] = LOOT
+            self.grid[y][x] = LOOT if rng.random() < 0.5 else POTION  # coins vs potion
 
         # 8) Place monsters away from the entry. Their tiles stay FLOOR; the game
         # loop tracks positions in a dict keyed by coordinate.

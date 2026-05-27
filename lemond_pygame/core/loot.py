@@ -1,8 +1,9 @@
-"""Pickup resolution: floor loot vs chests.
+"""Loot resolution.
 
-Pure: mutates the hero and reports what happened; the caller handles sound,
-messages, and the map tile. Floor tiles only ever hold gold or a potion;
-equipment comes exclusively from chests.
+Floor tiles carry a fixed reward decided at generation time (coins -> gold,
+potion -> a potion), so the caller reads the tile and uses :func:`floor_gold_amount`
+or adds a potion directly. Chests are the only source of equipment and are
+resolved here. Pure: mutates the hero and reports what happened.
 """
 
 from __future__ import annotations
@@ -13,34 +14,23 @@ from dataclasses import dataclass
 from .entities import Item, random_loot
 
 INVENTORY_LIMIT = 9
-FLOOR_GOLD_CHANCE = 0.5  # floor: gold vs potion
 CHEST_POTION_CHANCE = 0.2  # chest: occasional potion instead of gear
 
 
 @dataclass
 class PickupResult:
-    outcome: str  # "gold" | "potion" | "equipped" | "stored" | "inventory_full"
+    outcome: str  # "potion" | "equipped" | "stored" | "inventory_full"
     item: Item | None = None
     equip_status: str | None = None  # i18n code returned by Hero.equip when equipped
-    gold: int = 0
 
 
-def _gold_amount(depth: int, r) -> int:
+def floor_gold_amount(depth: int, rng=None) -> int:
+    r = rng or random
     return r.randint(5 + depth * 2, 12 + depth * 6)
 
 
-def resolve_pickup(hero, depth: int, from_chest: bool = False, rng=None) -> PickupResult:
+def resolve_chest(hero, depth: int, rng=None) -> PickupResult:
     r = rng or random
-    if not from_chest:
-        # Floor tiles only ever hold money or a potion.
-        if r.random() < FLOOR_GOLD_CHANCE:
-            amount = _gold_amount(depth, r)
-            hero.gold += amount
-            return PickupResult("gold", gold=amount)
-        hero.potions += 1
-        return PickupResult("potion")
-
-    # Chests are the only source of equipment.
     if r.random() < CHEST_POTION_CHANCE:
         hero.potions += 1
         return PickupResult("potion")
