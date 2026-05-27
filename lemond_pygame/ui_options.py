@@ -6,7 +6,7 @@ import pygame as pg
 
 from . import fonts, i18n
 from .core import config as cfg
-from .ui_common import line, panel
+from .ui_common import icon_label, line, panel
 
 NUMERIC = [
     ("ui.options.anim_speed", "anim_speed", 0.5, 2.0, 0.1),
@@ -31,7 +31,7 @@ def options_screen(screen, options: dict, apply_fn) -> str:
 
     while True:
         screen.fill(cfg.C_BG)
-        panel(screen, rect, i18n.t("ui.options.title"))
+        panel(screen, rect, i18n.t("ui.options.title"), icon="icon.options")
         y = rect.y + 60
         for i, (label_key, key, vmin, vmax, _step) in enumerate(NUMERIC):
             r = pg.Rect(rect.x + 30, y, rect.w - 60, 46)
@@ -47,8 +47,14 @@ def options_screen(screen, options: dict, apply_fn) -> str:
         pg.draw.rect(screen, (70, 70, 90), r, 1, border_radius=6)
         color = (220, 220, 220) if idx != lang_idx else (200, 240, 200)
         lang_name = i18n.LOCALE_NAMES.get(i18n.get_locale(), i18n.get_locale())
-        line(
-            screen, font, f"{i18n.t('ui.options.language')}: {lang_name}", r.x + 10, r.y + 14, color
+        icon_label(
+            screen,
+            font,
+            "icon.language",
+            f"{i18n.t('ui.options.language')}: {lang_name}",
+            r.x + 10,
+            r.y + 14,
+            color,
         )
 
         line(

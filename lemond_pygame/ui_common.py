@@ -6,18 +6,36 @@ import pygame as pg
 
 from . import fonts, i18n
 from .core import config as cfg
+from .drawing import object_icon
 
 
 def line(screen, font, text, x, y, col=(220, 220, 220)) -> None:
     fonts.draw_text(screen, font, text, x, y, col)
 
 
-def panel(screen, rect, title=None) -> None:
+def icon_label(screen, font, icon_key, text, x, y, col=(220, 220, 220), size=18, gap=6) -> int:
+    """Draw an atlas icon (with text fallback) then ``text``; return the next x."""
+    icon = object_icon(icon_key, size)
+    if icon:
+        screen.blit(icon, (x, y + max(0, (font.get_height() - size) // 2)))
+        x += size + gap
+    if text:
+        line(screen, font, text, x, y, col)
+        x += font.size(text)[0]
+    return x
+
+
+def panel(screen, rect, title=None, icon=None) -> None:
     pg.draw.rect(screen, cfg.C_PANEL, rect, border_radius=8)
     pg.draw.rect(screen, cfg.C_PANEL_BORDER, rect, 1, border_radius=8)
     if title:
         font = fonts.get_font(22, bold=True)
-        line(screen, font, title, rect.x + 10, rect.y + 8, (200, 200, 240))
+        tx = rect.x + 10
+        ic = object_icon(icon, 22) if icon else None
+        if ic:
+            screen.blit(ic, (tx, rect.y + 7))
+            tx += 28
+        line(screen, font, title, tx, rect.y + 8, (200, 200, 240))
 
 
 def message_box(screen, lines) -> None:

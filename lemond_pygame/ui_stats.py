@@ -7,7 +7,7 @@ import pygame as pg
 from . import fonts, i18n
 from .core import config as cfg
 from .core import progression
-from .ui_common import line, panel
+from .ui_common import icon_label, line, panel
 
 _STAT_KEYS = {pg.K_1: "str", pg.K_2: "dex", pg.K_3: "int"}
 _SKILL_KEYS = {pg.K_1: "MELEE", pg.K_2: "DODGE", pg.K_3: "MAGIC"}
@@ -19,25 +19,28 @@ def stats_window(screen, hero, options=None) -> None:
     manual = options is not None and not options.get("auto_stats", True)
     while True:
         screen.fill(cfg.C_BG)
-        panel(screen, rect, i18n.t("ui.stats.title"))
-        y = rect.y + 50
+        panel(screen, rect, i18n.t("ui.stats.title"), icon="icon.stats")
         rows = [
-            i18n.t("ui.stats.level", level=hero.level, xp=hero.xp, next=hero.xp_to_next()),
-            i18n.t("ui.stats.str", value=hero.str_),
-            i18n.t("ui.stats.dex", value=hero.dex),
-            i18n.t("ui.stats.int", value=hero.int_),
-            i18n.t("ui.stats.hp", hp=hero.hp, max=hero.max_hp),
+            (
+                "icon.levelup",
+                i18n.t("ui.stats.level", level=hero.level, xp=hero.xp, next=hero.xp_to_next()),
+            ),
+            ("icon.str", i18n.t("ui.stats.str", value=hero.str_)),
+            ("icon.dex", i18n.t("ui.stats.dex", value=hero.dex)),
+            ("icon.int", i18n.t("ui.stats.int", value=hero.int_)),
+            ("icon.hp", i18n.t("ui.stats.hp", hp=hero.hp, max=hero.max_hp)),
         ]
-        for s in rows:
-            line(screen, font, s, rect.x + 20, y)
-            y += 28
+        y = rect.y + 50
+        for key, text in rows:
+            icon_label(screen, font, key, text, rect.x + 20, y, size=22)
+            y += 32
         if manual:
             line(
                 screen,
                 font,
                 i18n.t("ui.stats.points", n=hero.stat_points),
                 rect.x + 20,
-                y + 8,
+                y + 6,
                 (200, 240, 200),
             )
         line(screen, font, i18n.t("ui.close_hint"), rect.x + 20, rect.bottom - 40, (160, 160, 200))
@@ -59,27 +62,23 @@ def skills_window(screen, hero, options=None) -> None:
     manual = options is not None and not options.get("auto_skills", True)
     while True:
         screen.fill(cfg.C_BG)
-        panel(screen, rect, i18n.t("ui.skills.title"))
+        panel(screen, rect, i18n.t("ui.skills.title"), icon="icon.skills")
+        rows = [
+            ("icon.dmg", i18n.t("ui.skills.melee", value=hero.skills["MELEE"])),
+            ("icon.dodge", i18n.t("ui.skills.dodge", value=hero.skills["DODGE"])),
+            ("icon.magic", i18n.t("ui.skills.magic", value=hero.skills["MAGIC"])),
+        ]
         y = rect.y + 50
-        line(
-            screen,
-            font,
-            i18n.t(
-                "ui.stats.skills",
-                melee=hero.skills["MELEE"],
-                dodge=hero.skills["DODGE"],
-                magic=hero.skills["MAGIC"],
-            ),
-            rect.x + 20,
-            y,
-        )
+        for key, text in rows:
+            icon_label(screen, font, key, text, rect.x + 20, y, size=22)
+            y += 32
         if manual:
             line(
                 screen,
                 font,
                 i18n.t("ui.skills.points", n=hero.skill_points),
                 rect.x + 20,
-                y + 36,
+                y + 6,
                 (200, 240, 200),
             )
         line(screen, font, i18n.t("ui.close_hint"), rect.x + 20, rect.bottom - 40, (160, 160, 200))

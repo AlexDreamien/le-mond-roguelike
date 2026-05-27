@@ -7,8 +7,9 @@ import pygame as pg
 from . import fonts, i18n
 from .core import config as cfg
 from .core.entities import Hero, Item
+from .drawing import object_icon
 from .storage import DEFAULT_OPTIONS, delete_save, list_saves, load_hero, save_hero
-from .ui_common import line, panel, prompt_yes_no
+from .ui_common import icon_label, line, panel, prompt_yes_no
 
 # class_kind -> (stats, skill, starting weapon kind)
 CLASSES = [
@@ -44,7 +45,7 @@ def _draw_slot(screen, font, info):
             depth=info["depth"],
             unlocked=info["unlocked_depth"],
         )
-        line(screen, font, text, r.x + 12, r.y + 12)
+        icon_label(screen, font, f"class.{info['class_kind']}", text, r.x + 12, r.y + 12, size=28)
         dr = _del_rect(r)
         pg.draw.rect(screen, (120, 60, 60), dr, border_radius=6)
         pg.draw.rect(screen, (200, 120, 120), dr, 1, border_radius=6)
@@ -77,6 +78,9 @@ def class_select(screen):
             cards.append((r, class_kind))
             pg.draw.rect(screen, (26, 26, 34), r, border_radius=8)
             pg.draw.rect(screen, (70, 70, 90), r, 1, border_radius=8)
+            class_icon = object_icon(f"class.{class_kind}", 40)
+            if class_icon:
+                screen.blit(class_icon, (r.right - 52, r.y + 8))
             line(screen, font, i18n.class_name(class_kind), r.x + 12, r.y + 10, (220, 220, 240))
             line(screen, font, f"{i18n.t('stat.str')}: {stats['STR']}", r.x + 12, r.y + 44)
             line(screen, font, f"{i18n.t('stat.dex')}: {stats['DEX']}", r.x + 12, r.y + 68)
@@ -145,9 +149,10 @@ def start_menu(screen, sounds):
         lr = _lang_rect()
         pg.draw.rect(screen, (30, 30, 40), lr, border_radius=6)
         pg.draw.rect(screen, (70, 70, 90), lr, 1, border_radius=6)
-        line(
+        icon_label(
             screen,
             font,
+            "icon.language",
             i18n.t("ui.start.language", name=lang_name),
             lr.x + 8,
             lr.y + 4,

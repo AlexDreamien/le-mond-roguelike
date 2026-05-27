@@ -7,7 +7,7 @@ import pygame as pg
 from . import fonts, i18n
 from .core import config as cfg
 from .core import economy, progression
-from .ui_common import line, panel
+from .ui_common import icon_label, line, panel
 
 
 def trainer_screen(screen, hero, options) -> None:
@@ -17,28 +17,32 @@ def trainer_screen(screen, hero, options) -> None:
 
     def redraw():
         screen.fill(cfg.C_BG)
-        panel(screen, rect, i18n.t("ui.trainer.title"))
-        line(
+        panel(screen, rect, i18n.t("ui.trainer.title"), icon="icon.str")
+        icon_label(
             screen,
             font,
+            "icon.gold",
             i18n.t("ui.gold", gold=hero.gold),
-            rect.x + 20,
+            rect.right - 180,
             rect.y + 12,
             (240, 220, 120),
         )
         y = rect.y + 64
-        line(
+        icon_label(
             screen,
             font,
+            "icon.str",
             i18n.t(
                 "ui.trainer.buy_stat", cost=economy.stat_point_cost(hero), points=hero.stat_points
             ),
             rect.x + 20,
             y,
+            size=22,
         )
-        line(
+        icon_label(
             screen,
             font,
+            "icon.skills",
             i18n.t(
                 "ui.trainer.buy_skill",
                 cost=economy.skill_point_cost(hero),
@@ -46,6 +50,7 @@ def trainer_screen(screen, hero, options) -> None:
             ),
             rect.x + 20,
             y + 36,
+            size=22,
         )
         if msg:
             line(screen, font, msg, rect.x + 20, rect.bottom - 60, (200, 200, 160))

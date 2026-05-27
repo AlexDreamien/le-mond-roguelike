@@ -8,7 +8,20 @@ from . import fonts, i18n
 from .core import config as cfg
 from .core import progression
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL
-from .ui_common import line, panel
+from .drawing import object_icon
+from .ui_common import icon_label, line, panel
+
+_LEGEND = [
+    ("icon.inventory", "I"),
+    ("icon.stats", "S"),
+    ("icon.skills", "K"),
+    ("icon.options", "O"),
+    ("icon.magic", "F"),
+    ("icon.grab", "G"),
+    ("icon.drink", "Z"),
+    ("icon.language", "L"),
+    ("icon.quit", "Q"),
+]
 
 
 def _draw_minimap_surface(d, hero_pos, monsters, size):
@@ -55,14 +68,10 @@ def pause_screen(
     font = fonts.get_font(20)
     title_font = fonts.get_font(24, bold=True)
     outer = pg.Rect(30, 30, cfg.SCREEN_W - 60, cfg.SCREEN_H - 120)
-    left = pg.Rect(outer.x + 14, outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 150)
+    left = pg.Rect(outer.x + 14, outer.y + 64, int(outer.w * 0.48) - 20, outer.h - 180)
     right = pg.Rect(
-        outer.x + int(outer.w * 0.52), outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 150
+        outer.x + int(outer.w * 0.52), outer.y + 64, int(outer.w * 0.48) - 20, outer.h - 180
     )
-
-    def _checkbox(value, label_key, key_label):
-        mark = "x" if value else " "
-        return f"[{mark}] {i18n.t(label_key)} ({key_label})"
 
     lines = list(event_log) if event_log else []
     max_rows = max(4, (right.h - 20) // 18)
@@ -70,7 +79,7 @@ def pause_screen(
 
     def redraw():
         screen.fill(cfg.C_BG)
-        panel(screen, outer, i18n.t("ui.pause.title"))
+        panel(screen, outer, i18n.t("ui.pause.title"), icon="icon.pause")
         head = i18n.t(
             "ui.pause.header",
             name=hero.name,
@@ -79,7 +88,7 @@ def pause_screen(
             depth=d.depth,
             potions=hero.potions,
         )
-        line(screen, title_font, head, outer.x + 16, outer.y + 16, (210, 210, 240))
+        line(screen, title_font, head, outer.x + 16, outer.y + 36, (210, 210, 240))
         pg.draw.rect(screen, (26, 26, 34), left, border_radius=8)
         pg.draw.rect(screen, (70, 70, 90), left, 1, border_radius=8)
         mm = _draw_minimap_surface(d, hero_pos, monsters, (left.w - 10, left.h - 10))
@@ -95,24 +104,42 @@ def pause_screen(
             on = (200, 240, 200)
             off = (170, 170, 180)
             rows = [
-                ("auto_stats", "ui.pause.auto_stats", "1"),
-                ("auto_skills", "ui.pause.auto_skills", "2"),
-                ("music", "ui.pause.music", "3"),
+                ("auto_stats", "ui.pause.auto_stats", "1", None),
+                ("auto_skills", "ui.pause.auto_skills", "2", None),
+                ("music", "ui.pause.music", "3", "music"),
             ]
-            for i, (key, label_key, hint) in enumerate(rows):
+            for i, (key, label_key, hint, extra) in enumerate(rows):
                 value = options.get(key, True)
-                text = _checkbox(value, label_key, hint)
-                line(
-                    screen,
-                    font,
-                    text,
-                    outer.x + 16,
-                    outer.bottom - 86 + i * 20,
-                    on if value else off,
-                )
-        line(
-            screen, font, i18n.t("ui.pause.hint"), outer.x + 16, outer.bottom - 24, (160, 160, 200)
+                ry = outer.bottom - 110 + i * 22
+                cb = object_icon("ui.checkbox_on" if value else "ui.checkbox_off", 18)
+                x = outer.x + 16
+                if cb:
+                    screen.blit(cb, (x, ry + 1))
+                    x += 24
+                label = f"{i18n.t(label_key)} ({hint})"
+                line(screen, font, label, x, ry, on if value else off)
+                if extra == "music":
+                    mi = object_icon("icon.music_on" if value else "icon.music_off", 18)
+                    if mi:
+                        screen.blit(mi, (x + font.size(label)[0] + 8, ry))
+
+        lx = outer.x + 16
+        for key, hint in _LEGEND:  # in-game controls reference
+            lx = icon_label(
+                screen, font, key, hint, lx, outer.bottom - 44, (180, 180, 200), size=18, gap=3
+            )
+            lx += 16
+
+        fx = icon_label(
+            screen, font, "ui.arrow_up", "", outer.x + 16, outer.bottom - 22, size=16, gap=1
         )
+        fx = icon_label(
+            screen, font, "ui.arrow_down", "", fx + 1, outer.bottom - 22, size=16, gap=8
+        )
+        fx = icon_label(
+            screen, font, "icon.save", "S", fx, outer.bottom - 22, (160, 160, 200), gap=4
+        )
+        line(screen, font, i18n.t("ui.pause.hint"), fx + 16, outer.bottom - 22, (160, 160, 200))
         pg.display.flip()
 
     redraw()

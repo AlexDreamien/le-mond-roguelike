@@ -126,7 +126,7 @@ def inventory_screen(screen, hero) -> str:
 
     def redraw(mouse):
         screen.fill(cfg.C_BG)
-        panel(screen, panel_rect, i18n.t("ui.inventory.title"))
+        panel(screen, panel_rect, i18n.t("ui.inventory.title"), icon="icon.inventory")
         line(screen, font, i18n.t("ui.inventory.equipment"), 80, 86, (200, 210, 240))
         line(screen, font, i18n.t("ui.inventory.items"), 560, 96, (200, 210, 240))
 

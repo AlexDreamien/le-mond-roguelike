@@ -23,7 +23,7 @@ def do_cast(screen, draw_map_cb, draw_hud_cb, d, hero, hx, hy, monsters, visible
     while True:
         draw_map_cb(visible)
         draw_hud_cb()
-        panel(screen, rect, i18n.t("ui.magic.title"))
+        panel(screen, rect, i18n.t("ui.magic.title"), icon="icon.magic")
         line(screen, font, i18n.t("ui.magic.hint"), rect.x + 20, rect.y + 50)
         pg.display.flip()
         for e in pg.event.get():
