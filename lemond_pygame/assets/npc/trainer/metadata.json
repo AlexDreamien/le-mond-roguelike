@@ -1,0 +1,41 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "90a5a6bb-3c36-4c05-8d20-d7ab502aa2d7",
+        "name": "A grizzled veteran combat trainer, muscular, short grey hair and a headband, leather chest harness over a tan tunic, arm bracers and boots, holding a wooden practice sword. Fantasy roguelike instructor, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "A grizzled veteran combat trainer, muscular, short grey hair and a headband, leather chest harness over a tan tunic, arm bracers and boots, holding a wooden practice sword. Fantasy roguelike instructor, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-05-27T10:20:07.37439+00:00"
+      },
+      "folder": "A_grizzled_veteran_combat_trainer_muscular_short_g",
+      "frames": {
+        "rotations": {
+          "south": "A_grizzled_veteran_combat_trainer_muscular_short_g/rotations/south.png",
+          "west": "A_grizzled_veteran_combat_trainer_muscular_short_g/rotations/west.png",
+          "east": "A_grizzled_veteran_combat_trainer_muscular_short_g/rotations/east.png",
+          "north": "A_grizzled_veteran_combat_trainer_muscular_short_g/rotations/north.png"
+        },
+        "animations": {
+          "Breathing_Idle-1c0eb4b2": {
+            "south": [
+              "A_grizzled_veteran_combat_trainer_muscular_short_g/animations/Breathing_Idle-1c0eb4b2/south/frame_000.png",
+              "A_grizzled_veteran_combat_trainer_muscular_short_g/animations/Breathing_Idle-1c0eb4b2/south/frame_001.png",
+              "A_grizzled_veteran_combat_trainer_muscular_short_g/animations/Breathing_Idle-1c0eb4b2/south/frame_002.png",
+              "A_grizzled_veteran_combat_trainer_muscular_short_g/animations/Breathing_Idle-1c0eb4b2/south/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T10:34:10.112273"
+}

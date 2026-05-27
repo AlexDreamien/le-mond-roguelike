@@ -1,0 +1,41 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "97af9391-d90b-4857-98d9-f1823ea316cb",
+        "name": "A round, friendly traveling merchant with a bushy grey beard, warm ochre tunic, red sash, a large brown backpack stuffed with wares and a fat coin pouch on his belt. Fantasy roguelike shopkeeper, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "A round, friendly traveling merchant with a bushy grey beard, warm ochre tunic, red sash, a large brown backpack stuffed with wares and a fat coin pouch on his belt. Fantasy roguelike shopkeeper, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-05-27T10:19:31.230787+00:00"
+      },
+      "folder": "A_round_friendly_traveling_merchant_with_a_bushy_g",
+      "frames": {
+        "rotations": {
+          "south": "A_round_friendly_traveling_merchant_with_a_bushy_g/rotations/south.png",
+          "west": "A_round_friendly_traveling_merchant_with_a_bushy_g/rotations/west.png",
+          "east": "A_round_friendly_traveling_merchant_with_a_bushy_g/rotations/east.png",
+          "north": "A_round_friendly_traveling_merchant_with_a_bushy_g/rotations/north.png"
+        },
+        "animations": {
+          "Breathing_Idle-f078ae3a": {
+            "south": [
+              "A_round_friendly_traveling_merchant_with_a_bushy_g/animations/Breathing_Idle-f078ae3a/south/frame_000.png",
+              "A_round_friendly_traveling_merchant_with_a_bushy_g/animations/Breathing_Idle-f078ae3a/south/frame_001.png",
+              "A_round_friendly_traveling_merchant_with_a_bushy_g/animations/Breathing_Idle-f078ae3a/south/frame_002.png",
+              "A_round_friendly_traveling_merchant_with_a_bushy_g/animations/Breathing_Idle-f078ae3a/south/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T10:33:53.148224"
+}

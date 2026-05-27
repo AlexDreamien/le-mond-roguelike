@@ -1,0 +1,41 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "1bd41e98-18fe-49a7-9fd6-13504f62474b",
+        "name": "A huge fat ogre with pale tan skin, a dull brutish face and small tusks, ragged loincloth, dragging a massive wooden club. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "A huge fat ogre with pale tan skin, a dull brutish face and small tusks, ragged loincloth, dragging a massive wooden club. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-05-27T10:27:47.37087+00:00"
+      },
+      "folder": "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish",
+      "frames": {
+        "rotations": {
+          "south": "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/rotations/south.png",
+          "west": "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/rotations/west.png",
+          "east": "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/rotations/east.png",
+          "north": "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/rotations/north.png"
+        },
+        "animations": {
+          "Breathing_Idle-5137c0b1": {
+            "south": [
+              "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/animations/Breathing_Idle-5137c0b1/south/frame_000.png",
+              "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/animations/Breathing_Idle-5137c0b1/south/frame_001.png",
+              "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/animations/Breathing_Idle-5137c0b1/south/frame_002.png",
+              "A_huge_fat_ogre_with_pale_tan_skin_a_dull_brutish/animations/Breathing_Idle-5137c0b1/south/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T10:34:33.444889"
+}

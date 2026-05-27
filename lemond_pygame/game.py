@@ -17,7 +17,12 @@ from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, resolve_pickup
 from .core.progression import auto_assign
-from .drawing import build_animsets_from_atlas, build_hero_animset, build_tiles
+from .drawing import (
+    build_animsets_from_atlas,
+    build_creature_animsets,
+    build_hero_animset,
+    build_tiles,
+)
 from .magic import do_cast
 from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
@@ -62,7 +67,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         sheets = animsets.get(m.glyph) or animsets.get("goblin")
         monsters_anim[id(m)] = AnimState(sheets, fps=6, speed_scale=options["anim_speed"])
     for a in monsters_anim.values():
-        a.set_facing("right")
+        a.set_facing("south")  # monsters use a single south-facing idle
     hero_anim.set_facing("south")  # hero uses 4-directional art
     mon_slide = {id(m): SlideFX() for m in monsters.values()}
     ps = ParticleSystem()
@@ -79,6 +84,14 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         npcs[free.pop()] = "merchant"
     if free and random.random() < TRAINER_CHANCE:
         npcs[free.pop()] = "trainer"
+
+    npc_anim = {}
+    for pos, kind in npcs.items():
+        sheets = animsets.get(kind)
+        if sheets:
+            anim = AnimState(sheets, fps=5, speed_scale=options["anim_speed"])
+            anim.set_facing("south")
+            npc_anim[pos] = anim
 
     hx, hy = d.entry
     rx, ry = float(hx), float(hy)
@@ -106,6 +119,9 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         hero_anim.set_speed(options["anim_speed"])
         hero_anim.update(dt)
         for a in monsters_anim.values():
+            a.set_speed(options["anim_speed"])
+            a.update(dt)
+        for a in npc_anim.values():
             a.set_speed(options["anim_speed"])
             a.update(dt)
         for fx in mon_slide.values():
@@ -313,6 +329,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             visible,
             mon_slide,
             npcs,
+            npc_anim,
         )
         ps.draw(world)
         sx, sy = shake.offset()
@@ -438,6 +455,8 @@ def run() -> None:
     hero_art = build_hero_animset()
     if hero_art:
         animsets["hero"] = hero_art  # PixelLab 4-directional hero, falls back to atlas
+    animsets.update(build_creature_animsets("monsters"))  # override atlas monsters
+    animsets.update(build_creature_animsets("npc"))  # "merchant", "trainer"
     sounds = make_sounds(master_volume=0.7)
 
     from .ui_start import start_menu

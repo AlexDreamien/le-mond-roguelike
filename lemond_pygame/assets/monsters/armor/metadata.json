@@ -1,0 +1,41 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "716cf36f-3a28-413e-abe2-3e9226965c9f",
+        "name": "An empty animated suit of dark steel plate armor with a closed great helm and glowing cyan eyes, holding an upright longsword; no body inside. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "An empty animated suit of dark steel plate armor with a closed great helm and glowing cyan eyes, holding an upright longsword; no body inside. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-05-27T10:28:13.654851+00:00"
+      },
+      "folder": "An_empty_animated_suit_of_dark_steel_plate_armor_w",
+      "frames": {
+        "rotations": {
+          "south": "An_empty_animated_suit_of_dark_steel_plate_armor_w/rotations/south.png",
+          "west": "An_empty_animated_suit_of_dark_steel_plate_armor_w/rotations/west.png",
+          "east": "An_empty_animated_suit_of_dark_steel_plate_armor_w/rotations/east.png",
+          "north": "An_empty_animated_suit_of_dark_steel_plate_armor_w/rotations/north.png"
+        },
+        "animations": {
+          "Breathing_Idle-dec4b30b": {
+            "south": [
+              "An_empty_animated_suit_of_dark_steel_plate_armor_w/animations/Breathing_Idle-dec4b30b/south/frame_000.png",
+              "An_empty_animated_suit_of_dark_steel_plate_armor_w/animations/Breathing_Idle-dec4b30b/south/frame_001.png",
+              "An_empty_animated_suit_of_dark_steel_plate_armor_w/animations/Breathing_Idle-dec4b30b/south/frame_002.png",
+              "An_empty_animated_suit_of_dark_steel_plate_armor_w/animations/Breathing_Idle-dec4b30b/south/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T10:34:38.593822"
+}

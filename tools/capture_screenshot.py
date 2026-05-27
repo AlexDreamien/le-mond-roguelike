@@ -24,6 +24,7 @@ from lemond_pygame.core.dungeon import Dungeon  # noqa: E402
 from lemond_pygame.core.entities import Hero, Item  # noqa: E402
 from lemond_pygame.drawing import (  # noqa: E402
     build_animsets_from_atlas,
+    build_creature_animsets,
     build_hero_animset,
     build_tiles,
 )
@@ -42,6 +43,9 @@ def main(out_path: str) -> None:
     hero_art = build_hero_animset()
     if hero_art:
         animsets["hero"] = hero_art
+    animsets.update(build_creature_animsets("monsters"))
+    npc_art = build_creature_animsets("npc")
+    animsets.update(npc_art)
     d = Dungeon(cfg.MAP_W, cfg.MAP_H, depth=1)
     d.generate()
     monsters = {pos: generate_monster(1) for pos in d.monsters}
@@ -75,6 +79,20 @@ def main(out_path: str) -> None:
             d.seen[y][x] = True
     visible = {(x, y) for y in range(d.h) for x in range(d.w)}
 
+    # Showcase a merchant and a trainer on free floor tiles.
+    free = [
+        (x, y)
+        for (x, y) in ((c % cfg.MAP_W, c // cfg.MAP_W) for c in range(cfg.MAP_W * cfg.MAP_H))
+        if d.grid[y][x] == 0 and (x, y) not in monsters and (x, y) != d.entry
+    ]
+    npcs = {}
+    npc_anim = {}
+    for kind, pos in zip(("merchant", "trainer"), free, strict=False):
+        if kind in animsets:
+            npcs[pos] = kind
+            npc_anim[pos] = AnimState(animsets[kind])
+            npc_anim[pos].set_facing("south")
+
     screen.fill(cfg.C_BG)
     draw_map(
         screen,
@@ -88,6 +106,8 @@ def main(out_path: str) -> None:
         monsters,
         visible,
         mon_slide,
+        npcs,
+        npc_anim,
     )
     draw_hud(screen, hero)
     draw_msg(screen, i18n.t("msg.level_intro", depth=1))

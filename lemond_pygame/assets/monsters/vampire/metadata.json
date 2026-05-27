@@ -1,0 +1,41 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "2c879fe0-e77c-454d-bdb7-9f96a58a19de",
+        "name": "A pale aristocratic vampire with slicked black hair and red eyes, fangs, wearing a high-collared black cloak with crimson lining over a dark waistcoat. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "A pale aristocratic vampire with slicked black hair and red eyes, fangs, wearing a high-collared black cloak with crimson lining over a dark waistcoat. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-05-27T10:28:34.744764+00:00"
+      },
+      "folder": "A_pale_aristocratic_vampire_with_slicked_black_hai",
+      "frames": {
+        "rotations": {
+          "south": "A_pale_aristocratic_vampire_with_slicked_black_hai/rotations/south.png",
+          "west": "A_pale_aristocratic_vampire_with_slicked_black_hai/rotations/west.png",
+          "east": "A_pale_aristocratic_vampire_with_slicked_black_hai/rotations/east.png",
+          "north": "A_pale_aristocratic_vampire_with_slicked_black_hai/rotations/north.png"
+        },
+        "animations": {
+          "Breathing_Idle-08ab7d44": {
+            "south": [
+              "A_pale_aristocratic_vampire_with_slicked_black_hai/animations/Breathing_Idle-08ab7d44/south/frame_000.png",
+              "A_pale_aristocratic_vampire_with_slicked_black_hai/animations/Breathing_Idle-08ab7d44/south/frame_001.png",
+              "A_pale_aristocratic_vampire_with_slicked_black_hai/animations/Breathing_Idle-08ab7d44/south/frame_002.png",
+              "A_pale_aristocratic_vampire_with_slicked_black_hai/animations/Breathing_Idle-08ab7d44/south/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T10:34:43.836371"
+}

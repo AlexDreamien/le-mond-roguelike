@@ -1,0 +1,41 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "8c48b88f-9efe-48a6-a170-78a583a7f3f6",
+        "name": "A small hunched goblin with green skin, big pointed ears, beady yellow eyes, ragged brown loincloth, clutching a crude rusty dagger. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "A small hunched goblin with green skin, big pointed ears, beady yellow eyes, ragged brown loincloth, clutching a crude rusty dagger. Fantasy roguelike enemy, full body, standing, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-05-27T10:20:47.45018+00:00"
+      },
+      "folder": "A_small_hunched_goblin_with_green_skin_big_pointed",
+      "frames": {
+        "rotations": {
+          "south": "A_small_hunched_goblin_with_green_skin_big_pointed/rotations/south.png",
+          "west": "A_small_hunched_goblin_with_green_skin_big_pointed/rotations/west.png",
+          "east": "A_small_hunched_goblin_with_green_skin_big_pointed/rotations/east.png",
+          "north": "A_small_hunched_goblin_with_green_skin_big_pointed/rotations/north.png"
+        },
+        "animations": {
+          "Breathing_Idle-8c8c97fa": {
+            "south": [
+              "A_small_hunched_goblin_with_green_skin_big_pointed/animations/Breathing_Idle-8c8c97fa/south/frame_000.png",
+              "A_small_hunched_goblin_with_green_skin_big_pointed/animations/Breathing_Idle-8c8c97fa/south/frame_001.png",
+              "A_small_hunched_goblin_with_green_skin_big_pointed/animations/Breathing_Idle-8c8c97fa/south/frame_002.png",
+              "A_small_hunched_goblin_with_green_skin_big_pointed/animations/Breathing_Idle-8c8c97fa/south/frame_003.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T10:34:15.381939"
+}

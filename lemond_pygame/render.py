@@ -189,6 +189,7 @@ def draw_map(
     visible,
     mon_slide,
     npcs=None,
+    npc_anim=None,
 ) -> None:
     floors = tiles["floor_variants"]
     nfloor = len(floors)
@@ -219,9 +220,12 @@ def draw_map(
                 surface.blit(frame, (x * cfg.TILE + offx, y * cfg.TILE + offy))
     if npcs:
         for (x, y), kind in npcs.items():
-            if (x, y) in visible:
-                _blit_shadow(surface, x * cfg.TILE, y * cfg.TILE)
-                surface.blit(_npc_marker(kind), (x * cfg.TILE, y * cfg.TILE))
+            if (x, y) not in visible:
+                continue
+            _blit_shadow(surface, x * cfg.TILE, y * cfg.TILE)
+            anim = npc_anim.get((x, y)) if npc_anim else None
+            frame = anim.get_frame() if anim else None
+            surface.blit(frame or _npc_marker(kind), (x * cfg.TILE, y * cfg.TILE))
     hpx, hpy = int(render_px * cfg.TILE), int(render_py * cfg.TILE)
     _blit_shadow(surface, hpx, hpy)
     hero_frame = hero_anim.get_frame()

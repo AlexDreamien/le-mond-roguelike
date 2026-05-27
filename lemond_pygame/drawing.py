@@ -140,45 +140,78 @@ def _fit_to_tile(raw: pg.Surface, bbox: pg.Rect) -> pg.Surface:
     return surf
 
 
-def build_hero_animset() -> dict[str, list[pg.Surface]]:
-    """Load the PixelLab hero: idle (static rotations) + animations, per direction.
+def _find_character_dir(base: Path) -> Path | None:
+    """The single subfolder holding animations/ or rotations/ (PixelLab layout)."""
+    if not base.is_dir():
+        return None
+    return next(
+        (p for p in base.iterdir() if (p / "animations").is_dir() or (p / "rotations").is_dir()),
+        None,
+    )
 
-    Keys are ``"{state}_{dir}"`` (e.g. ``walk_south``) to match AnimState lookups.
-    Returns an empty dict if the art is missing, so the game still runs.
+
+def _load_animset(char: Path, states: dict[str, str], dirs) -> dict[str, list[pg.Surface]]:
+    """Load a PixelLab character into ``{state}_{dir} -> [tile-fitted frames]``.
+
+    Animations come from ``animations/<prefix>/<dir>/frame_*.png``; any idle
+    direction an animation did not produce falls back to the static ``rotations``.
+    All frames are cropped to one shared content box and fitted to the tile so the
+    character keeps a consistent size and anchor.
     """
-    base = Path(resource_path("assets", "main_hero"))
-    char = next((p for p in base.iterdir() if (p / "animations").is_dir()), None)
-    if char is None:
-        return {}
-
     raw: dict[str, list[pg.Surface]] = {}
-    anim_by_prefix = {
-        p.name.split("-")[0]: p for p in (char / "animations").iterdir() if p.is_dir()
-    }
-    for state, prefix in HERO_STATES.items():
-        folder = anim_by_prefix.get(prefix)
+    anim_dir = char / "animations"
+    by_prefix = (
+        {p.name.split("-")[0]: p for p in anim_dir.iterdir() if p.is_dir()}
+        if anim_dir.is_dir()
+        else {}
+    )
+    for state, prefix in states.items():
+        folder = by_prefix.get(prefix)
         if folder is None:
             continue
-        for d in HERO_DIRS:
+        for d in dirs:
             sub = folder / d
             if sub.is_dir():
                 files = sorted(sub.glob("frame_*.png"))
                 raw[f"{state}_{d}"] = [pg.image.load(str(f)).convert_alpha() for f in files]
 
     rotations = char / "rotations"
-    for d in HERO_DIRS:
-        img = rotations / f"{d}.png"
-        if img.exists():
-            raw[f"idle_{d}"] = [pg.image.load(str(img)).convert_alpha()]
+    if rotations.is_dir():
+        for d in dirs:
+            img = rotations / f"{d}.png"
+            if img.exists():
+                raw.setdefault(f"idle_{d}", [pg.image.load(str(img)).convert_alpha()])
 
     if not raw:
         return {}
-
-    # Shared content bbox across every frame keeps the character anchored.
     bbox: pg.Rect | None = None
     for frames in raw.values():
         for frame in frames:
             r = frame.get_bounding_rect()
             bbox = r if bbox is None else bbox.union(r)
-
     return {key: [_fit_to_tile(frame, bbox) for frame in frames] for key, frames in raw.items()}
+
+
+def build_hero_animset() -> dict[str, list[pg.Surface]]:
+    """4-directional hero: walk/attack/cast/pickup/drink + idle from rotations."""
+    char = _find_character_dir(Path(resource_path("assets", "main_hero")))
+    return _load_animset(char, HERO_STATES, HERO_DIRS) if char else {}
+
+
+def build_creature_animsets(group: str) -> dict[str, dict[str, list[pg.Surface]]]:
+    """South-facing idle animsets for every kind under ``assets/<group>/<kind>/``.
+
+    ``group`` is "monsters" or "npc". Returns ``{kind: {"idle_south": [...]}}``.
+    """
+    base = Path(resource_path("assets", group))
+    out: dict[str, dict[str, list[pg.Surface]]] = {}
+    if not base.is_dir():
+        return out
+    for kind_dir in sorted(base.iterdir()):
+        char = _find_character_dir(kind_dir) if kind_dir.is_dir() else None
+        if char is None:
+            continue
+        animset = _load_animset(char, {"idle": "Breathing_Idle"}, ("south",))
+        if animset:
+            out[kind_dir.name] = animset
+    return out
