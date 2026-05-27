@@ -87,10 +87,16 @@
   "ui.skills.auto": "Skills currently improve automatically on level up.",
 
   "ui.inventory.title": "Inventory",
-  "ui.inventory.equipment": "Equipment:",
+  "ui.inventory.equipment": "Equipment",
+  "ui.inventory.items": "Items",
   "ui.inventory.items_hint": "Items (Enter - equip, Del - drop):",
   "ui.inventory.empty": "-",
-  "ui.inventory.close_hint": "Esc - close",
+  "ui.inventory.equip": "Equip (Enter)",
+  "ui.inventory.drop": "Drop (Del)",
+  "ui.inventory.unequipped": "Unequipped.",
+  "ui.inventory.close_hint": "Esc - close. Drag an item onto a slot to equip.",
+  "ui.item.power": "Power +{power}",
+  "ui.item.two_handed": "Two-handed",
 
   "ui.options.title": "Options (O)",
   "ui.options.anim_speed": "Animation speed",

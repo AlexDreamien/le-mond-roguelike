@@ -87,10 +87,16 @@
   "ui.skills.auto": "Навыки пока изменяются автоматически при уровне.",
 
   "ui.inventory.title": "Инвентарь",
-  "ui.inventory.equipment": "Экипировка:",
+  "ui.inventory.equipment": "Экипировка",
+  "ui.inventory.items": "Предметы",
   "ui.inventory.items_hint": "Предметы (Enter — экипировать, Del — выбросить):",
   "ui.inventory.empty": "-",
-  "ui.inventory.close_hint": "Esc — закрыть",
+  "ui.inventory.equip": "Экипировать (Enter)",
+  "ui.inventory.drop": "Выбросить (Del)",
+  "ui.inventory.unequipped": "Снято.",
+  "ui.inventory.close_hint": "Esc — закрыть. Перетащи предмет на слот, чтобы экипировать.",
+  "ui.item.power": "Сила +{power}",
+  "ui.item.two_handed": "Двуручное",
 
   "ui.options.title": "Настройки (O)",
   "ui.options.anim_speed": "Скорость анимаций",

@@ -16,6 +16,7 @@ from .core import config as cfg
 from .core.combat import dodge_chance
 from .core.dungeon import CHEST, ENTRY, EXIT, LOOT, POTION, WALL, Dungeon
 from .core.entities import Hero
+from .drawing import object_icon
 
 _shadow_cache: pg.Surface | None = None
 
@@ -154,21 +155,46 @@ def draw_hud(screen, hero: Hero) -> None:
     pg.draw.rect(screen, cfg.C_PANEL, (0, top, cfg.SCREEN_W, cfg.HUD_H))
     pg.draw.rect(screen, cfg.C_PANEL_BORDER, (0, top, cfg.SCREEN_W, cfg.HUD_H), 2)
     font = fonts.get_font(20)
+
+    # HP bar with a heart icon; the value sits centred on the bar.
     bar_y, bar_h = top + 10, 18
-    draw_hp_bar(screen, 10, bar_y, 260, bar_h, hero.hp, hero.max_hp)
+    heart = object_icon("icon.hp", 18)
+    bar_x = 36 if heart else 10
+    if heart:
+        screen.blit(heart, (12, bar_y))
+    draw_hp_bar(screen, bar_x, bar_y, 230, bar_h, hero.hp, hero.max_hp)
     hp_y = bar_y + (bar_h - font.get_height()) // 2
-    _line(screen, font, f"HP: {hero.hp}/{hero.max_hp}", 16, hp_y, (0, 0, 0))
+    _line(screen, font, f"{hero.hp}/{hero.max_hp}", bar_x + 8, hp_y, (0, 0, 0))
+
+    # Stat row: an icon (with text fallback) followed by its value.
     dmg_min, dmg_max = hero.weapon_damage()
     dodge = int(dodge_chance(hero, hero.skills["DODGE"]) * 100)
-    hud = (
-        f"Lv{hero.level}  "
-        f"{i18n.t('stat.str')}:{hero.str_} {i18n.t('stat.dex')}:{hero.dex} "
-        f"{i18n.t('stat.int')}:{hero.int_}  "
-        f"ARM:{hero.total_armor()}  DMG:{dmg_min}-{dmg_max}  DODGE:{dodge}%  "
-        f"XP:{hero.xp}/{hero.xp_to_next()}  {i18n.t('hud.potions')}:{hero.potions}  "
-        f"{i18n.t('hud.gold')}:{hero.gold}"
-    )
-    _line(screen, font, hud, 10, top + 36, cfg.C_TEXT)
+    pairs = [
+        ("icon.str", i18n.t("stat.str"), hero.str_),
+        ("icon.dex", i18n.t("stat.dex"), hero.dex),
+        ("icon.int", i18n.t("stat.int"), hero.int_),
+        ("icon.armor", "ARM", hero.total_armor()),
+        ("icon.dmg", "DMG", f"{dmg_min}-{dmg_max}"),
+        ("icon.dodge", "DODGE", f"{dodge}%"),
+        ("icon.xp", "XP", f"{hero.xp}/{hero.xp_to_next()}"),
+        ("icon.potion", i18n.t("hud.potions"), hero.potions),
+        ("icon.gold", i18n.t("hud.gold"), hero.gold),
+    ]
+    y = top + 40
+    x = 10
+    _line(screen, font, f"Lv{hero.level}", x, y, (210, 210, 240))
+    x += font.size(f"Lv{hero.level}")[0] + 18
+    for key, label, value in pairs:
+        icon = object_icon(key, 20)
+        if icon:
+            screen.blit(icon, (x, y - 1))
+            x += 24
+        else:
+            _line(screen, font, f"{label}:", x, y, (170, 170, 190))
+            x += font.size(f"{label}:")[0] + 4
+        text = str(value)
+        _line(screen, font, text, x, y, cfg.C_TEXT)
+        x += font.size(text)[0] + 16
 
 
 def draw_msg(screen, text: str) -> None:

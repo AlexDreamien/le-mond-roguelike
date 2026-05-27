@@ -105,6 +105,32 @@ def build_object_sprites() -> dict[str, pg.Surface]:
     return out
 
 
+_object_cache: dict[str, pg.Surface] | None = None
+_icon_cache: dict[tuple[str, int], pg.Surface] = {}
+
+
+def get_object_sprites() -> dict[str, pg.Surface]:
+    """Cached object atlas sprites (loaded once)."""
+    global _object_cache
+    if _object_cache is None:
+        _object_cache = build_object_sprites()
+    return _object_cache
+
+
+def object_icon(key: str, size: int) -> pg.Surface | None:
+    """A cached, scaled copy of an atlas sprite, or None if the key is missing."""
+    sprite = get_object_sprites().get(key)
+    if sprite is None:
+        return None
+    if sprite.get_width() == size:
+        return sprite
+    cached = _icon_cache.get((key, size))
+    if cached is None:
+        cached = pg.transform.smoothscale(sprite, (size, size))
+        _icon_cache[(key, size)] = cached
+    return cached
+
+
 def build_tiles() -> dict[str, object]:
     """Tile/sprite set, sourced from the objects atlas with a procedural fallback."""
     obj = build_object_sprites()
