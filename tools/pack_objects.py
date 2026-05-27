@@ -26,17 +26,19 @@ TILE = 32
 
 # Distinctive path substring (lowercased) -> stable key.
 NAME_MAP = {
+    # Hand-tuned after generation: some "wall"/"door" sprites read better as floors
+    # and vice versa (see objects_atlas.json, which is the authoritative mapping).
     "dungeon_wall_dark_grey-blue": "wall_0",
-    "dungeon_wall_cracked": "wall_1",
+    "dungeon_wall_cracked": "floor_4",  # reads as floor
     "dungeon_wall_mossy": "wall_2",
     "dungeon_wall_stone_with_embed": "wall_3",
     "dungeon_floor_dark_stone_flag": "floor_0",
-    "dungeon_floor_dark_cobble": "floor_1",
+    "dungeon_floor_dark_cobble": "wall_1",  # reads as wall
     "dungeon_floor_cracked": "floor_2",
     "stone_staircase_descending": "stairs_down",
-    "stone_staircase_going_up": "stairs_up",
-    "closed_wooden_dungeon_door": "door_closed",
-    "open_dark_doorway": "door_open",
+    "stone_staircase_going_up": "stairs_up",  # unused: no upward movement
+    "closed_wooden_dungeon_door": "floor_5",  # reads as floor
+    "open_dark_doorway": "door_open",  # unused
     "lit_wall_torch": "torch",
     "closed_wooden_treasure_chest": "chest",
     "small_pile_of_scattered": "coins",

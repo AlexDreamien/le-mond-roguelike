@@ -132,16 +132,19 @@ def object_icon(key: str, size: int) -> pg.Surface | None:
 
 
 def build_tiles() -> dict[str, object]:
-    """Tile/sprite set, sourced from the objects atlas with a procedural fallback."""
+    """Tile/sprite set, sourced from the objects atlas with a procedural fallback.
+
+    Wall/floor variants are gathered by key prefix, so re-labelling a sprite in
+    objects_atlas.json (e.g. a wall that reads as floor) is picked up automatically.
+    """
     obj = build_object_sprites()
-    walls = [obj[k] for k in ("wall_0", "wall_1", "wall_2", "wall_3") if k in obj]
-    floors = [obj[k] for k in ("floor_0", "floor_1", "floor_2") if k in obj]
+    walls = [obj[k] for k in sorted(obj) if k.startswith("wall_")]
+    floors = [obj[k] for k in sorted(obj) if k.startswith("floor_")]
     return {
         "wall_variants": walls or [_make_wall()],
         "floor_variants": floors or [_make_floor(i) for i in range(FLOOR_VARIANTS)],
         "chest": obj.get("chest") or _make_chest(),
         "stairs_down": obj.get("stairs_down") or _make_exit(),
-        "stairs_up": obj.get("stairs_up"),  # None -> entry shows plain floor
         "coins": obj.get("coins") or _make_loot(),
         "potion": obj.get("potion") or _make_loot(),
     }

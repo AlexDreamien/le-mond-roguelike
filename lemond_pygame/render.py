@@ -14,7 +14,7 @@ import pygame as pg
 from . import fonts, i18n, lighting
 from .core import config as cfg
 from .core.combat import dodge_chance
-from .core.dungeon import CHEST, ENTRY, EXIT, LOOT, POTION, WALL, Dungeon
+from .core.dungeon import CHEST, EXIT, LOOT, POTION, WALL, Dungeon
 from .core.entities import Hero
 from .drawing import object_icon
 
@@ -221,7 +221,6 @@ def draw_map(
     walls = tiles["wall_variants"]
     nwall = len(walls)
     floor = floors[d.depth % len(floors)]  # one floor sprite per level, varies by depth
-    stairs_up = tiles.get("stairs_up")
     for y in range(d.h):
         for x in range(d.w):
             r = pg.Rect(x * cfg.TILE, y * cfg.TILE, cfg.TILE, cfg.TILE)
@@ -233,8 +232,6 @@ def draw_map(
                 surface.blit(tiles["chest"], r)
             elif t == EXIT:
                 surface.blit(tiles["stairs_down"], r)
-            elif t == ENTRY and stairs_up:
-                surface.blit(stairs_up, r)
             elif t == LOOT:
                 surface.blit(tiles["coins"], r)
             elif t == POTION:
