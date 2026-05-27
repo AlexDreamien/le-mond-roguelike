@@ -10,7 +10,7 @@ import sys
 import pygame as pg
 
 from . import i18n
-from .audio import make_sounds
+from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
 from .core.combat import extra_attack_chance, generate_monster, try_attack
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL, Dungeon
@@ -52,7 +52,7 @@ def _facing(dx, dy) -> str:
     return "west" if dx < 0 else "east"
 
 
-def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> bool:
+def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, music=None) -> bool:
     d = Dungeon(cfg.MAP_W, cfg.MAP_H, hero.depth)
     d.generate()
     monsters = {pos: generate_monster(d.depth) for pos in d.monsters}
@@ -121,13 +121,15 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
 
     def apply_pickup(from_chest=False) -> bool:
         """Return True if the item was taken; False leaves it on the ground."""
-        result = resolve_pickup(hero, hero.depth)
+        result = resolve_pickup(hero, hero.depth, from_chest)
         if result.outcome == "inventory_full":
             set_msg(i18n.t("pickup.inventory_full", limit=INVENTORY_LIMIT))
             return False
         sounds["pickup"].play()
         hero_anim.set("pickup", one_shot=True, queue_to="idle")
-        if result.outcome == "potion":
+        if result.outcome == "gold":
+            set_msg(i18n.t("pickup.gold", gold=result.gold))
+        elif result.outcome == "potion":
             set_msg(i18n.t("pickup.chest_potion" if from_chest else "pickup.potion"))
         elif result.outcome == "equipped":
             status = i18n.t(result.equip_status, item=i18n.item_name(result.item))
@@ -403,6 +405,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                     event_log,
                     on_save=_save_cb,
                     options=options,
+                    music=music,
                 )
 
 
@@ -444,8 +447,12 @@ def run() -> None:
     for v in sounds.values():
         v.set_volume(options.get("volume", 0.7))
 
+    ambient = make_ambient()
+    ambient.set_volume(0.5)
+    music = Music(ambient, enabled=options.get("music", True))
+
     while True:
-        survived = run_level(screen, tiles, animsets, hero, sounds, options, current_slot)
+        survived = run_level(screen, tiles, animsets, hero, sounds, options, current_slot, music)
         if not survived:
             hero.hp = hero.max_hp
             message_box(screen, [i18n.t("msg.respawn_1"), i18n.t("msg.respawn_2")])

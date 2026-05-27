@@ -1,8 +1,8 @@
-"""Pickup resolution shared by floor loot, chests, and the manual grab key.
+"""Pickup resolution: floor loot vs chests.
 
-Centralises the rule that used to be copy-pasted in three places in the game
-loop. Pure: mutates the hero and reports what happened; the caller handles
-sound, messages, and the map tile.
+Pure: mutates the hero and reports what happened; the caller handles sound,
+messages, and the map tile. Floor tiles only ever hold gold or a potion;
+equipment comes exclusively from chests.
 """
 
 from __future__ import annotations
@@ -13,19 +13,35 @@ from dataclasses import dataclass
 from .entities import Item, random_loot
 
 INVENTORY_LIMIT = 9
-POTION_CHANCE = 0.4
+FLOOR_GOLD_CHANCE = 0.5  # floor: gold vs potion
+CHEST_POTION_CHANCE = 0.2  # chest: occasional potion instead of gear
 
 
 @dataclass
 class PickupResult:
-    outcome: str  # "potion" | "equipped" | "stored" | "inventory_full"
+    outcome: str  # "gold" | "potion" | "equipped" | "stored" | "inventory_full"
     item: Item | None = None
     equip_status: str | None = None  # i18n code returned by Hero.equip when equipped
+    gold: int = 0
 
 
-def resolve_pickup(hero, depth: int, rng: random.Random | None = None) -> PickupResult:
+def _gold_amount(depth: int, r) -> int:
+    return r.randint(5 + depth * 2, 12 + depth * 6)
+
+
+def resolve_pickup(hero, depth: int, from_chest: bool = False, rng=None) -> PickupResult:
     r = rng or random
-    if r.random() < POTION_CHANCE:
+    if not from_chest:
+        # Floor tiles only ever hold money or a potion.
+        if r.random() < FLOOR_GOLD_CHANCE:
+            amount = _gold_amount(depth, r)
+            hero.gold += amount
+            return PickupResult("gold", gold=amount)
+        hero.potions += 1
+        return PickupResult("potion")
+
+    # Chests are the only source of equipment.
+    if r.random() < CHEST_POTION_CHANCE:
         hero.potions += 1
         return PickupResult("potion")
     item = random_loot(depth, rng=r)

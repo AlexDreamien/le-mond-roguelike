@@ -57,6 +57,7 @@
   "msg.done": "Готово.",
   "msg.cancel": "Отмена.",
 
+  "pickup.gold": "Найдено золота: {gold}.",
   "pickup.potion": "Подобрано: зелье лечения (+1).",
   "pickup.chest_potion": "Сундук: зелье лечения (+1).",
   "pickup.equipped": "{status} (авто)",
@@ -102,7 +103,8 @@
   "ui.pause.header": "{name} — {cls} | Ур.{level} | Подземелье {depth} | Зелья: {potions}",
   "ui.pause.auto_stats": "Авто-распределение статов",
   "ui.pause.auto_skills": "Авто-распределение навыков",
-  "ui.pause.hint": "1/2 — авто-распределение   S — сохранить   ↑/↓ — прокрутка   Esc/Enter/P — закрыть",
+  "ui.pause.music": "Музыка",
+  "ui.pause.hint": "1/2/3 — статы/навыки/музыка   S — сохранить   ↑/↓ — прокрутка   Esc/Enter/P — закрыть",
 
   "ui.start.title": "Le-Mond — Рогалик",
   "ui.start.panel": "Стартовое меню (5 слотов)",

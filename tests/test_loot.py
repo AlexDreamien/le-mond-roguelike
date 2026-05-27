@@ -3,7 +3,7 @@ from lemond_pygame.core.loot import INVENTORY_LIMIT, resolve_pickup
 
 
 class StubRandom:
-    """Returns a fixed sequence from ``random()``; that is all the loot code uses."""
+    """Deterministic stand-in: random() replays a sequence, randint returns lo."""
 
     def __init__(self, values):
         self.values = list(values)
@@ -14,41 +14,64 @@ class StubRandom:
         self.i += 1
         return v
 
+    def randint(self, a, b):
+        return a
+
 
 def make_hero():
     return Hero(kind="hero", max_hp=20, hp=20, str_=5, dex=5, int_=5)
 
 
-def test_potion_outcome_increments_potions():
+# --- Floor loot: only gold or potions, never equipment ---
+
+
+def test_floor_gives_gold():
     h = make_hero()
-    result = resolve_pickup(h, depth=3, rng=StubRandom([0.1]))  # < POTION_CHANCE
+    result = resolve_pickup(h, depth=3, from_chest=False, rng=StubRandom([0.1]))  # < gold chance
+    assert result.outcome == "gold"
+    assert result.gold > 0
+    assert h.gold == result.gold
+
+
+def test_floor_gives_potion():
+    h = make_hero()
+    result = resolve_pickup(h, depth=3, from_chest=False, rng=StubRandom([0.9]))
     assert result.outcome == "potion"
     assert h.potions == 1
 
 
-def test_equipped_outcome_when_slot_is_empty():
-    h = make_hero()  # all equipment slots are None
-    # 0.5 -> not a potion, 0.1 -> first loot row (sword, MAIN)
-    result = resolve_pickup(h, depth=3, rng=StubRandom([0.5, 0.1]))
+# --- Chests: equipment (occasionally a potion) ---
+
+
+def test_chest_equips_into_empty_slot():
+    h = make_hero()
+    # 0.9 -> not the rare potion, 0.1 -> first loot row (sword, MAIN)
+    result = resolve_pickup(h, depth=3, from_chest=True, rng=StubRandom([0.9, 0.1]))
     assert result.outcome == "equipped"
-    assert result.equip_status == "equip.ok"
     assert h.equipment["MAIN"] is result.item
 
 
-def test_stored_outcome_when_slot_is_occupied():
+def test_chest_stores_when_slot_occupied():
     h = make_hero()
     for slot in EQUIP_SLOTS:
         h.equipment[slot] = Item(kind="sword", slot=slot, tier=1, power=1)
-    result = resolve_pickup(h, depth=3, rng=StubRandom([0.5, 0.1]))
+    result = resolve_pickup(h, depth=3, from_chest=True, rng=StubRandom([0.9, 0.1]))
     assert result.outcome == "stored"
     assert result.item in h.inventory
 
 
-def test_inventory_full_outcome():
+def test_chest_inventory_full_keeps_item():
     h = make_hero()
     for slot in EQUIP_SLOTS:
         h.equipment[slot] = Item(kind="sword", slot=slot, tier=1, power=1)
     h.inventory = [Item(kind="boots", slot="FEET", tier=1, power=1) for _ in range(INVENTORY_LIMIT)]
-    result = resolve_pickup(h, depth=3, rng=StubRandom([0.5, 0.1]))
+    result = resolve_pickup(h, depth=3, from_chest=True, rng=StubRandom([0.9, 0.1]))
     assert result.outcome == "inventory_full"
-    assert len(h.inventory) == INVENTORY_LIMIT  # nothing added
+    assert len(h.inventory) == INVENTORY_LIMIT
+
+
+def test_chest_can_give_potion():
+    h = make_hero()
+    result = resolve_pickup(h, depth=3, from_chest=True, rng=StubRandom([0.05]))  # < potion chance
+    assert result.outcome == "potion"
+    assert h.potions == 1

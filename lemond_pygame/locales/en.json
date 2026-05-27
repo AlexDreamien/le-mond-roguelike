@@ -57,6 +57,7 @@
   "msg.done": "Done.",
   "msg.cancel": "Cancelled.",
 
+  "pickup.gold": "Found {gold} gold.",
   "pickup.potion": "Picked up: healing potion (+1).",
   "pickup.chest_potion": "Chest: healing potion (+1).",
   "pickup.equipped": "{status} (auto)",
@@ -102,7 +103,8 @@
   "ui.pause.header": "{name} - {cls} | Lv.{level} | Dungeon {depth} | Potions: {potions}",
   "ui.pause.auto_stats": "Auto-distribute stats",
   "ui.pause.auto_skills": "Auto-distribute skills",
-  "ui.pause.hint": "1/2 - toggle auto-distribute   S - save   Up/Down - scroll   Esc/Enter/P - close",
+  "ui.pause.music": "Music",
+  "ui.pause.hint": "1/2/3 - toggle stats/skills/music   S - save   Up/Down - scroll   Esc/Enter/P - close",
 
   "ui.start.title": "Le-Mond - Roguelike",
   "ui.start.panel": "Start menu (5 slots)",

@@ -48,14 +48,14 @@ def _draw_minimap_surface(d, hero_pos, monsters, size):
 
 
 def pause_screen(
-    screen, d, hero, hero_pos, monsters, last_msg, event_log, on_save=None, options=None
+    screen, d, hero, hero_pos, monsters, last_msg, event_log, on_save=None, options=None, music=None
 ) -> str:
     font = fonts.get_font(20)
     title_font = fonts.get_font(24, bold=True)
     outer = pg.Rect(30, 30, cfg.SCREEN_W - 60, cfg.SCREEN_H - 120)
-    left = pg.Rect(outer.x + 14, outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 124)
+    left = pg.Rect(outer.x + 14, outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 150)
     right = pg.Rect(
-        outer.x + int(outer.w * 0.52), outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 124
+        outer.x + int(outer.w * 0.52), outer.y + 54, int(outer.w * 0.48) - 20, outer.h - 150
     )
 
     def _checkbox(value, label_key, key_label):
@@ -92,24 +92,22 @@ def pause_screen(
         if options is not None:
             on = (200, 240, 200)
             off = (170, 170, 180)
-            cb1 = _checkbox(options["auto_stats"], "ui.pause.auto_stats", "1")
-            cb2 = _checkbox(options["auto_skills"], "ui.pause.auto_skills", "2")
-            line(
-                screen,
-                font,
-                cb1,
-                outer.x + 16,
-                outer.bottom - 62,
-                on if options["auto_stats"] else off,
-            )
-            line(
-                screen,
-                font,
-                cb2,
-                outer.x + 16,
-                outer.bottom - 44,
-                on if options["auto_skills"] else off,
-            )
+            rows = [
+                ("auto_stats", "ui.pause.auto_stats", "1"),
+                ("auto_skills", "ui.pause.auto_skills", "2"),
+                ("music", "ui.pause.music", "3"),
+            ]
+            for i, (key, label_key, hint) in enumerate(rows):
+                value = options.get(key, True)
+                text = _checkbox(value, label_key, hint)
+                line(
+                    screen,
+                    font,
+                    text,
+                    outer.x + 16,
+                    outer.bottom - 86 + i * 20,
+                    on if value else off,
+                )
         line(
             screen, font, i18n.t("ui.pause.hint"), outer.x + 16, outer.bottom - 24, (160, 160, 200)
         )
@@ -137,6 +135,11 @@ def pause_screen(
                     options["auto_skills"] = not options["auto_skills"]
                     if options["auto_skills"]:
                         progression.auto_assign(hero, do_stats=False, do_skills=True)
+                    redraw()
+                if options is not None and e.key == pg.K_3:
+                    options["music"] = not options.get("music", True)
+                    if music is not None:
+                        music.set_enabled(options["music"])
                     redraw()
                 if e.key == pg.K_UP:
                     offset = max(0, offset - 1)

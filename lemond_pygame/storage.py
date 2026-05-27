@@ -16,6 +16,7 @@ DEFAULT_OPTIONS = {
     "language": "en",
     "auto_stats": True,
     "auto_skills": True,
+    "music": True,
 }
 SAVE_SLOTS = 5
 
