@@ -218,14 +218,14 @@ def draw_map(
     npc_anim=None,
 ) -> None:
     floors = tiles["floor_variants"]
-    nfloor = len(floors)
     walls = tiles["wall_variants"]
     nwall = len(walls)
+    floor = floors[d.depth % len(floors)]  # one floor sprite per level, varies by depth
     stairs_up = tiles.get("stairs_up")
     for y in range(d.h):
         for x in range(d.w):
             r = pg.Rect(x * cfg.TILE, y * cfg.TILE, cfg.TILE, cfg.TILE)
-            surface.blit(floors[(x * 7 + y * 13) % nfloor], r)
+            surface.blit(floor, r)
             t = d.grid[y][x]
             if t == WALL:
                 surface.blit(walls[(x * 5 + y * 11) % nwall], r)
