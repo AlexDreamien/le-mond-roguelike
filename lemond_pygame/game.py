@@ -17,7 +17,7 @@ from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, resolve_pickup
 from .core.progression import auto_assign
-from .drawing import build_animsets_from_atlas, build_tiles
+from .drawing import build_animsets_from_atlas, build_hero_animset, build_tiles
 from .magic import do_cast
 from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
@@ -44,6 +44,14 @@ _DIR_KEYS = {
 }
 
 
+def _facing(dx, dy) -> str:
+    if dy < 0:
+        return "north"
+    if dy > 0:
+        return "south"
+    return "west" if dx < 0 else "east"
+
+
 def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> bool:
     d = Dungeon(cfg.MAP_W, cfg.MAP_H, hero.depth)
     d.generate()
@@ -55,7 +63,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         monsters_anim[id(m)] = AnimState(sheets, fps=6, speed_scale=options["anim_speed"])
     for a in monsters_anim.values():
         a.set_facing("right")
-    hero_anim.set_facing("right")
+    hero_anim.set_facing("south")  # hero uses 4-directional art
     mon_slide = {id(m): SlideFX() for m in monsters.values()}
     ps = ParticleSystem()
 
@@ -116,6 +124,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             set_msg(i18n.t("pickup.inventory_full", limit=INVENTORY_LIMIT))
             return False
         sounds["pickup"].play()
+        hero_anim.set("pickup", one_shot=True, queue_to="idle")
         if result.outcome == "potion":
             set_msg(i18n.t("pickup.chest_potion" if from_chest else "pickup.potion"))
         elif result.outcome == "equipped":
@@ -135,10 +144,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
 
     def try_start_move(dx, dy):
         nonlocal moving, move_from, move_to, move_acc, hx, hy, rx, ry, npc_block
-        if dx < 0:
-            hero_anim.set_facing("left")
-        if dx > 0:
-            hero_anim.set_facing("right")
+        hero_anim.set_facing(_facing(dx, dy))
         nx, ny = hx + dx, hy + dy
         if not d.inside(nx, ny):
             return None
@@ -170,10 +176,6 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
         attack_cd = ATTACK_COOLDOWN
         m = monsters[(nx, ny)]
         a = monsters_anim[id(m)]
-        if nx < hx:
-            hero_anim.set_facing("left")
-        if nx > hx:
-            hero_anim.set_facing("right")
         hero_anim.set("attack", one_shot=True, queue_to="idle")
         a.set("hurt", one_shot=True, queue_to="idle")
         mon_slide[id(m)].trigger(nx - hx, ny - hy, dist=0.22, dur=0.12, mode="knock")
@@ -354,6 +356,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                     hero.potions -= 1
                     set_msg(i18n.t("msg.potion_used", healed=healed, potions=hero.potions))
                     sounds["potion"].play()
+                    hero_anim.set("drink", one_shot=True, queue_to="idle")
             elif e.key == pg.K_f:
 
                 def draw_map_cb(vis, rx=rx, ry=ry):
@@ -378,6 +381,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                     do_cast(screen, draw_map_cb, draw_hud_cb, d, hero, hx, hy, monsters, visible)
                 )
                 sounds["magic"].play()
+                hero_anim.set("cast", one_shot=True, queue_to="idle")
             elif e.key == pg.K_p:
 
                 def _save_cb():
@@ -422,6 +426,9 @@ def run() -> None:
     pg.display.set_caption(i18n.t("app.title"))
     tiles = build_tiles()
     animsets = build_animsets_from_atlas()
+    hero_art = build_hero_animset()
+    if hero_art:
+        animsets["hero"] = hero_art  # PixelLab 4-directional hero, falls back to atlas
     sounds = make_sounds(master_volume=0.7)
 
     from .ui_start import start_menu

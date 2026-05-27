@@ -22,7 +22,11 @@ from lemond_pygame.core import config as cfg  # noqa: E402
 from lemond_pygame.core.combat import generate_monster  # noqa: E402
 from lemond_pygame.core.dungeon import Dungeon  # noqa: E402
 from lemond_pygame.core.entities import Hero, Item  # noqa: E402
-from lemond_pygame.drawing import build_animsets_from_atlas, build_tiles  # noqa: E402
+from lemond_pygame.drawing import (  # noqa: E402
+    build_animsets_from_atlas,
+    build_hero_animset,
+    build_tiles,
+)
 from lemond_pygame.render import AnimState, SlideFX, draw_hud, draw_map, draw_msg  # noqa: E402
 
 
@@ -35,6 +39,9 @@ def main(out_path: str) -> None:
 
     tiles = build_tiles()
     animsets = build_animsets_from_atlas()
+    hero_art = build_hero_animset()
+    if hero_art:
+        animsets["hero"] = hero_art
     d = Dungeon(cfg.MAP_W, cfg.MAP_H, depth=1)
     d.generate()
     monsters = {pos: generate_monster(1) for pos in d.monsters}

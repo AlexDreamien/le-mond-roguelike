@@ -1,0 +1,191 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "a277fd36-26bf-4de1-b3ba-9fb2eb5bfe1e",
+        "name": "A heroic young adventurer with",
+        "prompt": "A heroic young adventurer with light blond hair, wearing a green hooded cloak with the hood pulled up, brown trousers and black leather boots. Fantasy roguelike hero, full body, standing, facing the camera, arms at sides. Clean readable silhouette, single dark outline, soft top-down lighting, limited earthy palette (green cloak, brown, black, blond).",
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-05-27T06:23:55.245868+00:00"
+      },
+      "folder": "A_heroic_young_adventurer_with",
+      "frames": {
+        "rotations": {
+          "south": "A_heroic_young_adventurer_with/rotations/south.png",
+          "south-east": "A_heroic_young_adventurer_with/rotations/south-east.png",
+          "east": "A_heroic_young_adventurer_with/rotations/east.png",
+          "north-east": "A_heroic_young_adventurer_with/rotations/north-east.png",
+          "north": "A_heroic_young_adventurer_with/rotations/north.png",
+          "north-west": "A_heroic_young_adventurer_with/rotations/north-west.png",
+          "west": "A_heroic_young_adventurer_with/rotations/west.png",
+          "south-west": "A_heroic_young_adventurer_with/rotations/south-west.png"
+        },
+        "animations": {
+          "Walking-2fac2905": {
+            "north": [
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/north/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/north/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/north/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/north/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/north/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/north/frame_005.png"
+            ],
+            "south": [
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/south/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/south/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/south/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/south/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/south/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/south/frame_005.png"
+            ],
+            "east": [
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/east/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/east/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/east/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/east/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/east/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/east/frame_005.png"
+            ],
+            "west": [
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/west/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/west/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/west/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/west/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/west/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Walking-2fac2905/west/frame_005.png"
+            ]
+          },
+          "Picking_Up-1fa692a2": {
+            "south": [
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/south/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/south/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/south/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/south/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/south/frame_004.png"
+            ],
+            "east": [
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/east/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/east/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/east/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/east/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/east/frame_004.png"
+            ],
+            "north": [
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/north/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/north/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/north/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/north/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/north/frame_004.png"
+            ],
+            "west": [
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/west/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/west/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/west/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/west/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Picking_Up-1fa692a2/west/frame_004.png"
+            ]
+          },
+          "Lead_Jab-52eb8a27": {
+            "east": [
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/east/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/east/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/east/frame_002.png"
+            ],
+            "west": [
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/west/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/west/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/west/frame_002.png"
+            ],
+            "south": [
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/south/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/south/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/south/frame_002.png"
+            ],
+            "north": [
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/north/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/north/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Lead_Jab-52eb8a27/north/frame_002.png"
+            ]
+          },
+          "Fireball-13b21694": {
+            "east": [
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/east/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/east/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/east/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/east/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/east/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/east/frame_005.png"
+            ],
+            "south": [
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/south/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/south/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/south/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/south/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/south/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/south/frame_005.png"
+            ],
+            "west": [
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/west/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/west/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/west/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/west/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/west/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/west/frame_005.png"
+            ],
+            "north": [
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/north/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/north/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/north/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/north/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/north/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Fireball-13b21694/north/frame_005.png"
+            ]
+          },
+          "Drinking-30c484f5": {
+            "south": [
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/south/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/south/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/south/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/south/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/south/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/south/frame_005.png"
+            ],
+            "north": [
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/north/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/north/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/north/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/north/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/north/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/north/frame_005.png"
+            ],
+            "east": [
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/east/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/east/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/east/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/east/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/east/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/east/frame_005.png"
+            ],
+            "west": [
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/west/frame_000.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/west/frame_001.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/west/frame_002.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/west/frame_003.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/west/frame_004.png",
+              "A_heroic_young_adventurer_with/animations/Drinking-30c484f5/west/frame_005.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-27T07:07:37.027023"
+}

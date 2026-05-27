@@ -69,7 +69,8 @@ class AnimState:
         self.speed_scale = max(0.2, min(3.0, scale))
 
     def set_facing(self, facing: str) -> None:
-        if facing in ("left", "right"):
+        # Monsters face left/right (atlas); the hero faces 4 compass directions.
+        if facing in ("left", "right", "north", "south", "east", "west"):
             self.facing = facing
 
     def set(self, state: str, one_shot: bool = False, queue_to: str = "idle") -> None:
@@ -81,13 +82,13 @@ class AnimState:
         self._queued = queue_to if one_shot else None
 
     def _frames_for_state(self):
-        key = f"{self.state}_{self.facing}"
-        return (
-            self.sheets.get(key)
-            or self.sheets.get(self.state)
-            or self.sheets.get("idle_right")
-            or self.sheets.get("idle_left")
-        )
+        for key in (f"{self.state}_{self.facing}", self.state, f"idle_{self.facing}"):
+            if self.sheets.get(key):
+                return self.sheets[key]
+        for key in ("idle_south", "idle_right", "idle_left"):
+            if self.sheets.get(key):
+                return self.sheets[key]
+        return next(iter(self.sheets.values()), None)
 
     def update(self, dt: float) -> None:
         frames = self._frames_for_state()

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import random
+from pathlib import Path
 
 import pygame as pg
 
@@ -11,6 +12,16 @@ from .core import config as cfg
 from .respath import resource_path
 
 ENTITY_KEYS = ["hero", "goblin", "orc", "bat", "ogre", "armor", "vampire"]
+
+# Hero animation states -> PixelLab export folder prefix (see assets/main_hero).
+HERO_DIRS = ("south", "north", "east", "west")
+HERO_STATES = {
+    "walk": "Walking",
+    "attack": "Lead_Jab",
+    "cast": "Fireball",
+    "pickup": "Picking_Up",
+    "drink": "Drinking",
+}
 
 FLOOR_VARIANTS = 6
 
@@ -106,3 +117,43 @@ def build_animsets_from_atlas() -> dict[str, dict[str, list[pg.Surface]]]:
         }
 
     return {ent: load_entity(ent) for ent in ENTITY_KEYS}
+
+
+def _scaled(surf: pg.Surface) -> pg.Surface:
+    return pg.transform.smoothscale(surf, (cfg.TILE, cfg.TILE))
+
+
+def build_hero_animset() -> dict[str, list[pg.Surface]]:
+    """Load the PixelLab hero: idle (static rotations) + animations, per direction.
+
+    Keys are ``"{state}_{dir}"`` (e.g. ``walk_south``) to match AnimState lookups.
+    Returns an empty dict if the art is missing, so the game still runs.
+    """
+    base = Path(resource_path("assets", "main_hero"))
+    char = next((p for p in base.iterdir() if (p / "animations").is_dir()), None)
+    if char is None:
+        return {}
+
+    def load_frames(folder: Path) -> list[pg.Surface]:
+        frames = sorted(folder.glob("frame_*.png"))
+        return [_scaled(pg.image.load(str(f)).convert_alpha()) for f in frames]
+
+    animset: dict[str, list[pg.Surface]] = {}
+    anim_by_prefix = {
+        p.name.split("-")[0]: p for p in (char / "animations").iterdir() if p.is_dir()
+    }
+    for state, prefix in HERO_STATES.items():
+        folder = anim_by_prefix.get(prefix)
+        if folder is None:
+            continue
+        for d in HERO_DIRS:
+            sub = folder / d
+            if sub.is_dir():
+                animset[f"{state}_{d}"] = load_frames(sub)
+
+    rotations = char / "rotations"
+    for d in HERO_DIRS:
+        img = rotations / f"{d}.png"
+        if img.exists():
+            animset[f"idle_{d}"] = [_scaled(pg.image.load(str(img)).convert_alpha())]
+    return animset
