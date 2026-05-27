@@ -119,8 +119,25 @@ def build_animsets_from_atlas() -> dict[str, dict[str, list[pg.Surface]]]:
     return {ent: load_entity(ent) for ent in ENTITY_KEYS}
 
 
-def _scaled(surf: pg.Surface) -> pg.Surface:
-    return pg.transform.smoothscale(surf, (cfg.TILE, cfg.TILE))
+def _fit_to_tile(raw: pg.Surface, bbox: pg.Rect) -> pg.Surface:
+    """Crop ``raw`` to the shared content ``bbox`` and bottom-center it on a tile.
+
+    The PixelLab canvas (60x60) is mostly transparent padding around a ~tile-sized
+    character; cropping to a bbox shared by every frame removes the padding without
+    shrinking the hero or making the animation jitter. The crop is only scaled down
+    if it would not fit the tile.
+    """
+    crop = raw.subsurface(bbox).copy()
+    cw, ch = crop.get_size()
+    scale = min(cfg.TILE / cw, cfg.TILE / ch, 1.0)
+    if scale < 1.0:
+        crop = pg.transform.smoothscale(
+            crop, (max(1, round(cw * scale)), max(1, round(ch * scale)))
+        )
+        cw, ch = crop.get_size()
+    surf = pg.Surface((cfg.TILE, cfg.TILE), pg.SRCALPHA)
+    surf.blit(crop, ((cfg.TILE - cw) // 2, cfg.TILE - ch))  # bottom-centered: feet on the tile
+    return surf
 
 
 def build_hero_animset() -> dict[str, list[pg.Surface]]:
@@ -134,11 +151,7 @@ def build_hero_animset() -> dict[str, list[pg.Surface]]:
     if char is None:
         return {}
 
-    def load_frames(folder: Path) -> list[pg.Surface]:
-        frames = sorted(folder.glob("frame_*.png"))
-        return [_scaled(pg.image.load(str(f)).convert_alpha()) for f in frames]
-
-    animset: dict[str, list[pg.Surface]] = {}
+    raw: dict[str, list[pg.Surface]] = {}
     anim_by_prefix = {
         p.name.split("-")[0]: p for p in (char / "animations").iterdir() if p.is_dir()
     }
@@ -149,11 +162,23 @@ def build_hero_animset() -> dict[str, list[pg.Surface]]:
         for d in HERO_DIRS:
             sub = folder / d
             if sub.is_dir():
-                animset[f"{state}_{d}"] = load_frames(sub)
+                files = sorted(sub.glob("frame_*.png"))
+                raw[f"{state}_{d}"] = [pg.image.load(str(f)).convert_alpha() for f in files]
 
     rotations = char / "rotations"
     for d in HERO_DIRS:
         img = rotations / f"{d}.png"
         if img.exists():
-            animset[f"idle_{d}"] = [_scaled(pg.image.load(str(img)).convert_alpha())]
-    return animset
+            raw[f"idle_{d}"] = [pg.image.load(str(img)).convert_alpha()]
+
+    if not raw:
+        return {}
+
+    # Shared content bbox across every frame keeps the character anchored.
+    bbox: pg.Rect | None = None
+    for frames in raw.values():
+        for frame in frames:
+            r = frame.get_bounding_rect()
+            bbox = r if bbox is None else bbox.union(r)
+
+    return {key: [_fit_to_tile(frame, bbox) for frame in frames] for key, frames in raw.items()}
