@@ -104,8 +104,10 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
 
     def update_animations(dt):
         hero_anim.set_speed(options["anim_speed"])
+        hero_anim.update(dt)
         for a in monsters_anim.values():
             a.set_speed(options["anim_speed"])
+            a.update(dt)
         for fx in mon_slide.values():
             fx.update(dt)
         ps.update(dt)
@@ -166,7 +168,6 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
             move_from = (hx, hy)
             move_to = (nx, ny)
             move_acc = 0.0
-            hero_anim.set("walk", one_shot=True, queue_to="idle")
             sounds["step"].play()
             return None
         return None
@@ -285,6 +286,11 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot) -> b
                         if try_start_move(dx, dy) == "dead":
                             return False
                         break
+
+        # Base hero pose: walk while sliding, idle when stopped. One-shot actions
+        # (attack/cast/pickup/drink) keep priority until they finish.
+        if not hero_anim.one_shot:
+            hero_anim.set("walk" if moving else "idle")
 
         shake.update(dt)
         if flash_t > 0:
