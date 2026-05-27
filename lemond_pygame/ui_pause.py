@@ -9,19 +9,7 @@ from .core import config as cfg
 from .core import progression
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL
 from .drawing import object_icon
-from .ui_common import icon_label, line, panel
-
-_LEGEND = [
-    ("icon.inventory", "I"),
-    ("icon.stats", "S"),
-    ("icon.skills", "K"),
-    ("icon.options", "O"),
-    ("icon.magic", "F"),
-    ("icon.grab", "G"),
-    ("icon.drink", "Z"),
-    ("icon.language", "L"),
-    ("icon.quit", "Q"),
-]
+from .ui_common import line, panel
 
 
 def _draw_minimap_surface(d, hero_pos, monsters, size):
@@ -68,9 +56,9 @@ def pause_screen(
     font = fonts.get_font(20)
     title_font = fonts.get_font(24, bold=True)
     outer = pg.Rect(30, 30, cfg.SCREEN_W - 60, cfg.SCREEN_H - 120)
-    left = pg.Rect(outer.x + 14, outer.y + 64, int(outer.w * 0.48) - 20, outer.h - 180)
+    left = pg.Rect(outer.x + 14, outer.y + 64, int(outer.w * 0.48) - 20, outer.h - 200)
     right = pg.Rect(
-        outer.x + int(outer.w * 0.52), outer.y + 64, int(outer.w * 0.48) - 20, outer.h - 180
+        outer.x + int(outer.w * 0.52), outer.y + 64, int(outer.w * 0.48) - 20, outer.h - 200
     )
 
     lines = list(event_log) if event_log else []
@@ -87,6 +75,7 @@ def pause_screen(
             level=hero.level,
             depth=d.depth,
             potions=hero.potions,
+            gold=hero.gold,
         )
         line(screen, title_font, head, outer.x + 16, outer.y + 36, (210, 210, 240))
         pg.draw.rect(screen, (26, 26, 34), left, border_radius=8)
@@ -100,6 +89,16 @@ def pause_screen(
         for s in view:
             line(screen, font, s, right.x + 10, y, (220, 220, 230))
             y += 18
+
+        # Settings group: one clearly labelled column of toggles.
+        line(
+            screen,
+            font,
+            i18n.t("ui.pause.settings"),
+            outer.x + 16,
+            outer.bottom - 132,
+            (190, 200, 230),
+        )
         if options is not None:
             on = (200, 240, 200)
             off = (170, 170, 180)
@@ -110,9 +109,9 @@ def pause_screen(
             ]
             for i, (key, label_key, hint, extra) in enumerate(rows):
                 value = options.get(key, True)
-                ry = outer.bottom - 110 + i * 22
+                ry = outer.bottom - 106 + i * 24
+                x = outer.x + 32
                 cb = object_icon("ui.checkbox_on" if value else "ui.checkbox_off", 18)
-                x = outer.x + 16
                 if cb:
                     screen.blit(cb, (x, ry + 1))
                     x += 24
@@ -123,23 +122,9 @@ def pause_screen(
                     if mi:
                         screen.blit(mi, (x + font.size(label)[0] + 8, ry))
 
-        lx = outer.x + 16
-        for key, hint in _LEGEND:  # in-game controls reference
-            lx = icon_label(
-                screen, font, key, hint, lx, outer.bottom - 44, (180, 180, 200), size=18, gap=3
-            )
-            lx += 16
-
-        fx = icon_label(
-            screen, font, "ui.arrow_up", "", outer.x + 16, outer.bottom - 22, size=16, gap=1
+        line(
+            screen, font, i18n.t("ui.pause.hint"), outer.x + 16, outer.bottom - 26, (160, 160, 200)
         )
-        fx = icon_label(
-            screen, font, "ui.arrow_down", "", fx + 1, outer.bottom - 22, size=16, gap=8
-        )
-        fx = icon_label(
-            screen, font, "icon.save", "S", fx, outer.bottom - 22, (160, 160, 200), gap=4
-        )
-        line(screen, font, i18n.t("ui.pause.hint"), fx + 16, outer.bottom - 22, (160, 160, 200))
         pg.display.flip()
 
     redraw()

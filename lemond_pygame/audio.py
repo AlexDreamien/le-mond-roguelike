@@ -1,6 +1,7 @@
 import array
 import io
 import math
+import random
 import struct
 
 import pygame as pg
@@ -42,16 +43,78 @@ def synth_tone(freq=440.0, ms=120, volume=0.5, shape="sine"):
     return pg.mixer.Sound(file=_wav_bytes(arr))
 
 
+def _render(samples, volume=0.6) -> pg.mixer.Sound:
+    amp = 32767 * max(0.0, min(1.0, volume))
+    arr = array.array("h", (int(max(-1.0, min(1.0, s)) * amp) for s in samples))
+    return pg.mixer.Sound(file=_wav_bytes(arr))
+
+
+def _footstep(volume=0.3) -> pg.mixer.Sound:
+    """A soft, dull noise burst — a foot landing on stone."""
+    n = int(cfg.SND_RATE * 0.09)
+    out = []
+    lp = 0.0
+    for i in range(n):
+        t = i / cfg.SND_RATE
+        lp = lp * 0.82 + random.uniform(-1, 1) * 0.18  # low-pass for a muffled thud
+        out.append(lp * math.exp(-t * 45))
+    return _render(out, volume)
+
+
+def _thud(freq=95, ms=150, volume=0.5) -> pg.mixer.Sound:
+    """A low damped thump with a little noise — bumping a wall."""
+    n = int(cfg.SND_RATE * ms / 1000)
+    out = []
+    lp = 0.0
+    for i in range(n):
+        t = i / cfg.SND_RATE
+        env = math.exp(-t * 22)
+        lp = lp * 0.9 + random.uniform(-1, 1) * 0.1
+        out.append(env * (0.6 * math.sin(2 * math.pi * freq * t) + 0.4 * lp))
+    return _render(out, volume)
+
+
+def _impact(volume=0.55) -> pg.mixer.Sound:
+    """A sharp whack plus a low thump — a melee hit."""
+    n = int(cfg.SND_RATE * 0.13)
+    out = []
+    lp = 0.0
+    for i in range(n):
+        t = i / cfg.SND_RATE
+        lp = lp * 0.5 + random.uniform(-1, 1) * 0.5  # brighter noise
+        crack = lp * math.exp(-t * 32)
+        thump = math.sin(2 * math.pi * 70 * t) * math.exp(-t * 42)
+        out.append(0.7 * crack + 0.55 * thump)
+    return _render(out, volume)
+
+
+def _chest(volume=0.5) -> pg.mixer.Sound:
+    """A wooden creak followed by a latch click — opening a chest."""
+    n = int(cfg.SND_RATE * 0.45)
+    out = []
+    lp = 0.0
+    for i in range(n):
+        t = i / cfg.SND_RATE
+        wobble = 0.5 + 0.5 * math.sin(2 * math.pi * 6 * t)  # creak
+        lp = lp * 0.7 + random.uniform(-1, 1) * 0.3
+        out.append(lp * wobble * max(0.0, 1.0 - t / 0.45) * 0.5)
+    click = int(cfg.SND_RATE * 0.30)
+    for i in range(click, min(n, click + int(cfg.SND_RATE * 0.03))):
+        out[i] += random.uniform(-1, 1) * math.exp(-(i - click) / cfg.SND_RATE * 120) * 0.6
+    return _render(out, volume)
+
+
 def make_sounds(master_volume=0.7):
     s = {}
-    s["step"] = synth_tone(520, 40, 0.25, "sine")
-    s["hit"] = synth_tone(220, 60, 0.6, "square")
+    s["step"] = _footstep(0.30)
+    s["hit"] = _impact(0.55)
+    s["wall"] = _thud(95, 150, 0.5)
+    s["open"] = _chest(0.5)
     s["hurt"] = synth_tone(120, 120, 0.6, "square")
     s["pickup"] = synth_tone(880, 80, 0.5, "sine")
     s["potion"] = synth_tone(660, 140, 0.5, "sine")
     s["levelup"] = synth_tone(990, 180, 0.6, "sine")
     s["magic"] = synth_tone(440, 120, 0.5, "sine")
-    s["open"] = synth_tone(350, 100, 0.5, "sine")
     for v in s.values():
         v.set_volume(master_volume)
     return s

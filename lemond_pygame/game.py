@@ -28,6 +28,7 @@ from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
 from .ui_common import message_box, prompt_yes_no
+from .ui_help import help_screen
 from .ui_inventory import inventory_screen
 from .ui_options import options_screen
 from .ui_pause import pause_screen
@@ -108,9 +109,13 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
     attack_cd = 0.0
     npc_block = False  # set after opening an NPC; cleared when no direction is held
 
-    def set_msg(text: str):
+    def set_status(text: str):
+        """Show a message at the bottom without recording it in the event log."""
         nonlocal msg
         msg = text
+
+    def set_msg(text: str):
+        set_status(text)
         event_log.append(text)
         if len(event_log) > 400:
             del event_log[: len(event_log) - 400]
@@ -189,7 +194,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             return _attack(nx, ny)
         tile = d.grid[ny][nx]
         if tile == WALL:
-            set_msg(i18n.t("msg.wall"))
+            set_status(i18n.t("msg.wall"))  # shown at the bottom, not logged
+            sounds["wall"].play()
             return None
         if tile in (FLOOR, ENTRY, LOOT, POTION, CHEST, EXIT):
             moving = True
@@ -377,6 +383,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
                 stats_window(screen, hero, options)
             elif e.key == pg.K_k:
                 skills_window(screen, hero, options)
+            elif e.key == pg.K_h:
+                help_screen(screen)
             elif e.key == pg.K_o:
 
                 def apply_opts(opts):
