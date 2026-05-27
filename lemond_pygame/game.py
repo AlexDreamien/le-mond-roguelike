@@ -12,6 +12,7 @@ import pygame as pg
 from . import i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
+from .core import spells as sp
 from .core.combat import extra_attack_chance, generate_monster, try_attack
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL, Dungeon
 from .core.fov import compute_fov
@@ -23,7 +24,7 @@ from .drawing import (
     build_hero_animset,
     build_tiles,
 )
-from .magic import do_cast
+from .magic import animate_cast, choose_direction, choose_spell
 from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
@@ -108,6 +109,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
     flash_t = 0.0
     attack_cd = 0.0
     npc_block = False  # set after opening an NPC; cleared when no direction is held
+    cast_block = False  # set after a cast so the aim key does not also step the hero
 
     def set_status(text: str):
         """Show a message at the bottom without recording it in the event log."""
@@ -206,6 +208,25 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             return None
         return None
 
+    def kill_monster(pos):
+        """Award XP, drop loot, and remove a dead monster. Shared by melee and
+        magic so both kill paths grant the same rewards and clean-up."""
+        m = monsters[pos]
+        nx, ny = pos
+        prev = hero.level
+        hero.gain_xp(m.xp_reward)
+        if hero.level > prev:
+            spawn_scaled("spawn_levelup", hx, hy, n=36)
+            sounds["levelup"].play()
+            auto_assign(hero, options["auto_stats"], options["auto_skills"])
+        spawn_scaled("spawn_burst", nx, ny, n=22, base_col=(200, 60, 60))
+        d.grid[ny][nx] = FLOOR
+        del monsters[pos]
+        del monsters_anim[id(m)]
+        del mon_slide[id(m)]
+        if random.random() < 0.4:
+            d.grid[ny][nx] = LOOT if random.random() < 0.5 else POTION
+
     def _attack(nx, ny):
         nonlocal flash_t, attack_cd
         attack_cd = ATTACK_COOLDOWN
@@ -228,19 +249,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             shake.trigger(mag=3.0, dur=0.10)  # light shake when the hero lands a blow
         if m.hp <= 0:
             set_msg(i18n.t("msg.killed", name=i18n.monster_name(m), xp=m.xp_reward))
-            prev = hero.level
-            hero.gain_xp(m.xp_reward)
-            if hero.level > prev:
-                spawn_scaled("spawn_levelup", hx, hy, n=36)
-                sounds["levelup"].play()
-                auto_assign(hero, options["auto_stats"], options["auto_skills"])
-            spawn_scaled("spawn_burst", nx, ny, n=22, base_col=(200, 60, 60))
-            d.grid[ny][nx] = FLOOR
-            del monsters[(nx, ny)]
-            del monsters_anim[id(m)]
-            del mon_slide[id(m)]
-            if random.random() < 0.4:
-                d.grid[ny][nx] = LOOT if random.random() < 0.5 else POTION
+            kill_monster((nx, ny))
             return None
         a.set("attack", one_shot=True, queue_to="idle")
         if hx < nx:
@@ -295,6 +304,96 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             return True
         return False
 
+    def render_world_frame(dt, overlay=None):
+        """Draw one full world+HUD frame to the screen without flipping.
+
+        Used by the spellcasting overlays so the dungeon keeps animating behind
+        their menus and the projectile can be painted onto the world (under the
+        screen-shake offset) via the ``overlay(world_surface)`` hook.
+        """
+        update_animations(dt)
+        shake.update(dt)
+        vis = compute_fov(d, hx, hy, cfg.FOV_RADIUS)
+        world.fill(cfg.C_BG)
+        draw_map(
+            world,
+            tiles,
+            hero_anim,
+            monsters_anim,
+            d,
+            hero,
+            rx,
+            ry,
+            monsters,
+            vis,
+            mon_slide,
+            npcs,
+            npc_anim,
+        )
+        ps.draw(world)
+        if overlay:
+            overlay(world)
+        sx, sy = shake.offset()
+        screen.fill((0, 0, 0))
+        screen.blit(world, (sx, sy))
+        draw_hud(screen, hero)
+        draw_msg(screen, msg)
+
+    def cast_spell():
+        """Run the full cast: pick a spell, aim it, fly the projectile, apply it."""
+        cast_clock = pg.time.Clock()
+        spell = choose_spell(screen, render_world_frame, hero, cast_clock)
+        if spell is None:
+            return
+        direction = choose_direction(screen, render_world_frame, hero, cast_clock, spell)
+        if direction is None:
+            return
+        hero.last_dir = direction
+        hero_anim.set_facing(_facing(*direction))
+        result = sp.resolve(
+            spell,
+            (hx, hy),
+            direction,
+            lambda x, y: (not d.inside(x, y)) or d.grid[y][x] == WALL,
+            monsters.keys(),
+            hero.int_,
+            hero.skills["MAGIC"],
+        )
+        hero_anim.set("cast", one_shot=True, queue_to="idle")
+        animate_cast(
+            screen,
+            render_world_frame,
+            cast_clock,
+            (hx, hy),
+            result,
+            ps,
+            shake,
+            sounds,
+            options["particles"],
+        )
+        # Apply damage, capturing names before any monster is removed.
+        applied = []  # (name, damage, killed)
+        for h in result.hits:
+            if h.pos not in monsters:
+                continue
+            m = monsters[h.pos]
+            name = i18n.monster_name(m)
+            m.hp -= h.damage
+            dead = m.hp <= 0
+            applied.append((name, h.damage, dead))
+            if dead:
+                kill_monster(h.pos)
+        spell_name = i18n.t("magic.spell." + spell.key)
+        if not applied:
+            set_msg(i18n.t("magic.spell_miss", spell=spell_name))
+        elif len(applied) == 1:
+            name, dmg, dead = applied[0]
+            key = "magic.spell_killed" if dead else "magic.spell_hit"
+            set_msg(i18n.t(key, name=name, dmg=dmg))
+        else:
+            slain = sum(1 for _, _, dead in applied if dead)
+            set_msg(i18n.t("magic.spell_multi", spell=spell_name, count=len(applied), killed=slain))
+
     clock = pg.time.Clock()
     while True:
         dt = clock.tick(cfg.FPS) / 1000.0
@@ -318,7 +417,8 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             pressed = pg.key.get_pressed()
             if not any(pressed[k] for k in _DIR_KEYS):
                 npc_block = False  # released: allow re-opening an NPC on the next press
-            else:
+                cast_block = False  # released: the aim key no longer suppresses stepping
+            elif not cast_block:  # an arrow held over from aiming must not step the hero
                 for key, (dx, dy) in _DIR_KEYS.items():
                     if pressed[key]:
                         hero.last_dir = (dx, dy)
@@ -406,31 +506,9 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
                     set_msg(i18n.t("msg.potion_used", healed=healed, potions=hero.potions))
                     sounds["potion"].play()
                     hero_anim.set("drink", one_shot=True, queue_to="idle")
-            elif e.key == pg.K_f:
-
-                def draw_map_cb(vis, rx=rx, ry=ry):
-                    draw_map(
-                        screen,
-                        tiles,
-                        hero_anim,
-                        monsters_anim,
-                        d,
-                        hero,
-                        rx,
-                        ry,
-                        monsters,
-                        vis,
-                        mon_slide,
-                    )
-
-                def draw_hud_cb():
-                    draw_hud(screen, hero)
-
-                set_msg(
-                    do_cast(screen, draw_map_cb, draw_hud_cb, d, hero, hx, hy, monsters, visible)
-                )
-                sounds["magic"].play()
-                hero_anim.set("cast", one_shot=True, queue_to="idle")
+            elif e.key == pg.K_f and not moving:
+                cast_spell()
+                cast_block = True  # don't let the aim key also step the hero
             elif e.key == pg.K_p:
 
                 def _save_cb():

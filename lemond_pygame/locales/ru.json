@@ -66,7 +66,13 @@
 
   "magic.spell_killed": "Заклинание поразило {name} на {dmg} и убило.",
   "magic.spell_hit": "Заклинание поразило {name} на {dmg}.",
-  "magic.spell_miss": "Заклинание ушло в пустоту.",
+  "magic.spell_multi": "{spell} поразил(а) врагов: {count} (убито: {killed}).",
+  "magic.spell_miss": "{spell} рассеивается в пустоте.",
+  "magic.spell.magic_arrow": "Магическая стрела",
+  "magic.spell.frost_spike": "Ледяной шип",
+  "magic.spell.fireball": "Огненный шар",
+  "magic.spell.lightning_chain": "Цепная молния",
+  "magic.spell.meteor": "Метеор",
 
   "ui.close_hint": "Esc/Enter — закрыть",
   "ui.message.title": "Сообщение",
@@ -130,6 +136,11 @@
 
   "ui.magic.title": "Магия: Выберите направление",
   "ui.magic.hint": "Стрелки: направление, Esc — отмена",
+  "ui.magic.choose": "Магия: выберите заклинание",
+  "ui.magic.choose_hint": "1-5 или Вверх/Вниз — выбор, Enter/F — каст, Esc — отмена",
+  "ui.magic.locked": "закрыто - Магия {skill}",
+  "ui.magic.stat": "урон {dmg}, дальность {rng}",
+  "ui.magic.dir_title": "{spell}: выберите направление",
 
   "ui.quit_confirm": "Сохранить и выйти?",
 
@@ -140,7 +151,7 @@
   "ui.help.move": "Движение / атака / разговор (зажми, чтобы идти)",
   "ui.help.grab": "Подобрать лут на клетке",
   "ui.help.drink": "Выпить зелье лечения",
-  "ui.help.magic": "Выпустить магический снаряд",
+  "ui.help.magic": "Сотворить заклинание (выбор + направление)",
   "ui.help.inventory": "Инвентарь (надеть / выбросить, перетаскивание)",
   "ui.help.stats": "Характеристики",
   "ui.help.skills": "Навыки",

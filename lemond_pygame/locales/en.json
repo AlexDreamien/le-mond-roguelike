@@ -66,7 +66,13 @@
 
   "magic.spell_killed": "The spell struck {name} for {dmg} and killed it.",
   "magic.spell_hit": "The spell struck {name} for {dmg}.",
-  "magic.spell_miss": "The spell faded into the void.",
+  "magic.spell_multi": "{spell} hit {count} foes ({killed} slain).",
+  "magic.spell_miss": "{spell} fades into the void.",
+  "magic.spell.magic_arrow": "Magic Arrow",
+  "magic.spell.frost_spike": "Frost Spike",
+  "magic.spell.fireball": "Fireball",
+  "magic.spell.lightning_chain": "Lightning Chain",
+  "magic.spell.meteor": "Meteor",
 
   "ui.close_hint": "Esc/Enter - close",
   "ui.message.title": "Message",
@@ -130,6 +136,11 @@
 
   "ui.magic.title": "Magic: choose a direction",
   "ui.magic.hint": "Arrows - direction, Esc - cancel",
+  "ui.magic.choose": "Magic: choose a spell",
+  "ui.magic.choose_hint": "1-5 or Up/Down - select, Enter/F - cast, Esc - cancel",
+  "ui.magic.locked": "locked - Magic {skill}",
+  "ui.magic.stat": "dmg {dmg}, range {rng}",
+  "ui.magic.dir_title": "{spell}: choose a direction",
 
   "ui.quit_confirm": "Save and exit?",
 
@@ -140,7 +151,7 @@
   "ui.help.move": "Move / attack / talk (hold to keep moving)",
   "ui.help.grab": "Pick up loot on the tile",
   "ui.help.drink": "Drink a healing potion",
-  "ui.help.magic": "Cast a magic bolt",
+  "ui.help.magic": "Cast a spell (pick spell, then aim)",
   "ui.help.inventory": "Inventory (equip / drop, drag to slots)",
   "ui.help.stats": "Stats",
   "ui.help.skills": "Skills",
