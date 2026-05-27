@@ -24,6 +24,20 @@ def test_total_armor_counts_only_armor_slots_plus_str_bonus():
     assert h.total_armor() == 4 + 10 // 5
 
 
+def test_xp_to_next_is_geometric():
+    # Exact integer ramp: 20 * (3/2)^(level-1), floored.
+    h = make_hero()
+    expected = {1: 20, 2: 30, 3: 45, 4: 67, 5: 101, 10: 768}
+    for level, want in expected.items():
+        h.level = level
+        assert h.xp_to_next() == want
+    # Strictly increasing, so leveling slows down as levels climb.
+    h.level = 4
+    lo = h.xp_to_next()
+    h.level = 5
+    assert h.xp_to_next() > lo
+
+
 def test_gain_xp_levels_up_and_awards_points():
     h = make_hero()
     h.gain_xp(h.xp_to_next())  # exactly one level

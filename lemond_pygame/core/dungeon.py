@@ -216,7 +216,9 @@ class Dungeon:
         # 8) Place monsters away from the entry. Their tiles stay FLOOR; the game
         # loop tracks positions in a dict keyed by coordinate.
         self.monsters = []
-        mons_cnt = max(6, (w * h) // 90)
+        # Population grows with depth so deeper floors get more crowded instead
+        # of staying at a fixed count; capped to avoid absurd density.
+        mons_cnt = min(28, max(7, 5 + self.depth))
         keep = [
             (x, y)
             for (x, y) in free_floors[ch_cnt + lt_cnt :]

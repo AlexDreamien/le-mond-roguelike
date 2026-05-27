@@ -88,3 +88,13 @@ def test_monsters_are_tracked_in_the_list_not_the_grid():
 
 def test_different_depths_differ():
     assert _generated(1).grid != _generated(2).grid
+
+
+def test_monster_count_scales_with_depth():
+    # Population grows with depth (capped), so deeper floors are more crowded.
+    shallow = len(_generated(1).monsters)
+    mid = len(_generated(8).monsters)
+    deep = len(_generated(40).monsters)
+    assert shallow == 7  # max(7, 5 + 1)
+    assert mid > shallow  # max(7, 5 + 8) == 13
+    assert deep <= 28  # hard cap keeps density reasonable

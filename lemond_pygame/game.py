@@ -289,7 +289,9 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             sounds["open"].play()
             hero.depth += 1
             hero.unlocked_depth = max(hero.unlocked_depth, hero.depth)
-            hero.hp = hero.max_hp
+            # Descending grants a partial recovery (~40%), not a full reset, so
+            # potions and attrition still matter between floors.
+            hero.hp = min(hero.max_hp, hero.hp + (hero.max_hp * 2) // 5)
             return True
         return False
 

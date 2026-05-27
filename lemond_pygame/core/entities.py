@@ -89,7 +89,10 @@ class Hero(Creature):
         self.max_hp = 16 + self.str_ * 2
 
     def xp_to_next(self) -> int:
-        return 20 + (self.level - 1) * 15
+        # Geometric ramp (~1.5x per level) via exact integer arithmetic, so
+        # leveling slows down as the dungeon deepens instead of staying linear.
+        n = self.level - 1
+        return 20 * 3**n // 2**n
 
     def gain_xp(self, amount: int) -> None:
         self.xp += amount

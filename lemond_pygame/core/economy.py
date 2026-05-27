@@ -28,8 +28,8 @@ def sell_price(item: Item) -> int:
 
 
 def stat_point_cost(hero) -> int:
-    return 60 + hero.level * 25
+    return 75 + hero.level * 35
 
 
 def skill_point_cost(hero) -> int:
-    return 90 + hero.level * 40
+    return 130 + hero.level * 60

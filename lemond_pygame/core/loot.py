@@ -25,8 +25,10 @@ class PickupResult:
 
 
 def floor_gold_amount(depth: int, rng=None) -> int:
+    # Trimmed from the old (5+2d, 12+6d) so gold income no longer outpaces the
+    # trainer/merchant prices and shopping stays a meaningful choice.
     r = rng or random
-    return r.randint(5 + depth * 2, 12 + depth * 6)
+    return r.randint(4 + depth, 10 + depth * 4)
 
 
 def resolve_chest(hero, depth: int, rng=None) -> PickupResult:

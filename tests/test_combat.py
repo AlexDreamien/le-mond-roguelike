@@ -7,6 +7,7 @@ from lemond_pygame.core.combat import (
     extra_attack_chance,
     generate_monster,
     try_attack,
+    weights_for_depth,
 )
 from lemond_pygame.core.entities import Creature
 
@@ -66,6 +67,47 @@ def test_try_attack_reports_death():
     _dmg, dead, _dodged = try_attack(attacker, defender, defender_armor=0, rng=rng)
     assert dead is True
     assert defender.hp <= 0
+
+
+def test_elites_are_gated_on_shallow_depths():
+    index = {kind: i for i, (kind, _) in enumerate(MONSTER_KINDS)}
+    w1 = weights_for_depth(1)
+    assert w1[index["ogre"]] == 0
+    assert w1[index["armor"]] == 0
+    assert w1[index["vampire"]] == 0
+    assert w1[index["goblin"]] > 0  # early floors still spawn fodder
+    w2 = weights_for_depth(2)
+    assert w2[index["vampire"]] > 0  # vampires unlock at depth 2
+    assert w2[index["ogre"]] == 0
+    w3 = weights_for_depth(3)
+    assert all(weight > 0 for weight in w3)  # everything unlocked from depth 3
+
+
+def test_no_elites_spawn_at_depth_one():
+    import random as _random
+
+    rng = _random.Random(7)
+    kinds = {generate_monster(1, rng=rng).kind for _ in range(300)}
+    assert "ogre" not in kinds
+    assert "armor" not in kinds
+    assert "vampire" not in kinds
+
+
+def test_elite_armor_scales_with_depth():
+    shallow = generate_monster(3, rng=_forced_kind("ogre"))
+    deep = generate_monster(12, rng=_forced_kind("ogre"))
+    assert deep.armor > shallow.armor  # ogre armor 2 + depth//2
+
+
+def _forced_kind(kind):
+    """An rng whose choices() always returns the named monster kind."""
+    target = next((k, s) for k, s in MONSTER_KINDS if k == kind)
+
+    class _Rng(random.Random):
+        def choices(self, population, weights=None, k=1):
+            return [target]
+
+    return _Rng()
 
 
 def test_generate_monster_is_deterministic_and_valid():

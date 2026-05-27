@@ -28,3 +28,6 @@ def test_training_costs_rise_with_level():
     h9.level = 9
     assert economy.stat_point_cost(h9) > economy.stat_point_cost(h1)
     assert economy.skill_point_cost(h1) > economy.stat_point_cost(h1)  # skills cost more
+    # Pinned values after the economy rebalance (gold income was trimmed to match).
+    assert economy.stat_point_cost(h1) == 75 + 35
+    assert economy.skill_point_cost(h1) == 130 + 60

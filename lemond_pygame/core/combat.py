@@ -27,7 +27,7 @@ MONSTER_KINDS = [
             "dex": (3, 1, 2),
             "int": (2, 0, 1),
             "hp": (18, 3, 1),
-            "armor": (0, 0, 1),
+            "armor": (1, 1, 3),
         },
     ),
     (
@@ -47,7 +47,7 @@ MONSTER_KINDS = [
             "dex": (2, 1, 3),
             "int": (2, 0, 1),
             "hp": (28, 4, 1),
-            "armor": (0, 0, 1),
+            "armor": (2, 1, 2),
         },
     ),
     (
@@ -67,11 +67,19 @@ MONSTER_KINDS = [
             "dex": (11, 2, 1),
             "int": (4, 1, 2),
             "hp": (8, 2, 1),
-            "armor": (1, 0, 1),
+            "armor": (1, 1, 4),
         },
     ),
 ]
 MONSTER_WEIGHTS = [3, 3, 2, 1, 2, 1]
+
+# Heavy hitters are suppressed on the first floors so a depth-1 hero never faces
+# an ogre or living armor in the opening room. Index order matches MONSTER_KINDS:
+# goblin, orc, bat, ogre, armor, vampire.
+_GATES = {
+    3: ("ogre", "armor"),  # appear only from depth 3
+    2: ("vampire",),  # appears only from depth 2
+}
 
 
 def _stat(spec: tuple[int, int, int], depth: int) -> int:
@@ -79,9 +87,20 @@ def _stat(spec: tuple[int, int, int], depth: int) -> int:
     return base + depth * num // den
 
 
+def weights_for_depth(depth: int) -> list[int]:
+    """Spawn weights with shallow-depth elites gated out (set to weight 0)."""
+    weights = list(MONSTER_WEIGHTS)
+    index = {kind: i for i, (kind, _) in enumerate(MONSTER_KINDS)}
+    for min_depth, kinds in _GATES.items():
+        if depth < min_depth:
+            for kind in kinds:
+                weights[index[kind]] = 0
+    return weights
+
+
 def generate_monster(depth: int, rng: random.Random | None = None) -> Creature:
     r = rng or random
-    kind, spec = r.choices(MONSTER_KINDS, weights=MONSTER_WEIGHTS, k=1)[0]
+    kind, spec = r.choices(MONSTER_KINDS, weights=weights_for_depth(depth), k=1)[0]
     base_hp = _stat(spec["hp"], depth)
     hp = base_hp + r.randint(0, max(1, base_hp // 4))
     return Creature(
