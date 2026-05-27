@@ -441,21 +441,17 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
 
 
 def _init_pygame() -> str:
-    drivers = ["wasapi", "directsound", "winmm", "dummy"]
-    for drv in drivers:
-        try:
-            os.environ["SDL_AUDIODRIVER"] = drv
-            pg.mixer.pre_init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN)
-            pg.init()
-            pg.mixer.init()  # a "dummy" driver yields no sound but does not error
-            return drv
-        except Exception:
-            with contextlib.suppress(Exception):
-                pg.quit()
-            continue
-    os.environ["SDL_AUDIODRIVER"] = "dummy"
+    """Init pygame; let SDL pick the platform's audio driver (coreaudio on macOS,
+    wasapi on Windows), falling back to a silent dummy driver if none is available."""
+    pg.mixer.pre_init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN)
     pg.init()
-    return "dummy"
+    try:
+        pg.mixer.init()
+    except pg.error:
+        os.environ["SDL_AUDIODRIVER"] = "dummy"
+        with contextlib.suppress(pg.error):
+            pg.mixer.init()
+    return os.environ.get("SDL_AUDIODRIVER", "default")
 
 
 def run() -> None:

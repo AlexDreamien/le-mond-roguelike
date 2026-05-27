@@ -1,0 +1,50 @@
+name: Build macOS app
+
+# Builds a double-clickable Le-Mond Roguelike.app on a cloud Apple-Silicon Mac.
+# Run it from the Actions tab (workflow_dispatch) or by pushing a v* tag.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest # Apple Silicon (arm64)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Build .app
+        run: |
+          pyinstaller --noconfirm --clean --windowed \
+            --name "Le-Mond Roguelike" \
+            --osx-bundle-identifier com.alexdreamien.lemondroguelike \
+            --add-data "lemond_pygame/assets:lemond_pygame/assets" \
+            --add-data "lemond_pygame/locales:lemond_pygame/locales" \
+            --collect-all pygame \
+            start.py
+
+      - name: Zip the .app (ditto preserves the bundle)
+        run: |
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            "Le-Mond Roguelike.app" "Le-Mond-Roguelike-macos-arm64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Le-Mond-Roguelike-macos-arm64
+          path: dist/Le-Mond-Roguelike-macos-arm64.zip
+
+      - name: Attach to release (tag builds only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Le-Mond-Roguelike-macos-arm64.zip
