@@ -1,7 +1,8 @@
 name: Build macOS app
 
-# Builds double-clickable Le-Mond Roguelike.app bundles for both Mac CPUs:
-# Apple Silicon (arm64, macos-latest) and Intel (x86_64, macos-13).
+# Builds a double-clickable Le-Mond Roguelike.app for Apple Silicon (arm64).
+# GitHub-hosted Intel (macos-13) runners are no longer available, so the
+# x86_64 leg was dropped; run the game from source on an Intel Mac instead.
 # Run from the Actions tab (workflow_dispatch) or by pushing a v* tag.
 on:
   push:
@@ -10,15 +11,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-latest # Apple Silicon
-            arch: arm64
-          - runner: macos-13 # Intel
-            arch: x86_64
-    runs-on: ${{ matrix.runner }}
+    runs-on: macos-latest # Apple Silicon (arm64)
     steps:
       - uses: actions/checkout@v4
 
@@ -45,15 +38,15 @@ jobs:
         run: |
           cd dist
           ditto -c -k --sequesterRsrc --keepParent \
-            "Le-Mond Roguelike.app" "Le-Mond-Roguelike-macos-${{ matrix.arch }}.zip"
+            "Le-Mond Roguelike.app" "Le-Mond-Roguelike-macos-arm64.zip"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Le-Mond-Roguelike-macos-${{ matrix.arch }}
-          path: dist/Le-Mond-Roguelike-macos-${{ matrix.arch }}.zip
+          name: Le-Mond-Roguelike-macos-arm64
+          path: dist/Le-Mond-Roguelike-macos-arm64.zip
 
       - name: Attach to release (tag builds only)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Le-Mond-Roguelike-macos-${{ matrix.arch }}.zip
+          files: dist/Le-Mond-Roguelike-macos-arm64.zip
