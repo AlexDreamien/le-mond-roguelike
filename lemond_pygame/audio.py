@@ -9,6 +9,33 @@ import pygame as pg
 from .core import config as cfg
 
 
+class _SilentSound:
+    """No-op stand-in used when the platform can't create mixer Sounds.
+
+    pygbag/WASM raises 'can't access resource on platform' for in-memory
+    ``mixer.Sound`` buffers, so on the web we fall back to silence instead of
+    crashing. The interface matches the bits of pygame.mixer.Sound the game
+    uses (play/set_volume), and play() returns None so the Music wrapper just
+    sees an idle channel."""
+
+    def play(self, *args, **kwargs):
+        return None
+
+    def set_volume(self, *args, **kwargs):
+        pass
+
+    def stop(self, *args, **kwargs):
+        pass
+
+
+def _make_sound(buf):
+    """Build a mixer Sound, or a silent stand-in if the platform refuses."""
+    try:
+        return pg.mixer.Sound(file=buf)
+    except Exception:
+        return _SilentSound()
+
+
 def _wav_bytes(samples, rate=cfg.SND_RATE, nch=1, sampwidth=2):
     data_bytes = samples.tobytes()
     byte_rate = rate * nch * sampwidth
@@ -40,13 +67,13 @@ def synth_tone(freq=440.0, ms=120, volume=0.5, shape="sine"):
         else:
             v = int(amp * math.sin(2 * math.pi * freq * t))
         arr.append(v)
-    return pg.mixer.Sound(file=_wav_bytes(arr))
+    return _make_sound(_wav_bytes(arr))
 
 
 def _render(samples, volume=0.6) -> pg.mixer.Sound:
     amp = 32767 * max(0.0, min(1.0, volume))
     arr = array.array("h", (int(max(-1.0, min(1.0, s)) * amp) for s in samples))
-    return pg.mixer.Sound(file=_wav_bytes(arr))
+    return _make_sound(_wav_bytes(arr))
 
 
 def _footstep(volume=0.3) -> pg.mixer.Sound:
@@ -159,7 +186,7 @@ def make_ambient(volume: float = 0.45) -> pg.mixer.Sound:
     peak = max(1e-6, max(abs(v) for v in samples))
     amp = int(32767 * max(0.0, min(1.0, volume)))
     arr = array.array("h", (int(amp * (v / peak)) for v in samples))
-    return pg.mixer.Sound(file=_wav_bytes(arr))
+    return _make_sound(_wav_bytes(arr))
 
 
 class Music:
