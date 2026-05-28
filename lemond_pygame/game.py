@@ -533,16 +533,26 @@ async def run_level(
 
 
 def _init_pygame() -> str:
-    """Init pygame; let SDL pick the platform's audio driver (coreaudio on macOS,
-    wasapi on Windows), falling back to a silent dummy driver if none is available."""
-    pg.mixer.pre_init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN)
+    """Init pygame and force the mixer to signed-16 mono at SND_RATE.
+
+    pre_init's format is only a *request*. Browsers (pygbag/WASM) typically open
+    the device as float32 stereo at 44.1/48 kHz; our raw int16 mono buffers then
+    play back as noise and crackle. ``allowedchanges=0`` pins the obtained format
+    to what we ask for (SDL converts to the hardware internally), so the buffers
+    are interpreted correctly. Falls back to a relaxed init (the buffer builder
+    then adapts to whatever format the device reports), then to a silent dummy
+    driver. SDL still picks the platform audio driver (coreaudio/wasapi)."""
+    pg.mixer.pre_init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN, allowedchanges=0)
     pg.init()
     try:
-        pg.mixer.init()
+        pg.mixer.init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN, allowedchanges=0)
     except pg.error:
-        os.environ["SDL_AUDIODRIVER"] = "dummy"
-        with contextlib.suppress(pg.error):
-            pg.mixer.init()
+        try:
+            pg.mixer.init()  # relaxed: accept whatever the device offers
+        except pg.error:
+            os.environ["SDL_AUDIODRIVER"] = "dummy"
+            with contextlib.suppress(pg.error):
+                pg.mixer.init()
     return os.environ.get("SDL_AUDIODRIVER", "default")
 
 
