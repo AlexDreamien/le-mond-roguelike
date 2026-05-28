@@ -28,12 +28,36 @@ class _SilentSound:
         pass
 
 
-def _make_sound(buf):
-    """Build a mixer Sound, or a silent stand-in if the platform refuses."""
+def _make_sound(samples):
+    """Build a mixer Sound from raw 16-bit mono samples (an ``array('h')``).
+
+    Uses an in-memory ``buffer`` matched to the mixer's actual rate/channels
+    rather than a WAV ``file=`` object: pygbag/WASM raises 'can't access resource
+    on platform' for file-like sources but accepts raw buffers. The samples are
+    generated at ``cfg.SND_RATE`` mono, so resample (nearest) and duplicate
+    across channels when the mixer opened with a different format. Falls back to
+    the WAV path on desktop, then to silence, if the platform refuses."""
     try:
-        return pg.mixer.Sound(file=buf)
+        init = pg.mixer.get_init()
+        rate = init[0] if init else cfg.SND_RATE
+        channels = init[2] if init else 1
+        data = samples
+        if rate != cfg.SND_RATE:  # nearest-neighbour resample to the mixer rate
+            ratio = rate / cfg.SND_RATE
+            count = int(len(data) * ratio)
+            last = len(data) - 1
+            data = array.array("h", (data[min(last, int(i / ratio))] for i in range(count)))
+        if channels >= 2:  # replicate the mono signal across channels, interleaved
+            interleaved = array.array("h")
+            for s in data:
+                interleaved.extend((s,) * channels)
+            data = interleaved
+        return pg.mixer.Sound(buffer=data.tobytes())
     except Exception:
-        return _SilentSound()
+        try:
+            return pg.mixer.Sound(file=_wav_bytes(samples))
+        except Exception:
+            return _SilentSound()
 
 
 def _wav_bytes(samples, rate=cfg.SND_RATE, nch=1, sampwidth=2):
@@ -67,13 +91,13 @@ def synth_tone(freq=440.0, ms=120, volume=0.5, shape="sine"):
         else:
             v = int(amp * math.sin(2 * math.pi * freq * t))
         arr.append(v)
-    return _make_sound(_wav_bytes(arr))
+    return _make_sound(arr)
 
 
 def _render(samples, volume=0.6) -> pg.mixer.Sound:
     amp = 32767 * max(0.0, min(1.0, volume))
     arr = array.array("h", (int(max(-1.0, min(1.0, s)) * amp) for s in samples))
-    return _make_sound(_wav_bytes(arr))
+    return _make_sound(arr)
 
 
 def _footstep(volume=0.3) -> pg.mixer.Sound:
@@ -186,7 +210,7 @@ def make_ambient(volume: float = 0.45) -> pg.mixer.Sound:
     peak = max(1e-6, max(abs(v) for v in samples))
     amp = int(32767 * max(0.0, min(1.0, volume)))
     arr = array.array("h", (int(amp * (v / peak)) for v in samples))
-    return _make_sound(_wav_bytes(arr))
+    return _make_sound(arr)
 
 
 class Music:
