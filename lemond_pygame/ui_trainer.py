@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -10,7 +12,7 @@ from .core import economy, progression
 from .ui_common import icon_label, line, panel
 
 
-def trainer_screen(screen, hero, options) -> None:
+async def trainer_screen(screen, hero, options) -> None:
     font = fonts.get_font(22)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, cfg.SCREEN_H - 200)
     msg = ""
@@ -61,6 +63,7 @@ def trainer_screen(screen, hero, options) -> None:
 
     redraw()
     while True:
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()

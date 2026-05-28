@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import replace
 
 import pygame as pg
@@ -17,7 +18,7 @@ from .ui_common import icon_label, line, panel
 STOCK_SIZE = 6
 
 
-def shop_screen(screen, hero, depth) -> None:
+async def shop_screen(screen, hero, depth) -> None:
     font = fonts.get_font(20)
     rect = pg.Rect(40, 40, cfg.SCREEN_W - 80, cfg.SCREEN_H - 120)
     stock = [random_item(economy.shop_tier(depth)) for _ in range(STOCK_SIZE)]
@@ -79,6 +80,7 @@ def shop_screen(screen, hero, depth) -> None:
 
     redraw()
     while True:
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()

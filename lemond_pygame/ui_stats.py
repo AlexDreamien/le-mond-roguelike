@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -13,7 +15,7 @@ _STAT_KEYS = {pg.K_1: "str", pg.K_2: "dex", pg.K_3: "int"}
 _SKILL_KEYS = {pg.K_1: "MELEE", pg.K_2: "DODGE", pg.K_3: "MAGIC"}
 
 
-def stats_window(screen, hero, options=None) -> None:
+async def stats_window(screen, hero, options=None) -> None:
     font = fonts.get_font(22)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, cfg.SCREEN_H - 180)
     manual = options is not None and not options.get("auto_stats", True)
@@ -45,6 +47,7 @@ def stats_window(screen, hero, options=None) -> None:
             )
         line(screen, font, i18n.t("ui.close_hint"), rect.x + 20, rect.bottom - 40, (160, 160, 200))
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -56,7 +59,7 @@ def stats_window(screen, hero, options=None) -> None:
                     progression.add_stat(hero, _STAT_KEYS[e.key])
 
 
-def skills_window(screen, hero, options=None) -> None:
+async def skills_window(screen, hero, options=None) -> None:
     font = fonts.get_font(22)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, cfg.SCREEN_H - 180)
     manual = options is not None and not options.get("auto_skills", True)
@@ -83,6 +86,7 @@ def skills_window(screen, hero, options=None) -> None:
             )
         line(screen, font, i18n.t("ui.close_hint"), rect.x + 20, rect.bottom - 40, (160, 160, 200))
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()

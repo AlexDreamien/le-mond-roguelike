@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import os
 import random
@@ -59,7 +60,9 @@ def _facing(dx, dy) -> str:
     return "west" if dx < 0 else "east"
 
 
-def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, music=None) -> bool:
+async def run_level(
+    screen, tiles, animsets, hero, sounds, options, current_slot, music=None
+) -> bool:
     d = Dungeon(cfg.MAP_W, cfg.MAP_H, hero.depth)
     d.generate()
     monsters = {pos: generate_monster(d.depth) for pos in d.monsters}
@@ -171,15 +174,15 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             set_msg(i18n.t("pickup.stored", item=i18n.item_describe(result.item)))
         return True
 
-    def _open_npc(nx, ny):
+    async def _open_npc(nx, ny):
         kind = npcs[(nx, ny)]
         if kind == "merchant":
-            shop_screen(screen, hero, hero.depth)
+            await shop_screen(screen, hero, hero.depth)
         else:
-            trainer_screen(screen, hero, options)
+            await trainer_screen(screen, hero, options)
         save_hero(current_slot, hero, options)
 
-    def try_start_move(dx, dy):
+    async def try_start_move(dx, dy):
         nonlocal moving, move_from, move_to, move_acc, hx, hy, rx, ry, npc_block
         hero_anim.set_facing(_facing(dx, dy))
         nx, ny = hx + dx, hy + dy
@@ -188,12 +191,12 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         if (nx, ny) in npcs:  # talk, do not attack or step onto them
             if not npc_block:
                 npc_block = True
-                _open_npc(nx, ny)
+                await _open_npc(nx, ny)
             return None
         if (nx, ny) in monsters:  # monsters live in this dict, not on the grid
             if attack_cd > 0:
                 return None
-            return _attack(nx, ny)
+            return await _attack(nx, ny)
         tile = d.grid[ny][nx]
         if tile == WALL:
             set_status(i18n.t("msg.wall"))  # shown at the bottom, not logged
@@ -227,7 +230,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         if random.random() < 0.4:
             d.grid[ny][nx] = LOOT if random.random() < 0.5 else POTION
 
-    def _attack(nx, ny):
+    async def _attack(nx, ny):
         nonlocal flash_t, attack_cd
         attack_cd = ATTACK_COOLDOWN
         m = monsters[(nx, ny)]
@@ -281,7 +284,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         )
         set_msg(hit_part + tail)
         if hero.hp <= 0:
-            message_box(screen, [i18n.t("msg.death_box")])
+            await message_box(screen, [i18n.t("msg.death_box")])
             return "dead"
         return None
 
@@ -339,13 +342,13 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         draw_hud(screen, hero)
         draw_msg(screen, msg)
 
-    def cast_spell():
+    async def cast_spell():
         """Run the full cast: pick a spell, aim it, fly the projectile, apply it."""
         cast_clock = pg.time.Clock()
-        spell = choose_spell(screen, render_world_frame, hero, cast_clock)
+        spell = await choose_spell(screen, render_world_frame, hero, cast_clock)
         if spell is None:
             return
-        direction = choose_direction(screen, render_world_frame, hero, cast_clock, spell)
+        direction = await choose_direction(screen, render_world_frame, hero, cast_clock, spell)
         if direction is None:
             return
         hero.last_dir = direction
@@ -360,7 +363,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             hero.skills["MAGIC"],
         )
         hero_anim.set("cast", one_shot=True, queue_to="idle")
-        animate_cast(
+        await animate_cast(
             screen,
             render_world_frame,
             cast_clock,
@@ -422,7 +425,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
                 for key, (dx, dy) in _DIR_KEYS.items():
                     if pressed[key]:
                         hero.last_dir = (dx, dy)
-                        if try_start_move(dx, dy) == "dead":
+                        if await try_start_move(dx, dy) == "dead":
                             return False
                         break
 
@@ -461,6 +464,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
         if flash_t > 0:
             draw_damage_flash(screen, flash_t / FLASH_DURATION)
         pg.display.flip()
+        await asyncio.sleep(0)  # yield to the browser each frame (no-op on desktop)
 
         for e in pg.event.get():
             if e.type == pg.QUIT:
@@ -470,7 +474,7 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
             if e.type != pg.KEYDOWN:
                 continue
             if e.key == pg.K_q:
-                if prompt_yes_no(screen, i18n.t("ui.quit_confirm")):
+                if await prompt_yes_no(screen, i18n.t("ui.quit_confirm")):
                     save_hero(current_slot, hero, options)
                     pg.quit()
                     sys.exit(0)
@@ -480,20 +484,20 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
                     take_floor(d.grid[hy][hx])
                     d.grid[hy][hx] = FLOOR
             elif e.key == pg.K_i:
-                set_msg(inventory_screen(screen, hero))
+                set_msg(await inventory_screen(screen, hero))
             elif e.key == pg.K_s:
-                stats_window(screen, hero, options)
+                await stats_window(screen, hero, options)
             elif e.key == pg.K_k:
-                skills_window(screen, hero, options)
+                await skills_window(screen, hero, options)
             elif e.key == pg.K_h:
-                help_screen(screen)
+                await help_screen(screen)
             elif e.key == pg.K_o:
 
                 def apply_opts(opts):
                     for v in sounds.values():
                         v.set_volume(opts["volume"])
 
-                options_screen(screen, options, apply_opts)
+                await options_screen(screen, options, apply_opts)
                 save_hero(current_slot, hero, options)
             elif e.key == pg.K_z:
                 if hero.potions <= 0:
@@ -507,14 +511,14 @@ def run_level(screen, tiles, animsets, hero, sounds, options, current_slot, musi
                     sounds["potion"].play()
                     hero_anim.set("drink", one_shot=True, queue_to="idle")
             elif e.key == pg.K_f and not moving:
-                cast_spell()
+                await cast_spell()
                 cast_block = True  # don't let the aim key also step the hero
             elif e.key == pg.K_p:
 
                 def _save_cb():
                     save_hero(current_slot, hero, options)
 
-                pause_screen(
+                await pause_screen(
                     screen,
                     d,
                     hero,
@@ -542,7 +546,7 @@ def _init_pygame() -> str:
     return os.environ.get("SDL_AUDIODRIVER", "default")
 
 
-def run() -> None:
+async def run() -> None:
     _init_pygame()
     i18n.load_locales()
 
@@ -559,7 +563,7 @@ def run() -> None:
 
     from .ui_start import start_menu
 
-    current_slot, hero, options = start_menu(screen, sounds)
+    current_slot, hero, options = await start_menu(screen, sounds)
     i18n.set_locale(options.get("language", i18n.get_locale()))
     for v in sounds.values():
         v.set_volume(options.get("volume", 0.7))
@@ -569,7 +573,9 @@ def run() -> None:
     music = Music(ambient, enabled=options.get("music", True))
 
     while True:
-        survived = run_level(screen, tiles, animsets, hero, sounds, options, current_slot, music)
+        survived = await run_level(
+            screen, tiles, animsets, hero, sounds, options, current_slot, music
+        )
         if not survived:
             hero.hp = hero.max_hp
-            message_box(screen, [i18n.t("msg.respawn_1"), i18n.t("msg.respawn_2")])
+            await message_box(screen, [i18n.t("msg.respawn_1"), i18n.t("msg.respawn_2")])

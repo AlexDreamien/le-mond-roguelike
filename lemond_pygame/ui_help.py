@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -37,7 +39,7 @@ def _key_box(screen, font, label, x, y) -> None:
     screen.blit(surf, surf.get_rect(center=box.center))
 
 
-def help_screen(screen) -> None:
+async def help_screen(screen) -> None:
     font = fonts.get_font(20)
     section_font = fonts.get_font(22, bold=True)
     rect = pg.Rect(140, 50, cfg.SCREEN_W - 280, cfg.SCREEN_H - 120)
@@ -69,6 +71,7 @@ def help_screen(screen) -> None:
             y += 30
         line(screen, font, i18n.t("ui.help.close"), rect.x + 26, rect.bottom - 36, (160, 160, 200))
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()

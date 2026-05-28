@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -65,7 +67,7 @@ def _toggle_language():
     i18n.set_locale(i18n.next_locale())
 
 
-def class_select(screen):
+async def class_select(screen):
     font = fonts.get_font(24)
     rect = pg.Rect(60, 60, cfg.SCREEN_W - 120, cfg.SCREEN_H - 160)
     while True:
@@ -104,6 +106,7 @@ def class_select(screen):
             )
         line(screen, font, i18n.t("ui.class.hint"), rect.x + 20, rect.bottom - 36, (160, 160, 200))
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -139,7 +142,7 @@ def create_hero_for_class(class_kind: str) -> Hero:
     return h
 
 
-def start_menu(screen, sounds):
+async def start_menu(screen, sounds):
     font = fonts.get_font(24)
     title_font = fonts.get_font(36, bold=True)
     while True:
@@ -168,6 +171,7 @@ def start_menu(screen, sounds):
             rects.append((_slot_rect(info["slot"]), info))
         line(screen, font, i18n.t("ui.start.hint"), 60, cfg.SCREEN_H - 60, (160, 160, 200))
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -186,7 +190,7 @@ def start_menu(screen, sounds):
                     if not r.collidepoint(e.pos):
                         continue
                     if info.get("exists") and _del_rect(r).collidepoint(e.pos):
-                        if prompt_yes_no(
+                        if await prompt_yes_no(
                             screen, i18n.t("ui.start.delete_confirm", slot=info["slot"])
                         ):
                             delete_save(info["slot"])
@@ -198,7 +202,7 @@ def start_menu(screen, sounds):
                         i18n.set_locale(opts.get("language", i18n.get_locale()))
                         sounds["open"].play()
                         return info["slot"], hero, opts
-                    class_kind = class_select(screen)
+                    class_kind = await class_select(screen)
                     if not class_kind:
                         break
                     hero = create_hero_for_class(class_kind)

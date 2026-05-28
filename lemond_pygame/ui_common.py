@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -38,7 +40,7 @@ def panel(screen, rect, title=None, icon=None) -> None:
         line(screen, font, title, tx, rect.y + 8, (200, 200, 240))
 
 
-def message_box(screen, lines) -> None:
+async def message_box(screen, lines) -> None:
     font = fonts.get_font(22)
     w = max(400, max(font.size(s)[0] for s in lines) + 40)
     h = 60 + 26 * len(lines)
@@ -58,6 +60,7 @@ def message_box(screen, lines) -> None:
     )
     pg.display.flip()
     while True:
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -66,7 +69,7 @@ def message_box(screen, lines) -> None:
                 return
 
 
-def prompt_yes_no(screen, text: str) -> bool:
+async def prompt_yes_no(screen, text: str) -> bool:
     font = fonts.get_font(22)
     w = max(420, font.size(text)[0] + 60)
     h = 140
@@ -76,6 +79,7 @@ def prompt_yes_no(screen, text: str) -> bool:
     line(screen, font, i18n.t("ui.confirm.hint"), rect.x + 20, rect.bottom - 30, (160, 160, 200))
     pg.display.flip()
     while True:
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()

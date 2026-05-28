@@ -5,6 +5,8 @@ drag an item from the grid onto a matching equipment slot.
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -68,7 +70,7 @@ def _blit_centered(screen, icon, rect):
     screen.blit(icon, icon.get_rect(center=rect.center))
 
 
-def inventory_screen(screen, hero) -> str:
+async def inventory_screen(screen, hero) -> str:
     font = fonts.get_font(20)
     small = fonts.get_font(18)
     panel_rect = pg.Rect(40, 40, cfg.SCREEN_W - 80, cfg.SCREEN_H - 100)
@@ -261,3 +263,4 @@ def inventory_screen(screen, hero) -> str:
                 drag_idx = None
                 dragging = False
         redraw(mouse)
+        await asyncio.sleep(0)

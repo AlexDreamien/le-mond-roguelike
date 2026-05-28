@@ -14,6 +14,8 @@ itself.
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -42,7 +44,7 @@ def _glow(surface, px: int, py: int, color, radius: int) -> None:
     surface.blit(g, (px - radius, py - radius), special_flags=pg.BLEND_RGB_ADD)
 
 
-def choose_spell(screen, render_frame, hero, clock):
+async def choose_spell(screen, render_frame, hero, clock):
     """Spell picker overlay. Returns the chosen Spell, or None if cancelled."""
     font = fonts.get_font(20)
     skill = hero.skills["MAGIC"]
@@ -80,6 +82,7 @@ def choose_spell(screen, render_frame, hero, clock):
             (160, 160, 200),
         )
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -98,7 +101,7 @@ def choose_spell(screen, render_frame, hero, clock):
                 return avail[_NUM_KEYS[e.key]]
 
 
-def choose_direction(screen, render_frame, hero, clock, spell):
+async def choose_direction(screen, render_frame, hero, clock, spell):
     """Aim overlay. Returns a (dx, dy) direction, or None if cancelled.
 
     Purely a choice of direction: the hero never steps as a side effect.
@@ -112,6 +115,7 @@ def choose_direction(screen, render_frame, hero, clock, spell):
         panel(screen, rect, i18n.t("ui.magic.dir_title", spell=name), icon="icon.magic")
         line(screen, font, i18n.t("ui.magic.hint"), rect.x + 20, rect.y + 50)
         pg.display.flip()
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 pg.quit()
@@ -124,7 +128,7 @@ def choose_direction(screen, render_frame, hero, clock, spell):
                 return _DIR_KEYS[e.key]
 
 
-def _run_for(seconds, clock, render_frame, overlay=None):
+async def _run_for(seconds, clock, render_frame, overlay=None):
     """Drive render_frame for a fixed wall-clock duration."""
     elapsed = 0.0
     while elapsed < seconds:
@@ -132,9 +136,10 @@ def _run_for(seconds, clock, render_frame, overlay=None):
         elapsed += dt
         render_frame(dt, overlay)
         pg.display.flip()
+        await asyncio.sleep(0)
 
 
-def animate_cast(
+async def animate_cast(
     screen, render_frame, clock, origin, result, ps, shake, sounds, particle_scale=1.0
 ):
     """Play the projectile flight and the impact burst for a resolved cast."""
@@ -163,6 +168,7 @@ def animate_cast(
 
         render_frame(dt, overlay)
         pg.display.flip()
+        await asyncio.sleep(0)
 
     # --- Impact: burst particles, screen shake, and any chain arcs.
     def scaled(n):
@@ -186,6 +192,6 @@ def animate_cast(
             for a, b in zip(points, points[1:], strict=False):
                 pg.draw.line(world, color, a, b, 3)
 
-        _run_for(0.22, clock, render_frame, overlay)
+        await _run_for(0.22, clock, render_frame, overlay)
     else:
-        _run_for(0.22, clock, render_frame)
+        await _run_for(0.22, clock, render_frame)

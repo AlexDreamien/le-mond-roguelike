@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -15,7 +17,7 @@ NUMERIC = [
 ]
 
 
-def options_screen(screen, options: dict, apply_fn) -> str:
+async def options_screen(screen, options: dict, apply_fn) -> str:
     font = fonts.get_font(20)
     rect = pg.Rect(70, 70, cfg.SCREEN_W - 140, cfg.SCREEN_H - 180)
     idx = 0
@@ -61,6 +63,7 @@ def options_screen(screen, options: dict, apply_fn) -> str:
             screen, font, i18n.t("ui.options.hint"), rect.x + 30, rect.bottom - 40, (160, 160, 200)
         )
         pg.display.flip()
+        await asyncio.sleep(0)
 
         for e in pg.event.get():
             if e.type == pg.QUIT:

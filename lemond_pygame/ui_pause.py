@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 import pygame as pg
 
 from . import fonts, i18n
@@ -50,7 +52,7 @@ def _draw_minimap_surface(d, hero_pos, monsters, size):
     return surf
 
 
-def pause_screen(
+async def pause_screen(
     screen, d, hero, hero_pos, monsters, last_msg, event_log, on_save=None, options=None, music=None
 ) -> str:
     font = fonts.get_font(20)
@@ -129,6 +131,7 @@ def pause_screen(
 
     redraw()
     while True:
+        await asyncio.sleep(0)
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 if on_save:
