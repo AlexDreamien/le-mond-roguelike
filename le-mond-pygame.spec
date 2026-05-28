@@ -15,8 +15,12 @@ tmp_ret = collect_all('pygame')
 datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
+# Entry point must be the absolute-import shim (start.py), not the package's
+# __main__.py: PyInstaller runs the entry script as top-level "__main__", which
+# has no parent package, so __main__.py's `from .game import run` would raise
+# "attempted relative import with no known parent package" at launch.
 a = Analysis(
-    ['lemond_pygame\\__main__.py'],
+    ['start.py'],
     pathex=[],
     binaries=binaries,
     datas=datas,
