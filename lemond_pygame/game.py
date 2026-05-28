@@ -10,7 +10,7 @@ import sys
 
 import pygame as pg
 
-from . import i18n
+from . import fonts, i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
 from .core import spells as sp
@@ -552,6 +552,18 @@ async def run() -> None:
 
     screen = pg.display.set_mode((cfg.SCREEN_W, cfg.SCREEN_H))
     pg.display.set_caption(i18n.t("app.title"))
+
+    async def loading(label):
+        """Paint a status frame and yield, so the browser canvas isn't blank
+        while assets and audio are synthesized (slow under WASM)."""
+        screen.fill(cfg.C_BG)
+        font = fonts.get_font(28, bold=True)
+        surf = font.render(label, True, (210, 210, 240))
+        screen.blit(surf, surf.get_rect(center=(cfg.SCREEN_W // 2, cfg.SCREEN_H // 2)))
+        pg.display.flip()
+        await asyncio.sleep(0)
+
+    await loading(i18n.t("app.title"))
     tiles = build_tiles()
     animsets = build_animsets_from_atlas()
     hero_art = build_hero_animset()
@@ -559,6 +571,7 @@ async def run() -> None:
         animsets["hero"] = hero_art  # PixelLab 4-directional hero, falls back to atlas
     animsets.update(build_creature_animsets("monsters"))  # override atlas monsters
     animsets.update(build_creature_animsets("npc"))  # "merchant", "trainer"
+    await loading(i18n.t("app.title"))
     sounds = make_sounds(master_volume=0.7)
 
     from .ui_start import start_menu
@@ -568,6 +581,7 @@ async def run() -> None:
     for v in sounds.values():
         v.set_volume(options.get("volume", 0.7))
 
+    await loading(i18n.t("app.title"))
     ambient = make_ambient()
     ambient.set_volume(0.5)
     music = Music(ambient, enabled=options.get("music", True))

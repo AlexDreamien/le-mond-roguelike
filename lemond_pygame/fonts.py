@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
+import sys
+
 import pygame as pg
 
 # Comma-separated preference list; SysFont picks the first installed and falls
 # back to PyGame's default font if none are present (e.g. on a minimal CI box).
 _PREFERRED = "Segoe UI,DejaVu Sans,Verdana,Arial"
+# The browser/WASM runtime (pygbag) has no fontconfig, so SysFont can hang or
+# fail there; use pygame's bundled default font instead.
+_IS_WEB = sys.platform == "emscripten"
 _cache: dict[tuple[int, bool], pg.font.Font] = {}
 
 
@@ -14,7 +19,11 @@ def get_font(size: int, bold: bool = False) -> pg.font.Font:
     key = (size, bold)
     font = _cache.get(key)
     if font is None:
-        font = pg.font.SysFont(_PREFERRED, size, bold=bold)
+        if _IS_WEB:
+            font = pg.font.Font(None, size)
+            font.set_bold(bold)
+        else:
+            font = pg.font.SysFont(_PREFERRED, size, bold=bold)
         _cache[key] = font
     return font
 
