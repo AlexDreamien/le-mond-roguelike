@@ -1,0 +1,32 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "4be8c34d-e8e9-475b-948c-7d5f2bca7538",
+        "name": "A translucent pale-blue spectral ghost, a wispy hooded wraith with a tattered lower body trailing into mist instead of legs, hollow glowing eyes, faintly see-through. Fantasy roguelike enemy, full body, floating, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "prompt": "A translucent pale-blue spectral ghost, a wispy hooded wraith with a tattered lower body trailing into mist instead of legs, hollow glowing eyes, faintly see-through. Fantasy roguelike enemy, full body, floating, facing the camera, single dark outline, soft top-down lighting, transparent background.",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-06-08T13:06:16.785557+00:00"
+      },
+      "folder": "A_translucent_pale-blue_spectral_ghost_a_wispy_hoo",
+      "frames": {
+        "rotations": {
+          "south": "A_translucent_pale-blue_spectral_ghost_a_wispy_hoo/rotations/south.png",
+          "west": "A_translucent_pale-blue_spectral_ghost_a_wispy_hoo/rotations/west.png",
+          "east": "A_translucent_pale-blue_spectral_ghost_a_wispy_hoo/rotations/east.png",
+          "north": "A_translucent_pale-blue_spectral_ghost_a_wispy_hoo/rotations/north.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-06-08T13:07:59.397536"
+}
