@@ -9,15 +9,23 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass, field
 
+from .weapons import category as weapon_category
+
 EQUIP_SLOTS = ["MAIN", "OFF", "HEAD", "BODY", "HANDS", "FEET"]
 
-# Loot table: kind -> (slot, power offset added to tier, two_handed).
+# Loot table: (cumulative threshold, kind, slot, power offset added to tier,
+# two_handed). Two-handed weapons (axe, bow, crossbow, staff) block the shield.
 LOOT_TABLE = [
-    (0.25, "sword", "MAIN", 0, False),
-    (0.40, "axe", "MAIN", 1, True),
-    (0.55, "staff", "MAIN", 0, False),
-    (0.70, "shield", "OFF", 0, False),
-    (0.80, "helmet", "HEAD", 0, False),
+    (0.12, "sword", "MAIN", 0, False),
+    (0.22, "dagger", "MAIN", 0, False),
+    (0.31, "axe", "MAIN", 1, True),
+    (0.39, "mace", "MAIN", 0, False),
+    (0.47, "bow", "MAIN", 0, True),
+    (0.53, "crossbow", "MAIN", 1, True),
+    (0.60, "staff", "MAIN", 0, True),
+    (0.66, "wand", "MAIN", 0, False),
+    (0.74, "shield", "OFF", 0, False),
+    (0.81, "helmet", "HEAD", 0, False),
     (0.90, "armor", "BODY", 1, False),
     (0.95, "gloves", "HANDS", 0, False),
     (1.00, "boots", "FEET", 0, False),
@@ -61,7 +69,9 @@ class Hero(Creature):
     xp: int = 0
     stat_points: int = 0
     skill_points: int = 0
-    skills: dict = field(default_factory=lambda: {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
+    skills: dict = field(
+        default_factory=lambda: {"MELEE": 0, "DODGE": 0, "MAGIC": 0, "ACCURACY": 0}
+    )
     potions: int = 0
     mana_potions: int = 0
     mana: int = 0
@@ -80,9 +90,11 @@ class Hero(Creature):
         return val + (self.str_ // 5)
 
     def weapon_damage(self) -> tuple[int, int]:
+        # Only melee weapons add their power to a swing; swinging a bow or staff
+        # in melee is improvised, so it lands as the unarmed base.
         weapon = self.equipment.get("MAIN")
         base = 1 + self.str_ // 2 + self.skills["MELEE"]
-        if weapon:
+        if weapon and weapon_category(weapon.kind) == "melee":
             base += weapon.power
         return (max(1, base - 1), base + 1)
 

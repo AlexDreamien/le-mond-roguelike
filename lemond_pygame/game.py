@@ -14,7 +14,15 @@ from . import fonts, i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
 from .core import spells as sp
-from .core.combat import extra_attack_chance, generate_monster, try_attack
+from .core import weapons as wp
+from .core.combat import (
+    MONSTER_TURN_INTERVAL,
+    caster_damage,
+    caster_spec,
+    extra_attack_chance,
+    generate_monster,
+    try_attack,
+)
 from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, floor_gold_amount, resolve_chest
@@ -22,10 +30,11 @@ from .core.progression import auto_assign
 from .drawing import (
     build_animsets_from_atlas,
     build_creature_animsets,
+    build_ghost_animset,
     build_hero_animset,
     build_tiles,
 )
-from .magic import animate_cast, choose_direction
+from .magic import animate_cast, animate_shot, choose_direction
 from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
@@ -114,6 +123,8 @@ async def run_level(
     attack_cd = 0.0
     npc_block = False  # set after opening an NPC; cleared when no direction is held
     cast_block = False  # set after a cast so the aim key does not also step the hero
+    crossbow_loaded = True  # a crossbow fires, then needs a reload press
+    monster_turn_acc = 0.0  # accumulates dt; caster monsters fire each interval
 
     def set_status(text: str):
         """Show a message at the bottom without recording it in the event log."""
@@ -367,8 +378,15 @@ async def run_level(
             set_status(i18n.t("magic.no_mana", spell=spell_name))
             return
         cast_clock = pg.time.Clock()
+        reach = sp.spell_range(spell, hero.int_)
         direction = await choose_direction(
-            screen, render_world_frame, hero, cast_clock, spell, d, (hx, hy)
+            screen,
+            render_world_frame,
+            cast_clock,
+            d,
+            (hx, hy),
+            reach,
+            i18n.t("ui.magic.dir_title", spell=spell_name),
         )
         if direction is None:
             return
@@ -383,6 +401,7 @@ async def run_level(
             monsters.keys(),
             hero.int_,
             hero.skills["MAGIC"],
+            wp.magic_power(hero.equipment.get("MAIN")),
         )
         hero_anim.set("cast", one_shot=True, queue_to="idle")
         await animate_cast(
@@ -417,6 +436,114 @@ async def run_level(
         else:
             slain = sum(1 for _, _, dead in applied if dead)
             set_msg(i18n.t("magic.spell_multi", spell=spell_name, count=len(applied), killed=slain))
+
+    async def ranged_attack():
+        """Fire the equipped bow/crossbow: aim, fly the bolt, resolve the hit."""
+        nonlocal crossbow_loaded
+        weapon = hero.equipment.get("MAIN")
+        if not weapon or wp.category(weapon.kind) != "ranged":
+            set_status(i18n.t("msg.no_ranged"))
+            return
+        if weapon.kind == "crossbow" and not crossbow_loaded:
+            crossbow_loaded = True  # second press reloads instead of firing
+            set_status(i18n.t("msg.crossbow_reload"))
+            sounds["open"].play()
+            return
+        reach = wp.weapon_range(hero, weapon)
+        shot_clock = pg.time.Clock()
+        direction = await choose_direction(
+            screen,
+            render_world_frame,
+            shot_clock,
+            d,
+            (hx, hy),
+            reach,
+            i18n.t("ui.ranged.dir_title", weapon=i18n.item_name(weapon)),
+        )
+        if direction is None:
+            return
+        if weapon.kind == "crossbow":
+            crossbow_loaded = False
+        hero.last_dir = direction
+        hero_anim.set_facing(_facing(*direction))
+        hero_anim.set("attack", one_shot=True, queue_to="idle")
+        # Trace the bolt: stop at the first monster or wall within range.
+        dx, dy = direction
+        target = None
+        end = (hx, hy)
+        for i in range(1, reach + 1):
+            x, y = hx + dx * i, hy + dy * i
+            if not d.inside(x, y) or d.grid[y][x] == WALL:
+                break
+            end = (x, y)
+            if (x, y) in monsters:
+                target = (x, y)
+                break
+        await animate_shot(screen, render_world_frame, shot_clock, (hx, hy), end, sounds)
+        if target is None:
+            set_msg(i18n.t("msg.ranged_miss"))
+            return
+        m = monsters[target]
+        name = i18n.monster_name(m)
+        dmg_range = wp.ranged_damage(hero, weapon)
+        dd, dead, dodged = try_attack(hero, m, m.armor + m.dex // 2, 0, damage=dmg_range)
+        if dodged:
+            set_msg(i18n.t("msg.monster_dodged", name=name))
+            return
+        spawn_scaled("spawn_hit", target[0], target[1], n=8, col=(255, 255, 180))
+        sounds["hit"].play()
+        if dead:
+            set_msg(i18n.t("msg.ranged_killed", name=name, dmg=dd))
+            kill_monster(target)
+        else:
+            set_msg(i18n.t("msg.ranged_hit", name=name, dmg=dd))
+
+    def _caster_dir(mx, my, reach):
+        """Return True if the hero is on a clear cardinal line from (mx,my) within
+        ``reach`` (no walls between), so a caster monster can fire."""
+        if mx == hx and my != hy and abs(my - hy) <= reach:
+            step = 1 if hy > my else -1
+            return all(d.grid[my + step * k][mx] != WALL for k in range(1, abs(my - hy)))
+        if my == hy and mx != hx and abs(mx - hx) <= reach:
+            step = 1 if hx > mx else -1
+            return all(d.grid[my][mx + step * k] != WALL for k in range(1, abs(mx - hx)))
+        return False
+
+    _EFFECT_COLOR = {
+        "ultrasound": (200, 130, 235),
+        "magic_arrow": (150, 200, 255),
+        "drain": (220, 70, 90),
+    }
+
+    def monster_casts(visible):
+        """Caster monsters fire at the hero from range. Real-time, non-blocking:
+        the hit shows as a coloured burst and flash rather than a flown bolt."""
+        nonlocal flash_t
+        for pos, m in list(monsters.items()):
+            spec = caster_spec(m.kind)
+            if not spec or pos not in visible or not _caster_dir(pos[0], pos[1], spec["range"]):
+                continue
+            dd, _dead, dodged = try_attack(
+                m,
+                hero,
+                hero.total_armor(),
+                hero.skills["DODGE"],
+                damage=caster_damage(m.kind, d.depth),
+            )
+            name = i18n.monster_name(m)
+            if dodged:
+                set_msg(i18n.t("msg.you_dodged_ranged", name=name))
+                continue
+            color = _EFFECT_COLOR.get(spec["effect"], (220, 120, 120))
+            spawn_scaled("spawn_burst", hx, hy, n=10, base_col=color)
+            shake.trigger(mag=5.0, dur=0.16)
+            flash_t = FLASH_DURATION
+            if spec["effect"] == "drain":
+                m.hp = min(m.max_hp, m.hp + dd)  # vampire heals by damage dealt
+            set_msg(i18n.t("msg.caster_hit", name=name, dmg=dd))
+            if hero.hp <= 0:
+                return True
+        return False
 
     clock = pg.time.Clock()
     while True:
@@ -460,6 +587,15 @@ async def run_level(
             flash_t = max(0.0, flash_t - dt)
 
         visible = compute_fov(d, hx, hy, cfg.FOV_RADIUS)
+
+        # Caster monsters take a turn on a fixed interval, firing at the hero.
+        monster_turn_acc += dt
+        if monster_turn_acc >= MONSTER_TURN_INTERVAL:
+            monster_turn_acc = 0.0
+            if monster_casts(visible):
+                await message_box(screen, [i18n.t("msg.death_box")])
+                return False
+
         world.fill(cfg.C_BG)
         draw_map(
             world,
@@ -551,6 +687,9 @@ async def run_level(
             elif e.key == pg.K_f and not moving:
                 await cast_spell()
                 cast_block = True  # don't let the aim key also step the hero
+            elif e.key == pg.K_r and not moving:
+                await ranged_attack()
+                cast_block = True  # don't let the aim key also step the hero
             elif e.key == pg.K_p:
 
                 def _save_cb():
@@ -619,6 +758,7 @@ async def run() -> None:
         animsets["hero"] = hero_art  # PixelLab 4-directional hero, falls back to atlas
     animsets.update(build_creature_animsets("monsters"))  # override atlas monsters
     animsets.update(build_creature_animsets("npc"))  # "merchant", "trainer"
+    animsets.setdefault("ghost", build_ghost_animset())  # procedural placeholder
     await loading(i18n.t("app.title"))
     sounds = make_sounds(master_volume=0.7)
 

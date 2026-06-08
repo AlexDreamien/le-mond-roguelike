@@ -12,7 +12,7 @@ from .core import progression
 from .ui_common import icon_label, line, panel
 
 _STAT_KEYS = {pg.K_1: "str", pg.K_2: "dex", pg.K_3: "int"}
-_SKILL_KEYS = {pg.K_1: "MELEE", pg.K_2: "DODGE", pg.K_3: "MAGIC"}
+_SKILL_KEYS = {pg.K_1: "MELEE", pg.K_2: "DODGE", pg.K_3: "MAGIC", pg.K_4: "ACCURACY"}
 
 
 async def stats_window(screen, hero, options=None) -> None:
@@ -70,6 +70,7 @@ async def skills_window(screen, hero, options=None) -> None:
             ("icon.dmg", i18n.t("ui.skills.melee", value=hero.skills["MELEE"])),
             ("icon.dodge", i18n.t("ui.skills.dodge", value=hero.skills["DODGE"])),
             ("icon.magic", i18n.t("ui.skills.magic", value=hero.skills["MAGIC"])),
+            ("icon.dex", i18n.t("ui.skills.accuracy", value=hero.skills.get("ACCURACY", 0))),
         ]
         y = rect.y + 50
         for key, text in rows:

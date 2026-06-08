@@ -13,6 +13,7 @@ from . import fonts, i18n
 from .core import config as cfg
 from .core.entities import EQUIP_SLOTS
 from .core.loot import INVENTORY_LIMIT
+from .core.weapons import can_equip
 from .drawing import object_icon
 from .ui_common import line, panel
 
@@ -48,6 +49,9 @@ def _equip_from_inventory(hero, idx) -> str:
     slot = item.slot
     if not slot:
         return "equip.not_equippable"
+    ok, unmet = can_equip(hero, item)
+    if not ok:  # stat/skill requirement not met -> a specific message, no equip
+        return "equip.req_" + (unmet if unmet in ("str", "dex", "int") else "skill")
     worn = hero.equipment.get(slot)
     status = hero.equip(item, to_slot=slot)
     if status == "equip.ok":

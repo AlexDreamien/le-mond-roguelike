@@ -83,10 +83,11 @@ def spell_range(spell: Spell, int_: int) -> int:
     return _RANGE_BASE[spell.key] + int_ // div
 
 
-def spell_damage(spell: Spell, int_: int, magic_skill: int) -> int:
+def spell_damage(spell: Spell, int_: int, magic_skill: int, magic_power: int = 0) -> int:
     """Hit for this much. Power scales primarily with intellect, and secondarily
-    with the magic skill. The single-target bolt rewards investment the most;
-    the area spells trade per-target damage for coverage."""
+    with the magic skill; an equipped staff/wand adds its ``magic_power``. The
+    single-target bolt rewards investment the most; the area spells trade
+    per-target damage for coverage."""
     table = {
         "magic_arrow": 4 + int_ + 2 * magic_skill,
         "frost_spike": 3 + int_ + magic_skill,
@@ -94,7 +95,7 @@ def spell_damage(spell: Spell, int_: int, magic_skill: int) -> int:
         "lightning_chain": 4 + int_ + magic_skill,
         "meteor": 8 + 2 * int_ + 2 * magic_skill,
     }
-    return max(1, table[spell.key])
+    return max(1, table[spell.key] + magic_power)
 
 
 @dataclass
@@ -132,16 +133,18 @@ def resolve(
     monsters,
     int_: int,
     magic_skill: int,
+    magic_power: int = 0,
 ) -> CastResult:
     """Resolve a cast without mutating anything.
 
     ``blocked(x, y)`` returns True for walls and out-of-bounds tiles.
     ``monsters`` is an iterable of tiles currently occupied by a monster.
+    ``magic_power`` is the equipped staff/wand bonus folded into the damage.
     """
     dx, dy = direction
     ox, oy = origin
     reach = spell_range(spell, int_)
-    dmg = spell_damage(spell, int_, magic_skill)
+    dmg = spell_damage(spell, int_, magic_skill, magic_power)
     monster_set = set(monsters)
 
     path: list[tuple[int, int]] = []

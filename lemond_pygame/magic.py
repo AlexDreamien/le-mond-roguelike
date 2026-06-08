@@ -15,12 +15,12 @@ itself.
 from __future__ import annotations
 
 import asyncio
+import math
 
 import pygame as pg
 
 from . import fonts, i18n
 from .core import config as cfg
-from .core import spells as sp
 from .core.dungeon import WALL
 from .ui_common import line, panel
 
@@ -44,9 +44,8 @@ def _glow(surface, px: int, py: int, color, radius: int) -> None:
     surface.blit(g, (px - radius, py - radius), special_flags=pg.BLEND_RGB_ADD)
 
 
-def _reachable_tiles(spell, hero, d, origin):
-    """Tiles the spell can reach in each cardinal direction (stops at walls)."""
-    reach = sp.spell_range(spell, hero.int_)
+def _reachable_tiles(reach, d, origin):
+    """Tiles reachable in each cardinal direction up to ``reach`` (stops at walls)."""
     ox, oy = origin
     tiles = []
     for dx, dy in _DIR_KEYS.values():
@@ -58,16 +57,16 @@ def _reachable_tiles(spell, hero, d, origin):
     return tiles
 
 
-async def choose_direction(screen, render_frame, hero, clock, spell, d, origin):
+async def choose_direction(screen, render_frame, clock, d, origin, reach, title):
     """Aim overlay. Returns a (dx, dy) direction, or None if cancelled.
 
     Purely a choice of direction: the hero never steps as a side effect. The
-    tiles the spell can reach are highlighted green so the player sees its range.
+    tiles reachable within ``reach`` are highlighted green so the player sees how
+    far the spell or shot will travel. ``title`` is a pre-localized header.
     """
     font = fonts.get_font(20)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, 90)
-    name = i18n.t("magic.spell." + spell.key)
-    tiles = _reachable_tiles(spell, hero, d, origin)
+    tiles = _reachable_tiles(reach, d, origin)
     fill = pg.Surface((cfg.TILE, cfg.TILE), pg.SRCALPHA)
     fill.fill((80, 230, 120, 70))
 
@@ -80,7 +79,7 @@ async def choose_direction(screen, render_frame, hero, clock, spell, d, origin):
     while True:
         dt = clock.tick(cfg.FPS) / 1000.0
         render_frame(dt, overlay)
-        panel(screen, rect, i18n.t("ui.magic.dir_title", spell=name), icon="icon.magic")
+        panel(screen, rect, title, icon="icon.magic")
         line(screen, font, i18n.t("ui.magic.hint"), rect.x + 20, rect.y + 50)
         pg.display.flip()
         await asyncio.sleep(0)
@@ -94,6 +93,30 @@ async def choose_direction(screen, render_frame, hero, clock, spell, d, origin):
                 return None
             if e.key in _DIR_KEYS:
                 return _DIR_KEYS[e.key]
+
+
+async def animate_shot(screen, render_frame, clock, origin, end, sounds, color=(235, 220, 150)):
+    """Fly a small projectile (arrow/bolt) from ``origin`` to ``end`` and spark."""
+    start = _tile_center(origin)
+    finish = _tile_center(end)
+    sounds["magic"].play()
+    dist = math.hypot(finish[0] - start[0], finish[1] - start[1])
+    flight = max(0.07, dist / 900.0)
+    elapsed = 0.0
+    while elapsed < flight:
+        dt = clock.tick(cfg.FPS) / 1000.0
+        elapsed += dt
+        f = min(1.0, elapsed / flight)
+        bx = int(start[0] + (finish[0] - start[0]) * f)
+        by = int(start[1] + (finish[1] - start[1]) * f)
+
+        def overlay(world, bx=bx, by=by):
+            pg.draw.line(world, color, start, (bx, by), 2)
+            _glow(world, bx, by, color, 5)
+
+        render_frame(dt, overlay)
+        pg.display.flip()
+        await asyncio.sleep(0)
 
 
 async def _run_for(seconds, clock, render_frame, overlay=None):

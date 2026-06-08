@@ -19,7 +19,10 @@ class StubRandom:
 
 
 def make_hero():
-    return Hero(kind="hero", max_hp=20, hp=20, str_=5, dex=5, int_=5)
+    # Strong enough to meet the requirements of low-tier auto-equipped loot.
+    h = Hero(kind="hero", max_hp=20, hp=20, str_=12, dex=12, int_=12)
+    h.skills = {"MELEE": 5, "DODGE": 5, "MAGIC": 5, "ACCURACY": 5}
+    return h
 
 
 def test_floor_gold_amount_is_positive_and_scales():

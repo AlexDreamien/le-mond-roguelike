@@ -70,16 +70,50 @@ MONSTER_KINDS = [
             "armor": (1, 1, 4),
         },
     ),
+    (
+        "ghost",
+        {
+            "str": (2, 0, 1),  # weak melee; a fragile, evasive ranged caster
+            "dex": (9, 2, 1),  # high dex -> dodges the hero's arrows well
+            "int": (5, 1, 1),
+            "hp": (7, 1, 1),  # squishy: dies fast to one solid hit
+            "armor": (0, 0, 1),
+        },
+    ),
 ]
-MONSTER_WEIGHTS = [3, 3, 2, 1, 2, 1]
+MONSTER_WEIGHTS = [3, 3, 2, 1, 2, 1, 1]  # ..., vampire, ghost
 
 # Heavy hitters are suppressed on the first floors so a depth-1 hero never faces
 # an ogre or living armor in the opening room. Index order matches MONSTER_KINDS:
-# goblin, orc, bat, ogre, armor, vampire.
+# goblin, orc, bat, ogre, armor, vampire, ghost.
 _GATES = {
     3: ("ogre", "armor"),  # appear only from depth 3
-    2: ("vampire",),  # appears only from depth 2
+    2: ("vampire", "ghost"),  # appear only from depth 2
 }
+
+# Caster monsters fire at the hero from range on a periodic tick when the hero is
+# on a clear cardinal line within reach. ``dmg`` is (base, num, den): the rolled
+# damage centre = base + depth*num//den. The hero may dodge (DODGE skill) and
+# armour halves the hit, like melee. The vampire heals itself by damage dealt.
+CASTERS = {
+    "bat": {"range": 3, "dmg": (2, 1, 2), "effect": "ultrasound"},
+    "ghost": {"range": 5, "dmg": (3, 1, 1), "effect": "magic_arrow"},
+    "vampire": {"range": 4, "dmg": (2, 1, 1), "effect": "drain"},
+}
+MONSTER_TURN_INTERVAL = 1.2  # seconds between caster volleys
+
+
+def caster_spec(kind: str):
+    return CASTERS.get(kind)
+
+
+def caster_damage(kind: str, depth: int) -> tuple[int, int] | None:
+    """Damage range for a caster monster's ranged attack at ``depth``."""
+    spec = CASTERS.get(kind)
+    if not spec:
+        return None
+    centre = _stat(spec["dmg"], depth)
+    return (max(1, centre - 1), centre + 1)
 
 
 def _stat(spec: tuple[int, int, int], depth: int) -> int:
@@ -127,12 +161,17 @@ def extra_attack_chance(entity) -> float:
     return min(0.30, entity.dex * 0.015)
 
 
-def try_attack(attacker, defender, defender_armor, defender_dodge_skill=0, rng=None):
-    """Resolve one swing. Returns (damage, defender_dead, dodged)."""
+def try_attack(attacker, defender, defender_armor, defender_dodge_skill=0, rng=None, damage=None):
+    """Resolve one swing. Returns (damage, defender_dead, dodged).
+
+    ``damage`` overrides the attacker's melee range with an explicit (min, max),
+    used for ranged shots and caster monster attacks so the same dodge/armour
+    resolution covers every kind of hit.
+    """
     r = rng or random
     if r.random() < dodge_chance(defender, defender_dodge_skill):
         return 0, False, True
-    base_min, base_max = attacker.melee_damage()
+    base_min, base_max = damage if damage is not None else attacker.melee_damage()
     dmg = r.randint(base_min, base_max)
     dmg = max(1, dmg - defender_armor // 2)
     defender.hp -= dmg

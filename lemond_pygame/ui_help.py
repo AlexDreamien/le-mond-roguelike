@@ -20,6 +20,7 @@ _ROWS = [
     ("icon.drink", "ui.help.drink", "Z"),
     ("icon.drink", "ui.help.drink_mana", "X"),
     ("icon.magic", "ui.help.magic", "F"),
+    ("icon.dmg", "ui.help.shoot", "R"),
     ("icon.magic", "ui.help.spellbook", "B"),
     ("section", "ui.help.sec_menus", None),
     ("icon.inventory", "ui.help.inventory", "I"),

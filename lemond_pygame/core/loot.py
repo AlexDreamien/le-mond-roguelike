@@ -12,6 +12,7 @@ import random
 from dataclasses import dataclass
 
 from .entities import Item, random_loot
+from .weapons import can_equip
 
 INVENTORY_LIMIT = 9
 CHEST_POTION_CHANCE = 0.2  # chest: occasional potion instead of gear
@@ -40,7 +41,8 @@ def resolve_chest(hero, depth: int, rng=None) -> PickupResult:
         hero.potions += 1
         return PickupResult("potion")
     item = random_loot(depth, rng=r)
-    if hero.equipment.get(item.slot) is None:
+    ok, _unmet = can_equip(hero, item)
+    if ok and hero.equipment.get(item.slot) is None:
         status = hero.equip(item, to_slot=item.slot)
         return PickupResult("equipped", item=item, equip_status=status)
     if len(hero.inventory) < INVENTORY_LIMIT:

@@ -133,7 +133,9 @@ def load_hero(slot: int) -> tuple[Hero | None, dict]:
         h.skill_points = data.get("skill_points", 0)
         h.depth = data.get("depth", 1)
         h.unlocked_depth = data.get("unlocked_depth", h.depth)
-        h.skills = data.get("skills", {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
+        h.skills = data.get("skills", {"MELEE": 0, "DODGE": 0, "MAGIC": 0, "ACCURACY": 0})
+        for sk in ("MELEE", "DODGE", "MAGIC", "ACCURACY"):
+            h.skills.setdefault(sk, 0)  # backfill new skills on legacy saves
         h.potions = data.get("potions", 0)
         h.mana_potions = data.get("mana_potions", 0)
         h.recompute_max_mana()  # derive from int, then honour any saved values

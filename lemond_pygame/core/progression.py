@@ -9,7 +9,7 @@ PRIMARY_STAT = {"warrior": "str", "thief": "dex", "mage": "int"}
 PRIMARY_SKILL = {"warrior": "MELEE", "thief": "DODGE", "mage": "MAGIC"}
 
 STATS = ("str", "dex", "int")
-SKILLS = ("MELEE", "DODGE", "MAGIC")
+SKILLS = ("MELEE", "DODGE", "MAGIC", "ACCURACY")
 
 
 def add_stat(hero: Hero, stat: str) -> bool:

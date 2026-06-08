@@ -266,3 +266,30 @@ def build_creature_animsets(group: str) -> dict[str, dict[str, list[pg.Surface]]
         if animset:
             out[kind_dir.name] = animset
     return out
+
+
+def build_ghost_animset() -> dict[str, list[pg.Surface]]:
+    """A procedural placeholder sprite for the ghost (no PixelLab art yet).
+
+    A translucent pale-blue wraith with a wavy hem and two dark eyes, drawn at a
+    couple of bob heights so it gently floats. Replace with generated art later.
+    """
+    t = cfg.TILE
+    frames = []
+    for bob in (0, 2):
+        s = pg.Surface((t, t), pg.SRCALPHA)
+        cx = t // 2
+        top = 4 + bob
+        body = (190, 215, 245, 165)
+        # Rounded head + tapering body.
+        pg.draw.circle(s, body, (cx, top + 8), 9)
+        pg.draw.rect(s, body, (cx - 9, top + 8, 18, t - top - 14), border_radius=4)
+        # Wavy hem (three little arcs along the bottom).
+        hem = top + 8 + (t - top - 14)
+        for i, ox in enumerate((-6, 0, 6)):
+            pg.draw.circle(s, body, (cx + ox, hem), 4 if i != 1 else 3)
+        # Eyes.
+        pg.draw.circle(s, (30, 40, 70, 230), (cx - 3, top + 7), 2)
+        pg.draw.circle(s, (30, 40, 70, 230), (cx + 3, top + 7), 2)
+        frames.append(s)
+    return {"idle_south": frames}
