@@ -39,19 +39,32 @@ def _make_sound(samples):
     the WAV path on desktop, then to silence, if the platform refuses."""
     try:
         init = pg.mixer.get_init()
-        rate = init[0] if init else cfg.SND_RATE
-        channels = init[2] if init else 1
+        if not init:
+            return pg.mixer.Sound(buffer=samples.tobytes())
+        rate, fmt, channels = init
         data = samples
-        if rate != cfg.SND_RATE:  # nearest-neighbour resample to the mixer rate
+        # 1) Nearest-neighbour resample from our generation rate to the mixer's.
+        if rate != cfg.SND_RATE:
             ratio = rate / cfg.SND_RATE
             count = int(len(data) * ratio)
             last = len(data) - 1
             data = array.array("h", (data[min(last, int(i / ratio))] for i in range(count)))
-        if channels >= 2:  # replicate the mono signal across channels, interleaved
-            interleaved = array.array("h")
+        # 2) Convert int16 -> the mixer's actual sample format. Browsers (pygbag)
+        #    open the device as 32-bit float; sending int16 bytes there plays back
+        #    as noise, so match whatever SDL reports. ``fmt`` low byte = bit width;
+        #    the float bit (0x100), or pygame's normalized 32, marks float.
+        raw = abs(fmt)
+        if raw == 32 or raw & 0x100:  # 32-bit float (AUDIO_F32)
+            data = array.array("f", (s / 32768.0 for s in data))
+        elif raw & 0xFF == 8:  # 8-bit
+            data = array.array("b", (s >> 8 for s in data))
+        # else: 16-bit signed, already matches ``data`` (array 'h')
+        # 3) Replicate the mono signal across the mixer's channels, interleaved.
+        if channels >= 2:
+            inter = array.array(data.typecode)
             for s in data:
-                interleaved.extend((s,) * channels)
-            data = interleaved
+                inter.extend((s,) * channels)
+            data = inter
         return pg.mixer.Sound(buffer=data.tobytes())
     except Exception:
         try:
