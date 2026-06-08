@@ -21,6 +21,7 @@ import pygame as pg
 from . import fonts, i18n
 from .core import config as cfg
 from .core import spells as sp
+from .core.dungeon import WALL
 from .ui_common import line, panel
 
 _DIR_KEYS = {
@@ -29,7 +30,6 @@ _DIR_KEYS = {
     pg.K_LEFT: (-1, 0),
     pg.K_RIGHT: (1, 0),
 }
-_NUM_KEYS = {pg.K_1: 0, pg.K_2: 1, pg.K_3: 2, pg.K_4: 3, pg.K_5: 4}
 
 
 def _tile_center(cell: tuple[int, int]) -> tuple[int, int]:
@@ -44,74 +44,42 @@ def _glow(surface, px: int, py: int, color, radius: int) -> None:
     surface.blit(g, (px - radius, py - radius), special_flags=pg.BLEND_RGB_ADD)
 
 
-async def choose_spell(screen, render_frame, hero, clock):
-    """Spell picker overlay. Returns the chosen Spell, or None if cancelled."""
-    font = fonts.get_font(20)
-    skill = hero.skills["MAGIC"]
-    avail = sp.available_spells(skill) or [sp.SPELLS[0]]
-    sel = 0
-    rect = pg.Rect(80, 70, cfg.SCREEN_W - 160, 70 + len(sp.SPELLS) * 30)
-    while True:
-        dt = clock.tick(cfg.FPS) / 1000.0
-        render_frame(dt)
-        panel(screen, rect, i18n.t("ui.magic.choose"), icon="icon.magic")
-        y = rect.y + 44
-        for spell in sp.SPELLS:
-            name = i18n.t("magic.spell." + spell.key)
-            if sp.is_unlocked(spell, skill):
-                slot = avail.index(spell) + 1
-                dmg = sp.spell_damage(spell, hero.int_, skill)
-                rng = sp.spell_range(spell, hero.int_)
-                label = f"{slot}. {name}   ({i18n.t('ui.magic.stat', dmg=dmg, rng=rng)})"
-                selected = avail[sel] is spell
-                if selected:
-                    hl = pg.Rect(rect.x + 12, y - 3, rect.w - 24, 27)
-                    pg.draw.rect(screen, (44, 44, 66), hl, border_radius=6)
-                col = (235, 235, 245) if selected else (175, 185, 205)
-            else:
-                label = f"-. {name}   ({i18n.t('ui.magic.locked', skill=spell.min_skill)})"
-                col = (110, 110, 125)
-            line(screen, font, label, rect.x + 24, y, col)
-            y += 30
-        line(
-            screen,
-            font,
-            i18n.t("ui.magic.choose_hint"),
-            rect.x + 20,
-            rect.bottom - 30,
-            (160, 160, 200),
-        )
-        pg.display.flip()
-        await asyncio.sleep(0)
-        for e in pg.event.get():
-            if e.type == pg.QUIT:
-                pg.quit()
-                raise SystemExit
-            if e.type != pg.KEYDOWN:
-                continue
-            if e.key == pg.K_ESCAPE:
-                return None
-            if e.key in (pg.K_UP, pg.K_LEFT):
-                sel = (sel - 1) % len(avail)
-            elif e.key in (pg.K_DOWN, pg.K_RIGHT):
-                sel = (sel + 1) % len(avail)
-            elif e.key in (pg.K_RETURN, pg.K_f):
-                return avail[sel]
-            elif e.key in _NUM_KEYS and _NUM_KEYS[e.key] < len(avail):
-                return avail[_NUM_KEYS[e.key]]
+def _reachable_tiles(spell, hero, d, origin):
+    """Tiles the spell can reach in each cardinal direction (stops at walls)."""
+    reach = sp.spell_range(spell, hero.int_)
+    ox, oy = origin
+    tiles = []
+    for dx, dy in _DIR_KEYS.values():
+        for i in range(1, reach + 1):
+            x, y = ox + dx * i, oy + dy * i
+            if not d.inside(x, y) or d.grid[y][x] == WALL:
+                break
+            tiles.append((x, y))
+    return tiles
 
 
-async def choose_direction(screen, render_frame, hero, clock, spell):
+async def choose_direction(screen, render_frame, hero, clock, spell, d, origin):
     """Aim overlay. Returns a (dx, dy) direction, or None if cancelled.
 
-    Purely a choice of direction: the hero never steps as a side effect.
+    Purely a choice of direction: the hero never steps as a side effect. The
+    tiles the spell can reach are highlighted green so the player sees its range.
     """
     font = fonts.get_font(20)
     rect = pg.Rect(80, 80, cfg.SCREEN_W - 160, 90)
     name = i18n.t("magic.spell." + spell.key)
+    tiles = _reachable_tiles(spell, hero, d, origin)
+    fill = pg.Surface((cfg.TILE, cfg.TILE), pg.SRCALPHA)
+    fill.fill((80, 230, 120, 70))
+
+    def overlay(world):
+        for x, y in tiles:
+            px, py = x * cfg.TILE, y * cfg.TILE
+            world.blit(fill, (px, py))
+            pg.draw.rect(world, (120, 240, 150), (px, py, cfg.TILE, cfg.TILE), 1)
+
     while True:
         dt = clock.tick(cfg.FPS) / 1000.0
-        render_frame(dt)
+        render_frame(dt, overlay)
         panel(screen, rect, i18n.t("ui.magic.dir_title", spell=name), icon="icon.magic")
         line(screen, font, i18n.t("ui.magic.hint"), rect.x + 20, rect.y + 50)
         pg.display.flip()

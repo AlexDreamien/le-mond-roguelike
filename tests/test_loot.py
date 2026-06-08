@@ -58,6 +58,15 @@ def test_chest_inventory_full_keeps_item():
 
 def test_chest_can_give_potion():
     h = make_hero()
-    result = resolve_chest(h, depth=3, rng=StubRandom([0.05]))  # < potion chance
+    # 0.05 < potion chance (potion branch); 0.99 -> not the mana half -> health.
+    result = resolve_chest(h, depth=3, rng=StubRandom([0.05, 0.99]))
     assert result.outcome == "potion"
     assert h.potions == 1
+
+
+def test_chest_can_give_mana_potion():
+    h = make_hero()
+    # 0.05 < potion chance (potion branch); 0.1 < 0.5 -> the mana half.
+    result = resolve_chest(h, depth=3, rng=StubRandom([0.05, 0.1]))
+    assert result.outcome == "mana_potion"
+    assert h.mana_potions == 1

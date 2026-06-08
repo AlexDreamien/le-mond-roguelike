@@ -25,7 +25,10 @@ def add_stat(hero: Hero, stat: str) -> bool:
     elif stat == "dex":
         hero.dex += 1
     else:
+        before = hero.max_mana
         hero.int_ += 1
+        hero.recompute_max_mana()
+        hero.mana += hero.max_mana - before  # gaining intellect grants the new mana
     return True
 
 

@@ -3,7 +3,7 @@
 # Display geometry
 TILE = 32
 MAP_W, MAP_H = 32, 20
-HUD_H = 100
+HUD_H = 116  # four rows: bars, stats, status message, hotkey hints
 SCREEN_W, SCREEN_H = MAP_W * TILE, MAP_H * TILE + HUD_H
 FPS = 60
 FOV_RADIUS = 8

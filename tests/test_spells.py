@@ -3,10 +3,24 @@ from lemond_pygame.core.spells import (
     SPELLS,
     available_spells,
     is_unlocked,
+    next_locked,
     resolve,
     spell_damage,
     spell_range,
 )
+
+
+def test_every_spell_has_a_positive_mana_cost():
+    assert all(s.mana_cost > 0 for s in SPELLS)
+    # Costlier spells hit harder: meteor (biggest) costs the most.
+    assert SPELL_BY_KEY["meteor"].mana_cost == max(s.mana_cost for s in SPELLS)
+    assert SPELL_BY_KEY["magic_arrow"].mana_cost < SPELL_BY_KEY["meteor"].mana_cost
+
+
+def test_next_locked_tracks_the_upcoming_unlock():
+    assert next_locked(0).key == "frost_spike"  # first spell above the starter
+    assert next_locked(4).key == "lightning_chain"
+    assert next_locked(9) is None  # everything unlocked
 
 
 def _blocked_from(walls, w=20, h=20):

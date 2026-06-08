@@ -38,7 +38,9 @@
   "stat.int": "INT",
 
   "hud.potions": "Potions",
+  "hud.mana_potions": "Mana pot.",
   "hud.gold": "Gold",
+  "hud.hotkeys": "F Cast  ·  I Inv  ·  S Stats  ·  K Skills  ·  B Book  ·  H Help  ·  Z/X Potion",
 
   "msg.wall": "A wall.",
   "msg.level_intro": "Level {depth}. Find the exit.",
@@ -50,6 +52,9 @@
   "msg.death_box": "You died, but the power of Le-Mond returns you to the start of the level.",
   "msg.no_potions": "No potions left.",
   "msg.potion_used": "Drank a potion: +{healed} HP. Left: {potions}.",
+  "msg.no_mana_potions": "No mana potions left.",
+  "msg.mana_full": "Mana is already full.",
+  "msg.mana_potion_used": "Drank a mana potion: +{restored} MP. Left: {potions}.",
   "msg.respawn_1": "You respawned at the entrance of the current level.",
   "msg.respawn_2": "Press ENTER...",
   "msg.closed": "Closed.",
@@ -59,7 +64,9 @@
 
   "pickup.gold": "Found {gold} gold.",
   "pickup.potion": "Picked up: healing potion (+1).",
+  "pickup.mana_potion": "Picked up: mana potion (+1).",
   "pickup.chest_potion": "Chest: healing potion (+1).",
+  "pickup.chest_mana_potion": "Chest: mana potion (+1).",
   "pickup.equipped": "{status} (auto)",
   "pickup.stored": "Stored in inventory: {item}",
   "pickup.inventory_full": "Inventory full ({limit}).",
@@ -73,6 +80,12 @@
   "magic.spell.fireball": "Fireball",
   "magic.spell.lightning_chain": "Lightning Chain",
   "magic.spell.meteor": "Meteor",
+  "magic.no_mana": "Not enough mana for {spell}.",
+  "magic.effect.magic_arrow": "single target",
+  "magic.effect.frost_spike": "pierces a line",
+  "magic.effect.fireball": "area blast",
+  "magic.effect.lightning_chain": "chains between foes",
+  "magic.effect.meteor": "large area blast",
 
   "ui.close_hint": "Esc/Enter - close",
   "ui.message.title": "Message",
@@ -144,6 +157,12 @@
 
   "ui.quit_confirm": "Save and exit?",
 
+  "ui.spellbook.title": "Spellbook",
+  "ui.spellbook.params": "dmg {dmg}  ·  range {rng}  ·  mana {mana}  ·  {effect}",
+  "ui.spellbook.bound": "[F]",
+  "ui.spellbook.next": "Next: {name} - unlocks at Magic {skill}",
+  "ui.spellbook.hint": "Up/Down - select, Enter - bind to F, Esc - close",
+
   "ui.help.title": "Controls & Hotkeys",
   "ui.help.sec_move": "Movement",
   "ui.help.sec_actions": "Actions",
@@ -151,7 +170,9 @@
   "ui.help.move": "Move / attack / talk (hold to keep moving)",
   "ui.help.grab": "Pick up loot on the tile",
   "ui.help.drink": "Drink a healing potion",
-  "ui.help.magic": "Cast a spell (pick spell, then aim)",
+  "ui.help.magic": "Cast the active spell (then aim)",
+  "ui.help.spellbook": "Spellbook (choose the F spell)",
+  "ui.help.drink_mana": "Drink a mana potion",
   "ui.help.inventory": "Inventory (equip / drop, drag to slots)",
   "ui.help.stats": "Stats",
   "ui.help.skills": "Skills",

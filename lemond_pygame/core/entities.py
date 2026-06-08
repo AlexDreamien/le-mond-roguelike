@@ -63,6 +63,10 @@ class Hero(Creature):
     skill_points: int = 0
     skills: dict = field(default_factory=lambda: {"MELEE": 0, "DODGE": 0, "MAGIC": 0})
     potions: int = 0
+    mana_potions: int = 0
+    mana: int = 0
+    max_mana: int = 0
+    active_spell: str = "magic_arrow"  # spell cast by F; chosen in the spellbook
     gold: int = 0
     depth: int = 1
     unlocked_depth: int = 1
@@ -87,6 +91,9 @@ class Hero(Creature):
 
     def recompute_max_hp(self) -> None:
         self.max_hp = 16 + self.str_ * 2
+
+    def recompute_max_mana(self) -> None:
+        self.max_mana = 10 + self.int_ * 4
 
     def xp_to_next(self) -> int:
         # Geometric ramp (~1.5x per level) via exact integer arithmetic, so

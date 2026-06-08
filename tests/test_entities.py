@@ -24,6 +24,15 @@ def test_total_armor_counts_only_armor_slots_plus_str_bonus():
     assert h.total_armor() == 4 + 10 // 5
 
 
+def test_recompute_max_mana_scales_with_intellect():
+    h = make_hero(int_=8)
+    h.recompute_max_mana()
+    assert h.max_mana == 10 + 8 * 4
+    poorer = make_hero(int_=3)
+    poorer.recompute_max_mana()
+    assert poorer.max_mana < h.max_mana
+
+
 def test_xp_to_next_is_geometric():
     # Exact integer ramp: 20 * (3/2)^(level-1), floored.
     h = make_hero()

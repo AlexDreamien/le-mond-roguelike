@@ -25,6 +25,7 @@ class Spell:
     min_skill: int  # MAGIC skill required to unlock the spell
     shape: str
     color: tuple[int, int, int]  # projectile/impact tint used by the render layer
+    mana_cost: int = 0  # mana spent per cast
     radius: int = 0  # aoe/meteor blast radius (Chebyshev distance)
     max_chains: int = 0  # chain: number of extra targets after the first
     chain_radius: int = 0  # chain: search radius for the next arc
@@ -33,19 +34,20 @@ class Spell:
 
 # Ordered by power / unlock depth. Index also drives the menu order.
 SPELLS: list[Spell] = [
-    Spell("magic_arrow", 0, "bolt", (150, 200, 255)),
-    Spell("frost_spike", 2, "pierce", (150, 225, 245)),
-    Spell("fireball", 4, "aoe", (255, 140, 60), radius=1),
+    Spell("magic_arrow", 0, "bolt", (150, 200, 255), mana_cost=3),
+    Spell("frost_spike", 2, "pierce", (150, 225, 245), mana_cost=5),
+    Spell("fireball", 4, "aoe", (255, 140, 60), mana_cost=8, radius=1),
     Spell(
         "lightning_chain",
         6,
         "chain",
         (245, 235, 130),
+        mana_cost=7,
         max_chains=3,
         chain_radius=3,
         falloff=70,
     ),
-    Spell("meteor", 9, "meteor", (255, 95, 50), radius=2),
+    Spell("meteor", 9, "meteor", (255, 95, 50), mana_cost=14, radius=2),
 ]
 SPELL_BY_KEY = {s.key: s for s in SPELLS}
 
@@ -66,6 +68,12 @@ def available_spells(magic_skill: int) -> list[Spell]:
 
 def is_unlocked(spell: Spell, magic_skill: int) -> bool:
     return magic_skill >= spell.min_skill
+
+
+def next_locked(magic_skill: int) -> Spell | None:
+    """The next spell that will unlock as the magic skill grows, if any."""
+    locked = [s for s in SPELLS if magic_skill < s.min_skill]
+    return min(locked, key=lambda s: s.min_skill) if locked else None
 
 
 def spell_range(spell: Spell, int_: int) -> int:

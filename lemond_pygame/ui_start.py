@@ -135,9 +135,12 @@ def create_hero_for_class(class_kind: str) -> Hero:
     h.skills[skill] = 1
     h.recompute_max_hp()
     h.hp = h.max_hp
+    h.recompute_max_mana()
+    h.mana = h.max_mana
     h.depth = 1
     h.unlocked_depth = 1
     h.potions = 1
+    h.mana_potions = 1
     h.equip(Item(kind=weapon_kind, slot="MAIN", tier=1, power=1, two_handed=False), to_slot="MAIN")
     return h
 

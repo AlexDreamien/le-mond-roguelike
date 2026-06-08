@@ -25,7 +25,7 @@ from .drawing import (
     build_hero_animset,
     build_tiles,
 )
-from .magic import animate_cast, choose_direction, choose_spell
+from .magic import animate_cast, choose_direction
 from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
@@ -35,6 +35,7 @@ from .ui_inventory import inventory_screen
 from .ui_options import options_screen
 from .ui_pause import pause_screen
 from .ui_shop import shop_screen
+from .ui_spellbook import spellbook_screen
 from .ui_stats import skills_window, stats_window
 from .ui_trainer import trainer_screen
 
@@ -150,8 +151,12 @@ async def run_level(
         sounds["pickup"].play()
         hero_anim.set("pickup", one_shot=True, queue_to="idle")
         if tile == POTION:
-            hero.potions += 1
-            set_msg(i18n.t("pickup.potion"))
+            if random.random() < 0.5:  # floor potions split between health and mana
+                hero.mana_potions += 1
+                set_msg(i18n.t("pickup.mana_potion"))
+            else:
+                hero.potions += 1
+                set_msg(i18n.t("pickup.potion"))
         else:
             amount = floor_gold_amount(hero.depth)
             hero.gold += amount
@@ -167,6 +172,8 @@ async def run_level(
         hero_anim.set("pickup", one_shot=True, queue_to="idle")
         if result.outcome == "potion":
             set_msg(i18n.t("pickup.chest_potion"))
+        elif result.outcome == "mana_potion":
+            set_msg(i18n.t("pickup.chest_mana_potion"))
         elif result.outcome == "equipped":
             status = i18n.t(result.equip_status, item=i18n.item_name(result.item))
             set_msg(i18n.t("pickup.equipped", status=status))
@@ -304,6 +311,7 @@ async def run_level(
             # Descending grants a partial recovery (~40%), not a full reset, so
             # potions and attrition still matter between floors.
             hero.hp = min(hero.max_hp, hero.hp + (hero.max_hp * 2) // 5)
+            hero.mana = min(hero.max_mana, hero.mana + (hero.max_mana * 2) // 5)
             return True
         return False
 
@@ -342,15 +350,29 @@ async def run_level(
         draw_hud(screen, hero)
         draw_msg(screen, msg)
 
+    def active_spell():
+        """The spell bound to F (chosen in the spellbook), clamped to unlocked."""
+        spell = sp.SPELL_BY_KEY.get(hero.active_spell)
+        if spell is None or not sp.is_unlocked(spell, hero.skills["MAGIC"]):
+            avail = sp.available_spells(hero.skills["MAGIC"])
+            spell = avail[-1] if avail else sp.SPELLS[0]
+            hero.active_spell = spell.key
+        return spell
+
     async def cast_spell():
-        """Run the full cast: pick a spell, aim it, fly the projectile, apply it."""
-        cast_clock = pg.time.Clock()
-        spell = await choose_spell(screen, render_world_frame, hero, cast_clock)
-        if spell is None:
+        """Cast the active spell: check mana, aim it, fly the projectile, apply it."""
+        spell = active_spell()
+        spell_name = i18n.t("magic.spell." + spell.key)
+        if hero.mana < spell.mana_cost:
+            set_status(i18n.t("magic.no_mana", spell=spell_name))
             return
-        direction = await choose_direction(screen, render_world_frame, hero, cast_clock, spell)
+        cast_clock = pg.time.Clock()
+        direction = await choose_direction(
+            screen, render_world_frame, hero, cast_clock, spell, d, (hx, hy)
+        )
         if direction is None:
             return
+        hero.mana -= spell.mana_cost  # spend only once the cast is committed
         hero.last_dir = direction
         hero_anim.set_facing(_facing(*direction))
         result = sp.resolve(
@@ -386,7 +408,6 @@ async def run_level(
             applied.append((name, h.damage, dead))
             if dead:
                 kill_monster(h.pos)
-        spell_name = i18n.t("magic.spell." + spell.key)
         if not applied:
             set_msg(i18n.t("magic.spell_miss", spell=spell_name))
         elif len(applied) == 1:
@@ -510,6 +531,23 @@ async def run_level(
                     set_msg(i18n.t("msg.potion_used", healed=healed, potions=hero.potions))
                     sounds["potion"].play()
                     hero_anim.set("drink", one_shot=True, queue_to="idle")
+            elif e.key == pg.K_x:
+                if hero.mana_potions <= 0:
+                    set_msg(i18n.t("msg.no_mana_potions"))
+                elif hero.mana >= hero.max_mana:
+                    set_msg(i18n.t("msg.mana_full"))
+                else:
+                    gain = 8 + 4 * hero.level
+                    restored = min(hero.max_mana - hero.mana, gain)
+                    hero.mana += restored
+                    hero.mana_potions -= 1
+                    set_msg(
+                        i18n.t("msg.mana_potion_used", restored=restored, potions=hero.mana_potions)
+                    )
+                    sounds["potion"].play()
+                    hero_anim.set("drink", one_shot=True, queue_to="idle")
+            elif e.key == pg.K_b:
+                await spellbook_screen(screen, hero)
             elif e.key == pg.K_f and not moving:
                 await cast_spell()
                 cast_block = True  # don't let the aim key also step the hero

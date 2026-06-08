@@ -19,7 +19,7 @@ CHEST_POTION_CHANCE = 0.2  # chest: occasional potion instead of gear
 
 @dataclass
 class PickupResult:
-    outcome: str  # "potion" | "equipped" | "stored" | "inventory_full"
+    outcome: str  # "potion" | "mana_potion" | "equipped" | "stored" | "inventory_full"
     item: Item | None = None
     equip_status: str | None = None  # i18n code returned by Hero.equip when equipped
 
@@ -34,6 +34,9 @@ def floor_gold_amount(depth: int, rng=None) -> int:
 def resolve_chest(hero, depth: int, rng=None) -> PickupResult:
     r = rng or random
     if r.random() < CHEST_POTION_CHANCE:
+        if r.random() < 0.5:  # split the potion drop between health and mana
+            hero.mana_potions += 1
+            return PickupResult("mana_potion")
         hero.potions += 1
         return PickupResult("potion")
     item = random_loot(depth, rng=r)

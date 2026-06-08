@@ -150,23 +150,41 @@ def draw_hp_bar(surface, x, y, w, h, cur, maxv) -> None:
     pg.draw.rect(surface, cfg.C_HP_FG, (x + 2, y + 2, int((w - 4) * frac), h - 4), border_radius=3)
 
 
+def _bar(surface, x, y, w, h, cur, maxv, bg, fg) -> None:
+    pg.draw.rect(surface, bg, (x, y, w, h), border_radius=3)
+    if maxv > 0:
+        frac = max(0.0, min(1.0, cur / maxv))
+        pg.draw.rect(surface, fg, (x + 2, y + 2, int((w - 4) * frac), h - 4), border_radius=3)
+
+
 def draw_hud(screen, hero: Hero) -> None:
     top = cfg.MAP_H * cfg.TILE
     pg.draw.rect(screen, cfg.C_PANEL, (0, top, cfg.SCREEN_W, cfg.HUD_H))
     pg.draw.rect(screen, cfg.C_PANEL_BORDER, (0, top, cfg.SCREEN_W, cfg.HUD_H), 2)
     font = fonts.get_font(20)
+    small = fonts.get_font(16)
 
-    # HP bar with a heart icon; the value sits centred on the bar.
-    bar_y, bar_h = top + 10, 18
+    # Row 1: HP bar (left) and mana bar (right), each with an icon and value.
+    bar_y, bar_h, bar_w = top + 10, 18, 200
+    val_dy = (bar_h - font.get_height()) // 2
     heart = object_icon("icon.hp", 18)
-    bar_x = 36 if heart else 10
+    hp_x = 36 if heart else 10
     if heart:
         screen.blit(heart, (12, bar_y))
-    draw_hp_bar(screen, bar_x, bar_y, 230, bar_h, hero.hp, hero.max_hp)
-    hp_y = bar_y + (bar_h - font.get_height()) // 2
-    _line(screen, font, f"{hero.hp}/{hero.max_hp}", bar_x + 8, hp_y, (0, 0, 0))
+    _bar(screen, hp_x, bar_y, bar_w, bar_h, hero.hp, hero.max_hp, cfg.C_HP_BG, cfg.C_HP_FG)
+    _line(screen, font, f"{hero.hp}/{hero.max_hp}", hp_x + 8, bar_y + val_dy, (0, 0, 0))
 
-    # Stat row: an icon (with text fallback) followed by its value.
+    mana_icon = object_icon("icon.magic", 18)
+    mi_x = hp_x + bar_w + 24
+    mana_x = mi_x + 24 if mana_icon else mi_x
+    if mana_icon:
+        screen.blit(mana_icon, (mi_x, bar_y))
+    _bar(
+        screen, mana_x, bar_y, bar_w, bar_h, hero.mana, hero.max_mana, (20, 24, 60), (70, 110, 230)
+    )
+    _line(screen, font, f"{hero.mana}/{hero.max_mana}", mana_x + 8, bar_y + val_dy, (235, 235, 245))
+
+    # Row 2: stat row, an icon (with text fallback) followed by its value.
     dmg_min, dmg_max = hero.weapon_damage()
     dodge = int(dodge_chance(hero, hero.skills["DODGE"]) * 100)
     pairs = [
@@ -178,12 +196,13 @@ def draw_hud(screen, hero: Hero) -> None:
         ("icon.dodge", "DODGE", f"{dodge}%"),
         ("icon.xp", "XP", f"{hero.xp}/{hero.xp_to_next()}"),
         ("icon.potion", i18n.t("hud.potions"), hero.potions),
+        ("icon.mana_potion", i18n.t("hud.mana_potions"), hero.mana_potions),
         ("icon.gold", i18n.t("hud.gold"), hero.gold),
     ]
     y = top + 40
     x = 10
     _line(screen, font, f"Lv{hero.level}", x, y, (210, 210, 240))
-    x += font.size(f"Lv{hero.level}")[0] + 18
+    x += font.size(f"Lv{hero.level}")[0] + 14
     for key, label, value in pairs:
         icon = object_icon(key, 20)
         if icon:
@@ -194,12 +213,15 @@ def draw_hud(screen, hero: Hero) -> None:
             x += font.size(f"{label}:")[0] + 4
         text = str(value)
         _line(screen, font, text, x, y, cfg.C_TEXT)
-        x += font.size(text)[0] + 16
+        x += font.size(text)[0] + 14
+
+    # Row 4: dim hotkey hints (row 3 is the status message from draw_msg).
+    _line(screen, small, i18n.t("hud.hotkeys"), 10, top + 92, (140, 145, 165))
 
 
 def draw_msg(screen, text: str) -> None:
     font = fonts.get_font(20)
-    _line(screen, font, text, 10, cfg.MAP_H * cfg.TILE + 64, (200, 200, 160))
+    _line(screen, font, text, 10, cfg.MAP_H * cfg.TILE + 66, (200, 200, 160))
 
 
 def draw_map(

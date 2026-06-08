@@ -27,6 +27,16 @@ def test_add_strength_increases_max_hp_and_heals_the_margin():
     assert h.hp == 12  # healed by the new margin
 
 
+def test_add_intellect_increases_max_mana_and_grants_the_margin():
+    h = make_hero(stat_points=1)
+    h.recompute_max_mana()  # 10 + int*5... actually 10 + int*4
+    h.mana = 5
+    before_max = h.max_mana
+    add_stat(h, "int")
+    assert h.max_mana == before_max + 4  # recompute_max_mana = 10 + int*4
+    assert h.mana == 9  # granted the new mana margin
+
+
 def test_add_stat_fails_without_points():
     h = make_hero(stat_points=0)
     assert add_stat(h, "str") is False

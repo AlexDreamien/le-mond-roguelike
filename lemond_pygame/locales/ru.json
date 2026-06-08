@@ -38,7 +38,9 @@
   "stat.int": "ИНТ",
 
   "hud.potions": "Зелья",
+  "hud.mana_potions": "Зел. маны",
   "hud.gold": "Золото",
+  "hud.hotkeys": "F Каст  ·  I Инв  ·  S Статы  ·  K Навыки  ·  B Книга  ·  H Помощь  ·  Z/X Зелья",
 
   "msg.wall": "Стена.",
   "msg.level_intro": "Уровень {depth}. Найдите выход.",
@@ -50,6 +52,9 @@
   "msg.death_box": "Вы погибли, но сила Ле-Монда возвращает вас к началу уровня.",
   "msg.no_potions": "Зелий нет.",
   "msg.potion_used": "Выпито зелье: +{healed} HP. Осталось: {potions}.",
+  "msg.no_mana_potions": "Зелий маны нет.",
+  "msg.mana_full": "Мана уже полная.",
+  "msg.mana_potion_used": "Выпито зелье маны: +{restored} MP. Осталось: {potions}.",
   "msg.respawn_1": "Вы возродились на входе текущего уровня.",
   "msg.respawn_2": "Нажмите ENTER...",
   "msg.closed": "Закрыто.",
@@ -59,7 +64,9 @@
 
   "pickup.gold": "Найдено золота: {gold}.",
   "pickup.potion": "Подобрано: зелье лечения (+1).",
+  "pickup.mana_potion": "Подобрано: зелье маны (+1).",
   "pickup.chest_potion": "Сундук: зелье лечения (+1).",
+  "pickup.chest_mana_potion": "Сундук: зелье маны (+1).",
   "pickup.equipped": "{status} (авто)",
   "pickup.stored": "Взято в инвентарь: {item}",
   "pickup.inventory_full": "Инвентарь полон ({limit}).",
@@ -73,6 +80,12 @@
   "magic.spell.fireball": "Огненный шар",
   "magic.spell.lightning_chain": "Цепная молния",
   "magic.spell.meteor": "Метеор",
+  "magic.no_mana": "Недостаточно маны для «{spell}».",
+  "magic.effect.magic_arrow": "одиночная цель",
+  "magic.effect.frost_spike": "пробивает линию",
+  "magic.effect.fireball": "взрыв по области",
+  "magic.effect.lightning_chain": "цепь по врагам",
+  "magic.effect.meteor": "большой взрыв по области",
 
   "ui.close_hint": "Esc/Enter — закрыть",
   "ui.message.title": "Сообщение",
@@ -144,6 +157,12 @@
 
   "ui.quit_confirm": "Сохранить и выйти?",
 
+  "ui.spellbook.title": "Книга заклинаний",
+  "ui.spellbook.params": "урон {dmg}  ·  дальность {rng}  ·  мана {mana}  ·  {effect}",
+  "ui.spellbook.bound": "[F]",
+  "ui.spellbook.next": "Далее: {name} - откроется при Магии {skill}",
+  "ui.spellbook.hint": "Вверх/Вниз — выбор, Enter — назначить на F, Esc — закрыть",
+
   "ui.help.title": "Управление и горячие клавиши",
   "ui.help.sec_move": "Движение",
   "ui.help.sec_actions": "Действия",
@@ -151,7 +170,9 @@
   "ui.help.move": "Движение / атака / разговор (зажми, чтобы идти)",
   "ui.help.grab": "Подобрать лут на клетке",
   "ui.help.drink": "Выпить зелье лечения",
-  "ui.help.magic": "Сотворить заклинание (выбор + направление)",
+  "ui.help.magic": "Сотворить активное заклинание (затем направление)",
+  "ui.help.spellbook": "Книга заклинаний (выбор для F)",
+  "ui.help.drink_mana": "Выпить зелье маны",
   "ui.help.inventory": "Инвентарь (надеть / выбросить, перетаскивание)",
   "ui.help.stats": "Характеристики",
   "ui.help.skills": "Навыки",
