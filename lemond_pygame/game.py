@@ -248,6 +248,15 @@ async def run_level(
         if random.random() < 0.4:
             d.grid[ny][nx] = LOOT if random.random() < 0.5 else POTION
 
+    def _lifesteal(damage_dealt):
+        """A vampiric weapon heals its wielder for a third of damage dealt."""
+        weapon = hero.equipment.get("MAIN")
+        if weapon and "vampiric" in getattr(weapon, "affixes", ()) and damage_dealt >= 3:
+            healed = min(hero.max_hp - hero.hp, damage_dealt // 3)
+            if healed > 0:
+                hero.hp += healed
+                spawn_scaled("spawn_heal", hx, hy, n=6)
+
     async def _attack(nx, ny):
         nonlocal flash_t, attack_cd
         attack_cd = ATTACK_COOLDOWN
@@ -268,6 +277,7 @@ async def run_level(
         sounds["hit"].play()
         if total > 0:
             shake.trigger(mag=3.0, dur=0.10)  # light shake when the hero lands a blow
+            _lifesteal(total)
         if m.hp <= 0:
             set_msg(i18n.t("msg.killed", name=i18n.monster_name(m), xp=m.xp_reward))
             kill_monster((nx, ny))
@@ -281,8 +291,9 @@ async def run_level(
         mon_slide[id(m)].trigger(hx - nx, hy - ny, dist=dash_dist, dur=0.10, mode="dash")
         md_total = 0
         mswings = 1 + (1 if random.random() < extra_attack_chance(m) else 0)
+        hero_dodge = hero.skills["DODGE"] + hero.dodge_bonus()
         for _ in range(mswings):
-            md, _dead, dodged = try_attack(m, hero, hero.total_armor(), hero.skills["DODGE"])
+            md, _dead, dodged = try_attack(m, hero, hero.total_armor(), hero_dodge)
             if dodged:
                 continue
             md_total += md
@@ -492,6 +503,7 @@ async def run_level(
             return
         spawn_scaled("spawn_hit", target[0], target[1], n=8, col=(255, 255, 180))
         sounds["hit"].play()
+        _lifesteal(dd)
         if dead:
             set_msg(i18n.t("msg.ranged_killed", name=name, dmg=dd))
             kill_monster(target)
@@ -527,7 +539,7 @@ async def run_level(
                 m,
                 hero,
                 hero.total_armor(),
-                hero.skills["DODGE"],
+                hero.skills["DODGE"] + hero.dodge_bonus(),
                 damage=caster_damage(m.kind, d.depth),
             )
             name = i18n.monster_name(m)

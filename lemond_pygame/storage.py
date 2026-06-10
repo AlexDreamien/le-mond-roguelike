@@ -39,6 +39,7 @@ def _item_to_dict(it: Item) -> dict:
         "tier": it.tier,
         "power": it.power,
         "two_handed": it.two_handed,
+        "affixes": list(getattr(it, "affixes", ())),
     }
 
 
@@ -70,6 +71,7 @@ def _item_from_dict(d: dict) -> Item:
         tier=tier,
         power=d.get("power", 0),
         two_handed=d.get("two_handed", False),
+        affixes=list(d.get("affixes", [])),
     )
 
 

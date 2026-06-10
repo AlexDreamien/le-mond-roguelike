@@ -3,13 +3,18 @@ from lemond_pygame.core.loot import INVENTORY_LIMIT, floor_gold_amount, resolve_
 
 
 class StubRandom:
-    """Deterministic stand-in: random() replays a sequence, randint returns lo."""
+    """Deterministic stand-in: random() replays a sequence, randint returns lo.
+
+    Once the sequence is exhausted it keeps returning 0.99 so optional follow-up
+    rolls (e.g. the affix roll inside random_item) fail quietly."""
 
     def __init__(self, values):
         self.values = list(values)
         self.i = 0
 
     def random(self):
+        if self.i >= len(self.values):
+            return 0.99
         v = self.values[self.i]
         self.i += 1
         return v

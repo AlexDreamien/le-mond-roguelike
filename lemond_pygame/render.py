@@ -186,7 +186,7 @@ def draw_hud(screen, hero: Hero) -> None:
 
     # Row 2: stat row, an icon (with text fallback) followed by its value.
     dmg_min, dmg_max = hero.weapon_damage()
-    dodge = int(dodge_chance(hero, hero.skills["DODGE"]) * 100)
+    dodge = int(dodge_chance(hero, hero.skills["DODGE"] + hero.dodge_bonus()) * 100)
     pairs = [
         ("icon.str", i18n.t("stat.str"), hero.str_),
         ("icon.dex", i18n.t("stat.dex"), hero.dex),

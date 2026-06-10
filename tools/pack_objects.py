@@ -47,6 +47,12 @@ NAME_MAP = {
     "small_curved_dagger": "item.dagger",
     "heavy_two-handed_battle_axe": "item.axe",
     "wooden_magic_staff": "item.staff",
+    # Combat v2 weapons (re-run this tool after generating their sprites).
+    "curved_wooden_hunting_bow": "item.bow",
+    "heavy_steel_crossbow": "item.crossbow",
+    "slender_arcane_wand": "item.wand",
+    "spiked_steel_mace": "item.mace",
+    "small_blue_mana_potion": "icon.mana_potion",
     "round_wooden_shield": "item.shield",
     "steel_helmet": "item.helmet",
     "steel_chestplate": "item.armor",

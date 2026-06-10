@@ -9,6 +9,7 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass, field
 
+from .affixes import equipment_bonus, item_bonus, roll_affixes
 from .weapons import category as weapon_category
 
 EQUIP_SLOTS = ["MAIN", "OFF", "HEAD", "BODY", "HANDS", "FEET"]
@@ -39,6 +40,7 @@ class Item:
     tier: int = 1
     power: int = 0
     two_handed: bool = False
+    affixes: list = field(default_factory=list)  # affix keys; see core.affixes
 
 
 @dataclass
@@ -87,7 +89,11 @@ class Hero(Creature):
         for it in self.equipment.values():
             if it and it.slot in ("OFF", "HEAD", "BODY", "HANDS", "FEET"):
                 val += max(0, it.power)
-        return val + (self.str_ // 5)
+        return val + (self.str_ // 5) + equipment_bonus(self.equipment, "armor")
+
+    def dodge_bonus(self) -> int:
+        """Extra dodge-skill points granted by 'swift' gear."""
+        return equipment_bonus(self.equipment, "dodge")
 
     def weapon_damage(self) -> tuple[int, int]:
         # Only melee weapons add their power to a swing; swinging a bow or staff
@@ -95,7 +101,7 @@ class Hero(Creature):
         weapon = self.equipment.get("MAIN")
         base = 1 + self.str_ // 2 + self.skills["MELEE"]
         if weapon and weapon_category(weapon.kind) == "melee":
-            base += weapon.power
+            base += weapon.power + item_bonus(weapon, "damage")
         return (max(1, base - 1), base + 1)
 
     def melee_damage(self) -> tuple[int, int]:
@@ -139,13 +145,14 @@ class Hero(Creature):
 def random_item(tier: int, rng: random.Random | None = None) -> Item:
     r = rng or random
     roll = r.random()
+    row = LOOT_TABLE[-1]
     for threshold, kind, slot, power_offset, two_handed in LOOT_TABLE:
         if roll < threshold:
-            return Item(
-                kind=kind, slot=slot, tier=tier, power=tier + power_offset, two_handed=two_handed
-            )
-    last = LOOT_TABLE[-1]
-    return Item(kind=last[1], slot=last[2], tier=tier, power=tier + last[3], two_handed=last[4])
+            row = (threshold, kind, slot, power_offset, two_handed)
+            break
+    item = Item(kind=row[1], slot=row[2], tier=tier, power=tier + row[3], two_handed=row[4])
+    roll_affixes(item, rng=r)
+    return item
 
 
 def random_loot(depth: int, rng: random.Random | None = None) -> Item:

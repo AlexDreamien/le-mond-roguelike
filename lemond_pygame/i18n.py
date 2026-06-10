@@ -58,7 +58,15 @@ def t(key: str, **kwargs) -> str:
 
 
 def item_name(item) -> str:
-    return f"{t('item.' + item.kind)} {item.tier}"
+    base = f"{t('item.' + item.kind)} {item.tier}"
+    affixes = list(getattr(item, "affixes", ()))
+    # Genitive-style suffixes ("Sword 3 of Sharpness" / "Меч 3 остроты") keep the
+    # Russian rendering free of adjective gender agreement.
+    if len(affixes) == 1:
+        return t("item.affix1", name=base, a=t("affix." + affixes[0]))
+    if len(affixes) >= 2:
+        return t("item.affix2", name=base, a=t("affix." + affixes[0]), b=t("affix." + affixes[1]))
+    return base
 
 
 def item_describe(item) -> str:

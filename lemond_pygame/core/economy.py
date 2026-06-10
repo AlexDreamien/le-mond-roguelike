@@ -16,7 +16,9 @@ def shop_tier(depth: int) -> int:
 
 
 def item_value(item: Item) -> int:
-    return item.tier * 8 + item.power * 6
+    base = item.tier * 8 + item.power * 6
+    # Each affix is a sizeable premium so enchanted finds are worth selling.
+    return base + len(getattr(item, "affixes", ())) * (8 + item.tier * 4)
 
 
 def buy_price(item: Item) -> int:

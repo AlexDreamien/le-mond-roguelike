@@ -11,6 +11,7 @@ import pygame as pg
 
 from . import fonts, i18n
 from .core import config as cfg
+from .core.affixes import affix_value
 from .core.entities import EQUIP_SLOTS
 from .core.loot import INVENTORY_LIMIT
 from .core.weapons import can_equip
@@ -74,6 +75,18 @@ def _blit_centered(screen, icon, rect):
     screen.blit(icon, icon.get_rect(center=rect.center))
 
 
+def _draw_item_glyph(screen, item, rect, size):
+    """Atlas icon for the item, or its initial letter while no icon exists yet
+    (e.g. newly added weapon kinds awaiting generated art)."""
+    icon = object_icon(f"item.{item.kind}", size)
+    if icon:
+        _blit_centered(screen, icon, rect)
+        return
+    letter = i18n.t("item." + item.kind)[:1].upper() or "?"
+    glyph = fonts.get_font(size - 8, bold=True).render(letter, True, (200, 210, 230))
+    _blit_centered(screen, glyph, rect)
+
+
 async def inventory_screen(screen, hero) -> str:
     font = fonts.get_font(20)
     small = fonts.get_font(18)
@@ -122,13 +135,18 @@ async def inventory_screen(screen, hero) -> str:
         lines = [i18n.item_name(item), i18n.t("ui.item.power", power=item.power)]
         if item.two_handed:
             lines.append(i18n.t("ui.item.two_handed"))
+        affixes = list(getattr(item, "affixes", ()))
+        for a in affixes:
+            lines.append(i18n.t("affix.desc." + a, value=affix_value(a, item.tier)))
         w = max(small.size(s)[0] for s in lines) + 20
         h = 8 + len(lines) * 20
         x = min(pos[0] + 14, cfg.SCREEN_W - w - 6)
         y = min(pos[1] + 14, cfg.SCREEN_H - h - 6)
         panel(screen, pg.Rect(x, y, w, h))
+        # Name colour signals rarity: white plain, blue one affix, gold two.
+        name_col = [(230, 230, 200), (130, 180, 255), (240, 200, 90)][min(2, len(affixes))]
         for j, s in enumerate(lines):
-            line(screen, small, s, x + 10, y + 6 + j * 20, (230, 230, 200))
+            line(screen, small, s, x + 10, y + 6 + j * 20, name_col if j == 0 else (230, 230, 200))
 
     def redraw(mouse):
         screen.fill(cfg.C_BG)
@@ -152,9 +170,7 @@ async def inventory_screen(screen, hero) -> str:
             )
             item = hero.equipment.get(slot)
             if item:
-                icon = object_icon(f"item.{item.kind}", SLOT - 16)
-                if icon:
-                    _blit_centered(screen, icon, r)
+                _draw_item_glyph(screen, item, r, SLOT - 16)
             else:
                 icon = object_icon(f"slot.{slot}", SLOT - 16)
                 if icon:
@@ -169,9 +185,7 @@ async def inventory_screen(screen, hero) -> str:
             border = (200, 220, 160) if (has and i == selected) else (70, 70, 90)
             pg.draw.rect(screen, border, r, 2, border_radius=6)
             if has and not (dragging and i == drag_idx):
-                icon = object_icon(f"item.{hero.inventory[i].kind}", CELL - 22)
-                if icon:
-                    _blit_centered(screen, icon, r)
+                _draw_item_glyph(screen, hero.inventory[i], r, CELL - 22)
 
         # Buttons
         active = 0 <= selected < len(hero.inventory)
@@ -204,9 +218,9 @@ async def inventory_screen(screen, hero) -> str:
                 if hs and hero.equipment.get(hs):
                     draw_tooltip(hero.equipment[hs], mouse)
         elif 0 <= drag_idx < len(hero.inventory):
-            icon = object_icon(f"item.{hero.inventory[drag_idx].kind}", CELL - 22)
-            if icon:
-                screen.blit(icon, icon.get_rect(center=mouse))
+            drag_rect = pg.Rect(0, 0, CELL - 22, CELL - 22)
+            drag_rect.center = mouse
+            _draw_item_glyph(screen, hero.inventory[drag_idx], drag_rect, CELL - 22)
         pg.display.flip()
 
     while True:

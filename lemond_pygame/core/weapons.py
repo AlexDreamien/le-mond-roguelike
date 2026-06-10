@@ -98,8 +98,10 @@ def ranged_damage(hero, weapon) -> tuple[int, int]:
     The crossbow roughly doubles the flat term (it fires every other turn), so it
     hits about twice as hard per bolt as the bow with a wider spread.
     """
+    from .affixes import item_bonus  # local import: affixes imports this module
+
     flat = 1 + hero.dex // 2 + hero.skills.get("ACCURACY", 0)
-    power = weapon.power if weapon else 0
+    power = (weapon.power + item_bonus(weapon, "damage")) if weapon else 0
     if weapon and weapon.kind == "crossbow":
         mid, spread = 2 * flat + power, 2
     else:
@@ -111,11 +113,15 @@ def magic_power(weapon) -> int:
     """Bonus spell damage from an equipped magic weapon (0 if none/not magic).
 
     Staves are two-handed and give their full power; one-handed wands give one
-    less but free the off-hand for a shield."""
+    less but free the off-hand for a shield. An 'arcane' affix adds on top
+    (and works on any weapon, so an enchanted blade can aid a battle-mage)."""
+    from .affixes import item_bonus  # local import: affixes imports this module
+
     if not weapon:
         return 0
+    base = 0
     if weapon.kind == "staff":
-        return max(0, weapon.power)
-    if weapon.kind == "wand":
-        return max(0, weapon.power - 1)
-    return 0
+        base = max(0, weapon.power)
+    elif weapon.kind == "wand":
+        base = max(0, weapon.power - 1)
+    return base + item_bonus(weapon, "magic")
