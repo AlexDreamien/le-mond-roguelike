@@ -1,0 +1,584 @@
+{
+  "objects": [
+    {
+      "id": "263e7f2d-19c5-47f1-806a-10a5755a7628",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "94fba550-fbf9-45e0-9994-ba76f378c392",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "2f00ec03-c829-487c-822e-814a178ffed0",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "b9276bbc-7d16-4678-b1c4-ccdae02e1b3f",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "e32cbe53-9aed-449e-aa86-3ada8e6a80a8",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "ee08eed7-1d65-4c96-a3b1-ade708747262",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "301eb043-5ad8-4c9e-ac09-cc7856248546",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "9d34a43e-904c-4a14-bfc6-cd2b0ee1f74a",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "31ddb781-290c-4987-8702-c6eb4cca1a37",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "c6fdcf86-f79e-4ba8-8c42-cd47b4501686",
+      "name": null,
+      "prompt": "Small blue mana potion bottle with a cork, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "f728e651-2bd7-44c9-b673-9e1ad53a3e5a",
+      "name": null,
+      "prompt": "Curved wooden hunting bow with a taut string, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "fba66a6b-41b7-4df0-98ff-b68147414f25",
+      "name": null,
+      "prompt": "Spiked steel mace with a wooden handle, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "fd38b207-745d-4ed7-9258-088b5013f72b",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "fe75ee83-890e-4f11-9241-d8d8589f5f5a",
+      "name": null,
+      "prompt": "Heavy steel crossbow with a wooden stock, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "59376a03-a4d1-477c-b421-8cbf1fabd670",
+      "name": null,
+      "prompt": "inventory items",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    },
+    {
+      "id": "91fea06b-8257-4183-b70a-7239175b9f48",
+      "name": null,
+      "prompt": "Slender arcane wand with a glowing blue tip, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "directions": 1,
+      "view": "low top-down",
+      "rotations": {
+        "unknown": "rotations/unknown.png"
+      },
+      "animations": {}
+    }
+  ],
+  "groups": [
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items",
+      "objects": [
+        {
+          "id": "263e7f2d-19c5-47f1-806a-10a5755a7628",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_2",
+      "objects": [
+        {
+          "id": "94fba550-fbf9-45e0-9994-ba76f378c392",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_3",
+      "objects": [
+        {
+          "id": "2f00ec03-c829-487c-822e-814a178ffed0",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_4",
+      "objects": [
+        {
+          "id": "b9276bbc-7d16-4678-b1c4-ccdae02e1b3f",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_5",
+      "objects": [
+        {
+          "id": "e32cbe53-9aed-449e-aa86-3ada8e6a80a8",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_6",
+      "objects": [
+        {
+          "id": "ee08eed7-1d65-4c96-a3b1-ade708747262",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_7",
+      "objects": [
+        {
+          "id": "301eb043-5ad8-4c9e-ac09-cc7856248546",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_8",
+      "objects": [
+        {
+          "id": "9d34a43e-904c-4a14-bfc6-cd2b0ee1f74a",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_9",
+      "objects": [
+        {
+          "id": "31ddb781-290c-4987-8702-c6eb4cca1a37",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/Small_blue_mana_potion_bottle",
+      "objects": [
+        {
+          "id": "c6fdcf86-f79e-4ba8-8c42-cd47b4501686",
+          "name": null,
+          "prompt": "Small blue mana potion bottle with a cork, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/Curved_wooden_hunting_bow_with",
+      "objects": [
+        {
+          "id": "f728e651-2bd7-44c9-b673-9e1ad53a3e5a",
+          "name": null,
+          "prompt": "Curved wooden hunting bow with a taut string, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/Spiked_steel_mace_with_a_woode",
+      "objects": [
+        {
+          "id": "fba66a6b-41b7-4df0-98ff-b68147414f25",
+          "name": null,
+          "prompt": "Spiked steel mace with a wooden handle, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_10",
+      "objects": [
+        {
+          "id": "fd38b207-745d-4ed7-9258-088b5013f72b",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/Heavy_steel_crossbow_with_a_wo",
+      "objects": [
+        {
+          "id": "fe75ee83-890e-4f11-9241-d8d8589f5f5a",
+          "name": null,
+          "prompt": "Heavy steel crossbow with a wooden stock, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/inventory_items_11",
+      "objects": [
+        {
+          "id": "59376a03-a4d1-477c-b421-8cbf1fabd670",
+          "name": null,
+          "prompt": "inventory items",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "folder": "objects/Slender_arcane_wand_with_a_glo",
+      "objects": [
+        {
+          "id": "91fea06b-8257-4183-b70a-7239175b9f48",
+          "name": null,
+          "prompt": "Slender arcane wand with a glowing blue tip, fantasy roguelike item icon, single dark outline, soft top-down lighting, transparent background.",
+          "size": {
+            "width": 48,
+            "height": 48
+          },
+          "directions": 1,
+          "view": "low top-down",
+          "rotations": {
+            "unknown": "rotations/unknown.png"
+          },
+          "animations": {}
+        }
+      ]
+    }
+  ],
+  "export_version": "1.0",
+  "export_date": "2026-06-12T12:39:19.615384"
+}
