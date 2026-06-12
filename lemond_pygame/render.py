@@ -224,6 +224,44 @@ def draw_msg(screen, text: str) -> None:
     _line(screen, font, text, 10, cfg.MAP_H * cfg.TILE + 66, (200, 200, 160))
 
 
+# The static tile layer (floor, walls, chests, loot) only changes when the grid
+# does (a chest opens, loot drops). Pre-rendering it collapses ~700 per-tile
+# blits per frame into one, which matters a lot for the WASM build where slow
+# frames starve the browser's audio pump and cause crackling.
+_static_cache: dict = {"key": None, "grid": None, "surface": None}
+
+
+def _static_map_layer(tiles, d: Dungeon) -> pg.Surface:
+    key = (id(d), d.depth)
+    if _static_cache["key"] == key and _static_cache["grid"] == d.grid:
+        return _static_cache["surface"]
+    floors = tiles["floor_variants"]
+    walls = tiles["wall_variants"]
+    nwall = len(walls)
+    floor = floors[d.depth % len(floors)]  # one floor sprite per level, varies by depth
+    surf = pg.Surface((d.w * cfg.TILE, d.h * cfg.TILE))
+    for y in range(d.h):
+        row = d.grid[y]
+        for x in range(d.w):
+            r = (x * cfg.TILE, y * cfg.TILE)
+            surf.blit(floor, r)
+            t = row[x]
+            if t == WALL:
+                surf.blit(walls[(x * 5 + y * 11) % nwall], r)
+            elif t == CHEST:
+                surf.blit(tiles["chest"], r)
+            elif t == EXIT:
+                surf.blit(tiles["stairs_down"], r)
+            elif t == LOOT:
+                surf.blit(tiles["coins"], r)
+            elif t == POTION:
+                surf.blit(tiles["potion"], r)
+    _static_cache["key"] = key
+    _static_cache["grid"] = [row[:] for row in d.grid]
+    _static_cache["surface"] = surf
+    return surf
+
+
 def draw_map(
     surface,
     tiles,
@@ -239,27 +277,9 @@ def draw_map(
     npcs=None,
     npc_anim=None,
 ) -> None:
-    floors = tiles["floor_variants"]
-    walls = tiles["wall_variants"]
-    nwall = len(walls)
-    floor = floors[d.depth % len(floors)]  # one floor sprite per level, varies by depth
-    for y in range(d.h):
-        for x in range(d.w):
-            r = pg.Rect(x * cfg.TILE, y * cfg.TILE, cfg.TILE, cfg.TILE)
-            surface.blit(floor, r)
-            t = d.grid[y][x]
-            if t == WALL:
-                surface.blit(walls[(x * 5 + y * 11) % nwall], r)
-            elif t == CHEST:
-                surface.blit(tiles["chest"], r)
-            elif t == EXIT:
-                surface.blit(tiles["stairs_down"], r)
-            elif t == LOOT:
-                surface.blit(tiles["coins"], r)
-            elif t == POTION:
-                surface.blit(tiles["potion"], r)
-            if (x, y) in visible:
-                d.seen[y][x] = True
+    surface.blit(_static_map_layer(tiles, d), (0, 0))
+    for x, y in visible:
+        d.seen[y][x] = True
     for (x, y), m in list(monsters.items()):
         if (x, y) in visible:
             a = monsters_anim.get(id(m))

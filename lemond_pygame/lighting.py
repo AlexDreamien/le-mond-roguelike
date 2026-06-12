@@ -56,7 +56,20 @@ def _vignette() -> pg.Surface:
     return _vignette_cache
 
 
+# The fog is expensive to build (per-tile set_at + a smoothscale), so cache the
+# scaled result and rebuild only when its inputs change: the hero light centre
+# (quantised to quarter tiles - the gradient is too soft to show finer steps),
+# or the visible set. ``seen`` only grows when visibility changes, so it is
+# covered by the same key. Slow frames matter doubly on the web build, where
+# they starve the browser's audio pump and cause crackling.
+_fog_cache: dict = {"key": None, "scaled": None}
+
+
 def apply(surface, d, visible, hero_rx, hero_ry, radius) -> None:
-    fog = _build_fog(d, visible, hero_rx, hero_ry, radius)
-    surface.blit(pg.transform.smoothscale(fog, (d.w * cfg.TILE, d.h * cfg.TILE)), (0, 0))
+    key = (id(d), round(hero_rx * 4), round(hero_ry * 4), hash(frozenset(visible)))
+    if _fog_cache["key"] != key:
+        fog = _build_fog(d, visible, hero_rx, hero_ry, radius)
+        _fog_cache["key"] = key
+        _fog_cache["scaled"] = pg.transform.smoothscale(fog, (d.w * cfg.TILE, d.h * cfg.TILE))
+    surface.blit(_fog_cache["scaled"], (0, 0))
     surface.blit(_vignette(), (0, 0))

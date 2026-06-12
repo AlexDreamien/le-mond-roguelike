@@ -728,13 +728,20 @@ def _init_pygame() -> str:
     the device as float32 stereo at 44.1/48 kHz; our raw int16 mono buffers then
     play back as noise and crackle. ``allowedchanges=0`` pins the obtained format
     to what we ask for (SDL converts to the hardware internally), so the buffers
-    are interpreted correctly. Falls back to a relaxed init (the buffer builder
-    then adapts to whatever format the device reports), then to a silent dummy
+    are interpreted correctly.
+
+    On the web the audio pump shares the main thread with the game (no
+    SharedArrayBuffer on GitHub Pages), so a slow frame starves it and crackles.
+    A much larger mixer buffer (~190 ms) rides over multi-frame hitches; the
+    extra latency is acceptable for ambience and short effects. Desktop keeps
+    the snappy default. Falls back to a relaxed init (the buffer builder then
+    adapts to whatever format the device reports), then to a silent dummy
     driver. SDL still picks the platform audio driver (coreaudio/wasapi)."""
-    pg.mixer.pre_init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN, allowedchanges=0)
+    buffer = 4096 if sys.platform == "emscripten" else 512
+    pg.mixer.pre_init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN, buffer, allowedchanges=0)
     pg.init()
     try:
-        pg.mixer.init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN, allowedchanges=0)
+        pg.mixer.init(cfg.SND_RATE, cfg.SND_SIZE, cfg.SND_CHAN, buffer, allowedchanges=0)
     except pg.error:
         try:
             pg.mixer.init()  # relaxed: accept whatever the device offers
