@@ -14,7 +14,7 @@ import pygame as pg
 from . import fonts, i18n, lighting
 from .core import config as cfg
 from .core.combat import dodge_chance
-from .core.dungeon import CHEST, EXIT, LOOT, POTION, WALL, Dungeon
+from .core.dungeon import CHEST, EXIT, LOOT, NOTE, POTION, WALL, Dungeon
 from .core.entities import Hero
 from .drawing import object_icon
 
@@ -256,6 +256,8 @@ def _static_map_layer(tiles, d: Dungeon) -> pg.Surface:
                 surf.blit(tiles["coins"], r)
             elif t == POTION:
                 surf.blit(tiles["potion"], r)
+            elif t == NOTE:
+                surf.blit(tiles["note"], r)
     _static_cache["key"] = key
     _static_cache["grid"] = [row[:] for row in d.grid]
     _static_cache["surface"] = surf

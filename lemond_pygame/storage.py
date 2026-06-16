@@ -96,6 +96,8 @@ def save_hero(slot: int, hero: Hero, options: dict) -> None:
         "mana": hero.mana,
         "max_mana": hero.max_mana,
         "active_spell": hero.active_spell,
+        "lore_seen": list(hero.lore_seen),
+        "deaths": hero.deaths,
         "gold": hero.gold,
         "inventory": [_item_to_dict(it) for it in hero.inventory],
         "equipment": {
@@ -144,6 +146,8 @@ def load_hero(slot: int) -> tuple[Hero | None, dict]:
         h.max_mana = data.get("max_mana", h.max_mana)
         h.mana = data.get("mana", h.max_mana)
         h.active_spell = data.get("active_spell", "magic_arrow")
+        h.lore_seen = list(data.get("lore_seen", []))
+        h.deaths = data.get("deaths", 0)
         h.gold = data.get("gold", 0)
         h.inventory = [_item_from_dict(it) for it in data.get("inventory", [])]
         h.equipment = {s: None for s in EQUIP_SLOTS}

@@ -13,6 +13,7 @@ import pygame as pg
 from . import fonts, i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
+from .core import lore
 from .core import spells as sp
 from .core import weapons as wp
 from .core.combat import (
@@ -23,7 +24,7 @@ from .core.combat import (
     generate_monster,
     try_attack,
 )
-from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, POTION, WALL, Dungeon
+from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, NOTE, POTION, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, floor_gold_amount, resolve_chest
 from .core.progression import auto_assign
@@ -41,6 +42,7 @@ from .storage import save_hero
 from .ui_common import message_box, prompt_yes_no
 from .ui_help import help_screen
 from .ui_inventory import inventory_screen
+from .ui_note import note_screen
 from .ui_options import options_screen
 from .ui_pause import pause_screen
 from .ui_shop import shop_screen
@@ -108,6 +110,19 @@ async def run_level(
             anim.set_facing("south")
             npc_anim[pos] = anim
 
+    # Scatter a couple of readable lore tiles (explorer notes / wall inscriptions),
+    # picking pieces the hero has not seen yet. Uses the global RNG so the story
+    # accretes across runs rather than repeating floor-for-floor.
+    lore_tiles: dict[tuple[int, int], str] = {}
+    seen = set(hero.lore_seen)
+    keys = lore.pick_lore_keys(hero.depth, random.randint(1, 2), seen)
+    for key in keys:
+        if not free:
+            break
+        pos = free.pop()
+        d.grid[pos[1]][pos[0]] = NOTE
+        lore_tiles[pos] = key
+
     hx, hy = d.entry
     rx, ry = float(hx), float(hy)
     moving = False
@@ -130,6 +145,19 @@ async def run_level(
         """Show a message at the bottom without recording it in the event log."""
         nonlocal msg
         msg = text
+
+    muse_shown = set()  # run-local: each musing trigger fires at most once per level
+    level_kills = [0]  # boxed for the kill-streak musing
+
+    def note_muse(trigger: str):
+        """Voice a one-off hero musing (shown in the status line, not a popup)."""
+        avail = [k for k in lore.musings_for_trigger(trigger) if k not in hero.lore_seen]
+        if not avail or trigger in muse_shown:
+            return
+        key = random.choice(avail)
+        hero.lore_seen.append(key)
+        muse_shown.add(trigger)
+        set_msg(i18n.t(key))
 
     def set_msg(text: str):
         set_status(text)
@@ -220,7 +248,7 @@ async def run_level(
             set_status(i18n.t("msg.wall"))  # shown at the bottom, not logged
             sounds["wall"].play()
             return None
-        if tile in (FLOOR, ENTRY, LOOT, POTION, CHEST, EXIT):
+        if tile in (FLOOR, ENTRY, LOOT, POTION, CHEST, EXIT, NOTE):
             moving = True
             move_from = (hx, hy)
             move_to = (nx, ny)
@@ -247,6 +275,9 @@ async def run_level(
         del mon_slide[id(m)]
         if random.random() < 0.4:
             d.grid[ny][nx] = LOOT if random.random() < 0.5 else POTION
+        level_kills[0] += 1
+        if level_kills[0] >= 5:  # a grim reflection after a string of kills
+            note_muse("slaughter")
 
     def _lifesteal(damage_dealt):
         """A vampiric weapon heals its wielder for a third of damage dealt."""
@@ -312,12 +343,14 @@ async def run_level(
             else i18n.t("msg.monster_hit_back", name=i18n.monster_name(m), dmg=md_total)
         )
         set_msg(hit_part + tail)
+        if 0 < hero.hp <= hero.max_hp // 4:
+            note_muse("lowhp")
         if hero.hp <= 0:
             await message_box(screen, [i18n.t("msg.death_box")])
             return "dead"
         return None
 
-    def on_arrival():
+    async def on_arrival():
         nonlocal hx, hy, rx, ry
         tile = d.grid[hy][hx]
         if tile == CHEST:
@@ -326,6 +359,15 @@ async def run_level(
         elif tile in (LOOT, POTION):
             take_floor(tile)
             d.grid[hy][hx] = FLOOR
+        elif tile == NOTE:
+            key = lore_tiles.pop((hx, hy), None)
+            d.grid[hy][hx] = FLOOR
+            if key:
+                if key not in hero.lore_seen:
+                    hero.lore_seen.append(key)
+                inscr = lore.is_inscription(key)
+                title = "" if inscr else i18n.t("ui.note.found")
+                await note_screen(screen, title, i18n.t(key), inscription=inscr)
         elif tile == EXIT:
             sounds["open"].play()
             hero.depth += 1
@@ -553,9 +595,17 @@ async def run_level(
             if spec["effect"] == "drain":
                 m.hp = min(m.max_hp, m.hp + dd)  # vampire heals by damage dealt
             set_msg(i18n.t("msg.caster_hit", name=name, dmg=dd))
+            if 0 < hero.hp <= hero.max_hp // 4:
+                note_muse("lowhp")
             if hero.hp <= 0:
                 return True
         return False
+
+    # On entering the floor, voice the act-band musing (once ever); once the hero
+    # has respawned enough times, the respawn-reveal musing seeds the twist.
+    if hero.deaths >= lore.RESPAWN_REVEAL_DEATHS:
+        note_muse("respawn")
+    note_muse("band:" + lore.band_for_depth(hero.depth))
 
     clock = pg.time.Clock()
     while True:
@@ -571,7 +621,7 @@ async def run_level(
                 move_acc = 0.0
                 hx, hy = move_to
                 rx, ry = float(hx), float(hy)
-                if on_arrival():
+                if await on_arrival():
                     return True
 
         if attack_cd > 0:
@@ -799,4 +849,5 @@ async def run() -> None:
         )
         if not survived:
             hero.hp = hero.max_hp
+            hero.deaths += 1  # the city keeps a checkpoint of you (see the story canon)
             await message_box(screen, [i18n.t("msg.respawn_1"), i18n.t("msg.respawn_2")])

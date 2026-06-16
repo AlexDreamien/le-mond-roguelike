@@ -83,6 +83,8 @@ class Hero(Creature):
     depth: int = 1
     unlocked_depth: int = 1
     last_dir: tuple[int, int] = (1, 0)
+    lore_seen: list = field(default_factory=list)  # note/inscription/musing keys shown
+    deaths: int = 0  # respawns so far (drives the respawn-reveal musing / the twist)
 
     def total_armor(self) -> int:
         val = 0

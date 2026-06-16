@@ -9,7 +9,7 @@ from __future__ import annotations
 import random
 from collections import deque
 
-WALL, FLOOR, ENTRY, EXIT, CHEST, MONSTER, LOOT, POTION = 1, 0, 2, 3, 4, 5, 6, 7
+WALL, FLOOR, ENTRY, EXIT, CHEST, MONSTER, LOOT, POTION, NOTE = 1, 0, 2, 3, 4, 5, 6, 7, 8
 DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
 

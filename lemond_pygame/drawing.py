@@ -88,6 +88,20 @@ def _make_loot() -> pg.Surface:
     return surf
 
 
+def _make_note() -> pg.Surface:
+    """A small rolled parchment lying on the ground — a readable lore tile."""
+    t = cfg.TILE
+    surf = pg.Surface((t, t), pg.SRCALPHA)
+    pad = t // 4
+    body = pg.Rect(pad, pad + 2, t - 2 * pad, t - 2 * pad - 4)
+    pg.draw.rect(surf, (222, 206, 160), body, border_radius=3)
+    pg.draw.rect(surf, (150, 130, 90), body, 1, border_radius=3)
+    for i in range(3):  # faint lines of writing
+        ly = body.y + 6 + i * 5
+        pg.draw.line(surf, (120, 100, 70), (body.x + 4, ly), (body.right - 4, ly), 1)
+    return surf
+
+
 def build_object_sprites() -> dict[str, pg.Surface]:
     """Load the packed objects atlas into ``{key: Surface}`` (empty if missing)."""
     png = resource_path("assets", "objects_atlas.png")
@@ -147,6 +161,7 @@ def build_tiles() -> dict[str, object]:
         "stairs_down": obj.get("stairs_down") or _make_exit(),
         "coins": obj.get("coins") or _make_loot(),
         "potion": obj.get("potion") or _make_loot(),
+        "note": _make_note(),
     }
 
 
