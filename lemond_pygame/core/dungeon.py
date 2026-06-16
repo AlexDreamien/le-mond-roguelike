@@ -10,6 +10,9 @@ import random
 from collections import deque
 
 WALL, FLOOR, ENTRY, EXIT, CHEST, MONSTER, LOOT, POTION, NOTE = 1, 0, 2, 3, 4, 5, 6, 7, 8
+# SECRET marks a sealed secret-room floor: not WALL (so it's walkable once revealed)
+# and not FLOOR (so generation's flood/connector/maze steps leave it alone).
+SECRET = 9
 DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
 
@@ -25,6 +28,31 @@ class Dungeon:
 
     def inside(self, x, y) -> bool:
         return 0 <= x < self.w and 0 <= y < self.h
+
+    def walkable(self, x, y) -> bool:
+        return self.inside(x, y) and self.grid[y][x] != WALL
+
+    def walkable_neighbors(self, x, y) -> int:
+        return sum(1 for dx, dy in DIRS if self.walkable(x + dx, y + dy))
+
+    def exit_reachable(self, blocked) -> bool:
+        """Whether the exit is reachable from the entry treating ``blocked`` cells
+        (e.g. un-walkable talk-NPC tiles) as walls. Used to keep NPCs from sealing
+        the only path to the stairs."""
+        if self.exit in blocked:
+            return False
+        seen = {self.entry}
+        q = deque([self.entry])
+        while q:
+            x, y = q.popleft()
+            if (x, y) == self.exit:
+                return True
+            for dx, dy in DIRS:
+                nx, ny = x + dx, y + dy
+                if self.walkable(nx, ny) and (nx, ny) not in blocked and (nx, ny) not in seen:
+                    seen.add((nx, ny))
+                    q.append((nx, ny))
+        return self.exit in seen
 
     def generate(self) -> None:
         w, h = self.w, self.h
@@ -51,6 +79,22 @@ class Dungeon:
                     return True
             return False
 
+        # 1b) Reserve a sealed secret room: a 3x3 SECRET-floor core inside a 5x5
+        # wall footprint. Reserving it now (grid is all wall) guarantees space; the
+        # ``reserved`` set keeps every later carve out, so the moat stays solid and
+        # the room is reachable only by bumping the secret door placed below.
+        self.secret_cells: set[tuple[int, int]] = set()
+        self.secret_doors: list[tuple[int, int]] = []
+        reserved: set[tuple[int, int]] = set()
+        if rng.random() < 0.65 and w > 8 and h > 8:
+            fx = rng.randrange(1, w - 6)
+            fy = rng.randrange(1, h - 6)
+            reserved = {(x, y) for y in range(fy, fy + 5) for x in range(fx, fx + 5)}
+            for y in range(fy + 1, fy + 4):
+                for x in range(fx + 1, fx + 4):
+                    self.grid[y][x] = SECRET
+                    self.secret_cells.add((x, y))
+
         # 2) Random non-overlapping rooms (odd sizes tile nicely with corridors).
         rooms = []
         room_tries = 80
@@ -60,12 +104,19 @@ class Dungeon:
             rx = rng.randrange(1, w - rw - 1)
             ry = rng.randrange(1, h - rh - 1)
             r = (rx, ry, rw, rh)
-            if not rect_overlaps(r, rooms, margin=2):
+            hits_reserved = any(
+                (x, y) in reserved
+                for x in range(rx - 1, rx + rw + 1)
+                for y in range(ry - 1, ry + rh + 1)
+            )
+            if not hits_reserved and not rect_overlaps(r, rooms, margin=2):
                 rooms.append(r)
                 carve_rect(rx, ry, rx + rw, ry + rh, FLOOR)
 
         # 3) Flood the empty space with a maze (DFS on odd coordinates).
         visited = [[False] * w for _ in range(h)]
+        for rx, ry in reserved:  # the maze never enters the reserved footprint
+            visited[ry][rx] = True
 
         def neighbors_cells(x, y):
             out = []
@@ -91,7 +142,7 @@ class Dungeon:
                 x, y = stack[-1]
                 nbrs = []
                 for dx, dy, nx, ny in neighbors_cells(x, y):
-                    if visited[ny][nx]:
+                    if visited[ny][nx] or (x + dx, y + dy) in reserved:
                         continue
                     # Do not punch through existing rooms.
                     if self.grid[ny][nx] == FLOOR:
@@ -135,7 +186,7 @@ class Dungeon:
                 for dx, dy in dirs:
                     x, y = cx, cy
                     for _ in range(12):
-                        if not (1 <= x < w - 1 and 1 <= y < h - 1):
+                        if not (1 <= x < w - 1 and 1 <= y < h - 1) or (x, y) in reserved:
                             break
                         if self.grid[y][x] == FLOOR:
                             dug = True
@@ -155,7 +206,7 @@ class Dungeon:
         for _ in range(loops):
             x = rng.randrange(2, w - 2)
             y = rng.randrange(2, h - 2)
-            if self.grid[y][x] != WALL:
+            if self.grid[y][x] != WALL or (x, y) in reserved:
                 continue
             if (self.grid[y][x - 1] == FLOOR and self.grid[y][x + 1] == FLOOR) or (
                 self.grid[y - 1][x] == FLOOR and self.grid[y + 1][x] == FLOOR
@@ -202,6 +253,33 @@ class Dungeon:
         self.exit = exit_
         self.grid[entry[1]][entry[0]] = ENTRY
         self.grid[exit_[1]][exit_[0]] = EXIT
+
+        # 6b) Place the secret door: a footprint wall touching the secret core on
+        # one side and an outside corridor on the other. It stays WALL until the
+        # hero bumps it. If no corridor reached the moat, open the room so it is
+        # not lost (it becomes an ordinary, connected room instead).
+        if self.secret_cells:
+            door = None
+            for mx, my in reserved:
+                if self.grid[my][mx] != WALL:
+                    continue
+                touches_secret = any((mx + dx, my + dy) in self.secret_cells for dx, dy in DIRS)
+                touches_corridor = any(
+                    self.inside(mx + dx, my + dy)
+                    and (mx + dx, my + dy) not in reserved
+                    and self.grid[my + dy][mx + dx] == FLOOR
+                    for dx, dy in DIRS
+                )
+                if touches_secret and touches_corridor:
+                    door = (mx, my)
+                    break
+            if door:
+                self.secret_doors = [door]
+            else:
+                for sx, sy in self.secret_cells:
+                    self.grid[sy][sx] = FLOOR
+                self.secret_cells = set()
+                self._ensure_connected()
 
         # 7) Scatter chests and loot.
         free_floors = [(x, y) for (x, y) in floors if (x, y) not in (entry, exit_)]

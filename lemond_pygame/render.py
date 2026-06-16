@@ -241,8 +241,25 @@ def draw_msg(screen, text: str) -> None:
 _static_cache: dict = {"key": None, "grid": None, "surface": None}
 
 
-def _static_map_layer(tiles, d: Dungeon) -> pg.Surface:
-    key = (id(d), d.depth)
+def _wall_mark(surf, x, y, kind: str) -> None:
+    """Bake a faint hint onto a special wall tile: lines of script for an
+    inscription, a thin crack for a secret door."""
+    px, py = x * cfg.TILE, y * cfg.TILE
+    t = cfg.TILE
+    if kind == "inscr":
+        col = (200, 185, 130)
+        for i in range(3):
+            ly = py + 9 + i * 5
+            pg.draw.line(surf, col, (px + 8, ly), (px + t - 8, ly), 1)
+    else:  # secret door: a hairline crack a careful eye can spot
+        col = (120, 118, 132)
+        pg.draw.line(surf, col, (px + t // 2 - 3, py + 5), (px + t // 2 + 2, py + t // 2), 1)
+        pg.draw.line(surf, col, (px + t // 2 + 2, py + t // 2), (px + t // 2 - 2, py + t - 5), 1)
+
+
+def _static_map_layer(tiles, d: Dungeon, wall_lore=None) -> pg.Surface:
+    wall_lore = wall_lore or {}
+    key = (id(d), d.depth, frozenset(wall_lore))
     if _static_cache["key"] == key and _static_cache["grid"] == d.grid:
         return _static_cache["surface"]
     floors = tiles["floor_variants"]
@@ -268,6 +285,8 @@ def _static_map_layer(tiles, d: Dungeon) -> pg.Surface:
                 surf.blit(tiles["potion"], r)
             elif t == NOTE:
                 surf.blit(tiles["note"], r)
+    for (mx, my), mark in wall_lore.items():  # faint hints on inscribed/secret walls
+        _wall_mark(surf, mx, my, mark[0])
     _static_cache["key"] = key
     _static_cache["grid"] = [row[:] for row in d.grid]
     _static_cache["surface"] = surf
@@ -288,8 +307,9 @@ def draw_map(
     mon_slide,
     npcs=None,
     npc_anim=None,
+    wall_lore=None,
 ) -> None:
-    surface.blit(_static_map_layer(tiles, d), (0, 0))
+    surface.blit(_static_map_layer(tiles, d, wall_lore), (0, 0))
     for x, y in visible:
         d.seen[y][x] = True
     for (x, y), m in list(monsters.items()):

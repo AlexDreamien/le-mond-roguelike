@@ -79,23 +79,38 @@ def _band_at_or_before(depth: int) -> list[str]:
     return order[: order.index(band_for_depth(depth)) + 1]
 
 
-def pick_lore_keys(depth: int, count: int, exclude: set[str], rng=None) -> list[str]:
-    """Pick up to ``count`` distinct note/inscription keys to place on a floor.
+def _pick(source: dict, depth: int, count: int, exclude: set[str], rng=None) -> list[str]:
+    """Pick up to ``count`` distinct keys from ``source`` (NOTES or INSCRIPTIONS).
 
     Favours the current act band but may surface earlier, unseen lore. Already
     seen keys in ``exclude`` are skipped so the player keeps finding new pieces.
     """
     r = rng or random
     bands = set(_band_at_or_before(depth))
-    pool = [k for k, b in NOTES.items() if b in bands and k not in exclude]
-    pool += [k for k, b in INSCRIPTIONS.items() if b in bands and k not in exclude]
+    pool = [k for k, b in source.items() if b in bands and k not in exclude]
     if not pool:
         return []
     r.shuffle(pool)
-    # Weight toward the current band by sorting current-band entries first.
-    cur = band_for_depth(depth)
-    pool.sort(key=lambda k: 0 if NOTES.get(k, INSCRIPTIONS.get(k)) == cur else 1)
+    cur = band_for_depth(depth)  # weight toward the current band
+    pool.sort(key=lambda k: 0 if source[k] == cur else 1)
     return pool[:count]
+
+
+def pick_notes(depth: int, count: int, exclude: set[str], rng=None) -> list[str]:
+    """Explorer-note keys (found on floors / in secret rooms)."""
+    return _pick(NOTES, depth, count, exclude, rng)
+
+
+def pick_inscriptions(depth: int, count: int, exclude: set[str], rng=None) -> list[str]:
+    """Wall-inscription keys (carved on corridor walls, read by bumping them)."""
+    return _pick(INSCRIPTIONS, depth, count, exclude, rng)
+
+
+def pick_lore_keys(depth: int, count: int, exclude: set[str], rng=None) -> list[str]:
+    """Mixed notes + inscriptions (kept for callers/tests that want either)."""
+    merged = dict(NOTES)
+    merged.update(INSCRIPTIONS)
+    return _pick(merged, depth, count, exclude, rng)
 
 
 def is_inscription(key: str) -> bool:

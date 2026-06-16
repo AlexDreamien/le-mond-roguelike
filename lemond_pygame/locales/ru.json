@@ -77,6 +77,7 @@
   "msg.no_mana_potions": "Зелий маны нет.",
   "msg.mana_full": "Мана уже полная.",
   "msg.mana_potion_used": "Выпито зелье маны: +{restored} MP. Осталось: {potions}.",
+  "msg.secret_found": "Перед вами открывается тайная комната.",
   "msg.no_ranged": "Не надет лук или арбалет.",
   "msg.crossbow_reload": "Арбалет перезаряжен.",
   "msg.ranged_miss": "Выстрел уходит в пустоту.",

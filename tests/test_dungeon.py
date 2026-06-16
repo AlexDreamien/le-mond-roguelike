@@ -7,6 +7,7 @@ from lemond_pygame.core.dungeon import (
     FLOOR,
     LOOT,
     MONSTER,
+    SECRET,
     WALL,
     Dungeon,
 )
@@ -73,7 +74,10 @@ def test_all_floor_is_reachable_from_entry():
                 if d.inside(nx, ny) and (nx, ny) not in reachable and d.grid[ny][nx] != WALL:
                     reachable.add((nx, ny))
                     q.append((nx, ny))
-        all_floor = {(x, y) for y in range(d.h) for x in range(d.w) if d.grid[y][x] != WALL}
+        # SECRET cells are intentionally sealed (a hidden room behind a door).
+        all_floor = {
+            (x, y) for y in range(d.h) for x in range(d.w) if d.grid[y][x] not in (WALL, SECRET)
+        }
         assert all_floor == reachable, f"depth {depth}: {len(all_floor - reachable)} sealed cells"
 
 

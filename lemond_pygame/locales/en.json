@@ -77,6 +77,7 @@
   "msg.no_mana_potions": "No mana potions left.",
   "msg.mana_full": "Mana is already full.",
   "msg.mana_potion_used": "Drank a mana potion: +{restored} MP. Left: {potions}.",
+  "msg.secret_found": "A hidden room opens before you.",
   "msg.no_ranged": "No bow or crossbow equipped.",
   "msg.crossbow_reload": "Crossbow reloaded.",
   "msg.ranged_miss": "Your shot hits nothing.",

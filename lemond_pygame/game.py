@@ -13,7 +13,7 @@ import pygame as pg
 from . import fonts, i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
-from .core import endings, lore
+from .core import endings, lore, secrets
 from .core import spells as sp
 from .core import weapons as wp
 from .core.combat import (
@@ -24,7 +24,7 @@ from .core.combat import (
     generate_monster,
     try_attack,
 )
-from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, NOTE, POTION, WALL, Dungeon
+from .core.dungeon import CHEST, ENTRY, EXIT, FLOOR, LOOT, NOTE, POTION, SECRET, WALL, Dungeon
 from .core.fov import compute_fov
 from .core.loot import INVENTORY_LIMIT, floor_gold_amount, resolve_chest
 from .core.progression import auto_assign
@@ -91,7 +91,7 @@ async def run_level(
     mon_slide = {id(m): SlideFX() for m in monsters.values()}
     ps = ParticleSystem()
 
-    npcs = {}  # pos -> "merchant" | "trainer"; collide to open a menu instead of attacking
+    npcs = {}  # pos -> kind; collide to talk (not attack). Talk-NPCs block their tile.
     free = [
         (x, y)
         for y in range(d.h)
@@ -99,20 +99,32 @@ async def run_level(
         if d.grid[y][x] == FLOOR and (x, y) not in monsters and (x, y) != d.entry
     ]
     random.shuffle(free)
-    if free and random.random() < MERCHANT_CHANCE:
-        npcs[free.pop()] = "merchant"
-    if free and random.random() < TRAINER_CHANCE:
-        npcs[free.pop()] = "trainer"
+
+    def place_npc(kind: str) -> bool:
+        # Talk-NPCs can't be killed or walked through, so only place them on an
+        # open tile (room/junction: >=3 walkable neighbours) that keeps the exit
+        # reachable when every NPC tile is blocked -- never sealing the only path.
+        for pos in free:
+            if d.walkable_neighbors(*pos) >= 3 and d.exit_reachable(set(npcs) | {pos}):
+                free.remove(pos)
+                npcs[pos] = kind
+                return True
+        return False
+
+    if random.random() < MERCHANT_CHANCE:
+        place_npc("merchant")
+    if random.random() < TRAINER_CHANCE:
+        place_npc("trainer")
     # Named story characters appear in their act band: Gildar parleys in the
     # Reading Halls, Sando recruits in the Unwritten Depths, and Rosmund's Shade
     # waits at the Heart (always) to resolve the endings.
     band = lore.band_for_depth(hero.depth)
-    if free and band == lore.ACT2 and not hero.flags["gildar_met"] and random.random() < 0.5:
-        npcs[free.pop()] = "gildar"
-    if free and band == lore.ACT3 and not hero.flags["sando_met"] and random.random() < 0.5:
-        npcs[free.pop()] = "sando"
-    if free and band == lore.ACT4:
-        npcs[free.pop()] = "rosmund"
+    if band == lore.ACT2 and not hero.flags["gildar_met"] and random.random() < 0.5:
+        place_npc("gildar")
+    if band == lore.ACT3 and not hero.flags["sando_met"] and random.random() < 0.5:
+        place_npc("sando")
+    if band == lore.ACT4:
+        place_npc("rosmund")
 
     npc_anim = {}
     for pos, kind in npcs.items():
@@ -122,18 +134,42 @@ async def run_level(
             anim.set_facing("south")
             npc_anim[pos] = anim
 
-    # Scatter a couple of readable lore tiles (explorer notes / wall inscriptions),
-    # picking pieces the hero has not seen yet. Uses the global RNG so the story
-    # accretes across runs rather than repeating floor-for-floor.
+    # --- Story lore placement ------------------------------------------------
+    # Notes lie on the floor and inside secret rooms (read on arrival). Wall
+    # inscriptions are carved on single-width corridor walls and read by bumping
+    # them. Secret rooms are niches hidden behind a bumpable secret door.
+    # lore_tiles: floor pos -> note key; wall_lore: wall pos -> (kind, key) where
+    # kind is "inscr" (a carved inscription) or "secret" (a hidden door).
     lore_tiles: dict[tuple[int, int], str] = {}
+    wall_lore: dict[tuple[int, int], tuple[str, str | None]] = {}
     seen = set(hero.lore_seen)
-    keys = lore.pick_lore_keys(hero.depth, random.randint(1, 2), seen)
-    for key in keys:
+    for key in lore.pick_notes(hero.depth, random.randint(1, 2), seen):
         if not free:
             break
         pos = free.pop()
         d.grid[pos[1]][pos[0]] = NOTE
         lore_tiles[pos] = key
+        seen.add(key)
+    for key in lore.pick_inscriptions(hero.depth, random.randint(1, 2), seen):
+        pos = secrets.corridor_wall(d, set(wall_lore))
+        if pos is None:
+            break
+        wall_lore[pos] = ("inscr", key)
+        seen.add(key)
+    # The generator reserved a sealed secret room (if any). Drop a note inside,
+    # sometimes a chest, and register its hidden door so bumping it opens the room.
+    if d.secret_doors and d.secret_cells:
+        note_keys = lore.pick_notes(hero.depth, 1, seen)
+        if note_keys:
+            cells = sorted(d.secret_cells)
+            npos = cells[len(cells) // 2]
+            d.grid[npos[1]][npos[0]] = NOTE
+            lore_tiles[npos] = note_keys[0]
+            seen.add(note_keys[0])
+            if len(cells) > 2 and random.random() < 0.5:
+                cx, cy = cells[0]
+                d.grid[cy][cx] = CHEST
+            wall_lore[d.secret_doors[0]] = ("secret", note_keys[0])
 
     hx, hy = d.entry
     rx, ry = float(hx), float(hy)
@@ -267,10 +303,24 @@ async def run_level(
             return await _attack(nx, ny)
         tile = d.grid[ny][nx]
         if tile == WALL:
+            mark = wall_lore.get((nx, ny))
+            if mark is not None:  # an inscribed or secret-door wall: bump to use it
+                kind, key = mark
+                if kind == "inscr":
+                    if key not in hero.lore_seen:
+                        hero.lore_seen.append(key)
+                    sounds["open"].play()
+                    await note_screen(screen, "", i18n.t(key), inscription=True)
+                else:  # secret door: open it, revealing the hidden room behind
+                    d.grid[ny][nx] = FLOOR
+                    del wall_lore[(nx, ny)]
+                    sounds["open"].play()
+                    set_msg(i18n.t("msg.secret_found"))
+                return None
             set_status(i18n.t("msg.wall"))  # shown at the bottom, not logged
             sounds["wall"].play()
             return None
-        if tile in (FLOOR, ENTRY, LOOT, POTION, CHEST, EXIT, NOTE):
+        if tile in (FLOOR, ENTRY, LOOT, POTION, CHEST, EXIT, NOTE, SECRET):
             moving = True
             move_from = (hx, hy)
             move_to = (nx, ny)
@@ -426,6 +476,7 @@ async def run_level(
             mon_slide,
             npcs,
             npc_anim,
+            wall_lore,
         )
         ps.draw(world)
         if overlay:
@@ -698,6 +749,7 @@ async def run_level(
             mon_slide,
             npcs,
             npc_anim,
+            wall_lore,
         )
         ps.draw(world)
         sx, sy = shake.offset()
