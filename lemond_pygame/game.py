@@ -13,7 +13,7 @@ import pygame as pg
 from . import fonts, i18n
 from .audio import Music, make_ambient, make_sounds
 from .core import config as cfg
-from .core import lore
+from .core import endings, lore
 from .core import spells as sp
 from .core import weapons as wp
 from .core.combat import (
@@ -40,6 +40,8 @@ from .particles import ParticleSystem
 from .render import AnimState, Shake, SlideFX, draw_damage_flash, draw_hud, draw_map, draw_msg
 from .storage import save_hero
 from .ui_common import message_box, prompt_yes_no
+from .ui_dialogue import dialogue_screen
+from .ui_ending import ending_screen
 from .ui_help import help_screen
 from .ui_inventory import inventory_screen
 from .ui_note import note_screen
@@ -101,6 +103,16 @@ async def run_level(
         npcs[free.pop()] = "merchant"
     if free and random.random() < TRAINER_CHANCE:
         npcs[free.pop()] = "trainer"
+    # Named story characters appear in their act band: Gildar parleys in the
+    # Reading Halls, Sando recruits in the Unwritten Depths, and Rosmund's Shade
+    # waits at the Heart (always) to resolve the endings.
+    band = lore.band_for_depth(hero.depth)
+    if free and band == lore.ACT2 and not hero.flags["gildar_met"] and random.random() < 0.5:
+        npcs[free.pop()] = "gildar"
+    if free and band == lore.ACT3 and not hero.flags["sando_met"] and random.random() < 0.5:
+        npcs[free.pop()] = "sando"
+    if free and band == lore.ACT4:
+        npcs[free.pop()] = "rosmund"
 
     npc_anim = {}
     for pos, kind in npcs.items():
@@ -140,6 +152,7 @@ async def run_level(
     cast_block = False  # set after a cast so the aim key does not also step the hero
     crossbow_loaded = True  # a crossbow fires, then needs a reload press
     monster_turn_acc = 0.0  # accumulates dt; caster monsters fire each interval
+    pending_ending = None  # set when Rosmund's dialogue resolves an ending
 
     def set_status(text: str):
         """Show a message at the bottom without recording it in the event log."""
@@ -223,11 +236,18 @@ async def run_level(
         return True
 
     async def _open_npc(nx, ny):
+        nonlocal pending_ending
         kind = npcs[(nx, ny)]
         if kind == "merchant":
             await shop_screen(screen, hero, hero.depth)
-        else:
+        elif kind == "trainer":
             await trainer_screen(screen, hero, options)
+        else:  # a named story character: run their dialogue
+            choice = await dialogue_screen(screen, kind, hero)
+            if choice:  # only Rosmund's hinge returns an ending token
+                pending_ending = endings.resolve(choice, hero)
+            elif kind in ("gildar", "sando"):
+                del npcs[(nx, ny)]  # they have said their piece and move on
         save_hero(current_slot, hero, options)
 
     async def try_start_move(dx, dy):
@@ -611,6 +631,9 @@ async def run_level(
 
     clock = pg.time.Clock()
     while True:
+        if pending_ending:  # Rosmund's choice resolved -> show it and end the run
+            await ending_screen(screen, pending_ending)
+            return "ending"
         dt = clock.tick(cfg.FPS) / 1000.0
         update_animations(dt)
         if moving:
@@ -835,21 +858,25 @@ async def run() -> None:
 
     from .ui_start import start_menu
 
-    current_slot, hero, options = await start_menu(screen, sounds)
-    i18n.set_locale(options.get("language", i18n.get_locale()))
-    for v in sounds.values():
-        v.set_volume(options.get("volume", 0.7))
-
     await loading(i18n.t("app.title"))
     ambient = make_ambient()
     ambient.set_volume(0.5)
-    music = Music(ambient, enabled=options.get("music", True))
 
-    while True:
-        survived = await run_level(
-            screen, tiles, animsets, hero, sounds, options, current_slot, music
-        )
-        if not survived:
-            hero.hp = hero.max_hp
-            hero.deaths += 1  # the city keeps a checkpoint of you (see the story canon)
-            await message_box(screen, [i18n.t("msg.respawn_1"), i18n.t("msg.respawn_2")])
+    while True:  # one iteration per campaign; an ending sends us back to the menu
+        current_slot, hero, options = await start_menu(screen, sounds)
+        i18n.set_locale(options.get("language", i18n.get_locale()))
+        for v in sounds.values():
+            v.set_volume(options.get("volume", 0.7))
+        music = Music(ambient, enabled=options.get("music", True))
+
+        while True:
+            result = await run_level(
+                screen, tiles, animsets, hero, sounds, options, current_slot, music
+            )
+            if result == "ending":
+                save_hero(current_slot, hero, options)
+                break  # campaign complete -> return to the start menu
+            if not result:
+                hero.hp = hero.max_hp
+                hero.deaths += 1  # the city keeps a checkpoint of you (the story canon)
+                await message_box(screen, [i18n.t("msg.respawn_1"), i18n.t("msg.respawn_2")])

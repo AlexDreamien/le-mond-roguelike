@@ -86,6 +86,14 @@ class Hero(Creature):
     last_dir: tuple[int, int] = (1, 0)
     lore_seen: list = field(default_factory=list)  # note/inscription/musing keys shown
     deaths: int = 0  # respawns so far (drives the respawn-reveal musing / the twist)
+    flags: dict = field(
+        default_factory=lambda: {
+            "inq_favor": 0,
+            "cult_favor": 0,
+            "gildar_met": False,
+            "sando_met": False,
+        }
+    )  # story choices that steer the ending; see core.dialogue / core.endings
 
     def total_armor(self) -> int:
         val = 0

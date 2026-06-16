@@ -39,15 +39,25 @@ def _blit_shadow(surface, px, py) -> None:
 _npc_cache: dict[str, pg.Surface] = {}
 
 
+# Procedural markers for NPCs that have no PixelLab art yet. Named story
+# characters get a distinct colour and initial so they read at a glance.
+_NPC_STYLE = {
+    "merchant": ((235, 205, 95), "$"),
+    "trainer": ((110, 200, 235), "+"),
+    "gildar": ((220, 220, 235), "G"),  # Inquisition: pale steel
+    "sando": ((180, 110, 220), "S"),  # Cult: violet
+    "rosmund": ((150, 210, 230), "R"),  # a fading shade: cold pale blue
+}
+
+
 def _npc_marker(kind: str) -> pg.Surface:
     s = _npc_cache.get(kind)
     if s is None:
         t = cfg.TILE
         s = pg.Surface((t, t), pg.SRCALPHA)
-        color = (235, 205, 95) if kind == "merchant" else (110, 200, 235)
+        color, symbol = _NPC_STYLE.get(kind, ((200, 200, 210), "?"))
         pg.draw.circle(s, color, (t // 2, t // 2), t // 2 - 3)
         pg.draw.circle(s, (20, 20, 28), (t // 2, t // 2), t // 2 - 3, 2)
-        symbol = "$" if kind == "merchant" else "+"
         glyph = fonts.get_font(22, bold=True).render(symbol, True, (30, 30, 40))
         s.blit(glyph, glyph.get_rect(center=(t // 2, t // 2)))
         _npc_cache[kind] = s
