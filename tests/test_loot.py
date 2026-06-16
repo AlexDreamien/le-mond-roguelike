@@ -39,8 +39,8 @@ def test_floor_gold_amount_is_positive_and_scales():
 
 def test_chest_equips_into_empty_slot():
     h = make_hero()
-    # 0.9 -> not the rare potion, 0.1 -> first loot row (sword, MAIN)
-    result = resolve_chest(h, depth=3, rng=StubRandom([0.9, 0.1]))
+    # 0.9 -> not the rare potion, 0.99 -> not the rare artifact, 0.1 -> sword (MAIN)
+    result = resolve_chest(h, depth=3, rng=StubRandom([0.9, 0.99, 0.1]))
     assert result.outcome == "equipped"
     assert h.equipment["MAIN"] is result.item
 
@@ -49,7 +49,7 @@ def test_chest_stores_when_slot_occupied():
     h = make_hero()
     for slot in EQUIP_SLOTS:
         h.equipment[slot] = Item(kind="sword", slot=slot, tier=1, power=1)
-    result = resolve_chest(h, depth=3, rng=StubRandom([0.9, 0.1]))
+    result = resolve_chest(h, depth=3, rng=StubRandom([0.9, 0.99, 0.1]))
     assert result.outcome == "stored"
     assert result.item in h.inventory
 
@@ -59,7 +59,7 @@ def test_chest_inventory_full_keeps_item():
     for slot in EQUIP_SLOTS:
         h.equipment[slot] = Item(kind="sword", slot=slot, tier=1, power=1)
     h.inventory = [Item(kind="boots", slot="FEET", tier=1, power=1) for _ in range(INVENTORY_LIMIT)]
-    result = resolve_chest(h, depth=3, rng=StubRandom([0.9, 0.1]))
+    result = resolve_chest(h, depth=3, rng=StubRandom([0.9, 0.99, 0.1]))
     assert result.outcome == "inventory_full"
     assert len(h.inventory) == INVENTORY_LIMIT
 

@@ -15,6 +15,22 @@ def line(screen, font, text, x, y, col=(220, 220, 220)) -> None:
     fonts.draw_text(screen, font, text, x, y, col)
 
 
+def wrap_text(font, text: str, max_w: int) -> list[str]:
+    """Greedy word-wrap ``text`` to lines no wider than ``max_w`` pixels."""
+    lines: list[str] = []
+    for para in text.split("\n"):
+        cur = ""
+        for w in para.split(" "):
+            trial = f"{cur} {w}".strip()
+            if font.size(trial)[0] <= max_w or not cur:
+                cur = trial
+            else:
+                lines.append(cur)
+                cur = w
+        lines.append(cur)
+    return lines
+
+
 def icon_label(screen, font, icon_key, text, x, y, col=(220, 220, 220), size=18, gap=6) -> int:
     """Draw an atlas icon (with text fallback) then ``text``; return the next x."""
     icon = object_icon(icon_key, size)

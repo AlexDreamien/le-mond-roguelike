@@ -11,6 +11,7 @@ from __future__ import annotations
 import random
 from dataclasses import dataclass
 
+from .artifacts import maybe_artifact
 from .entities import Item, random_loot
 from .weapons import can_equip
 
@@ -40,7 +41,8 @@ def resolve_chest(hero, depth: int, rng=None) -> PickupResult:
             return PickupResult("mana_potion")
         hero.potions += 1
         return PickupResult("potion")
-    item = random_loot(depth, rng=r)
+    tier = 1 + min(5, depth // 2)
+    item = maybe_artifact(depth, tier, rng=r) or random_loot(depth, rng=r)
     ok, _unmet = can_equip(hero, item)
     if ok and hero.equipment.get(item.slot) is None:
         status = hero.equip(item, to_slot=item.slot)

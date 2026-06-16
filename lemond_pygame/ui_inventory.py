@@ -16,7 +16,7 @@ from .core.entities import EQUIP_SLOTS
 from .core.loot import INVENTORY_LIMIT
 from .core.weapons import can_equip
 from .drawing import object_icon
-from .ui_common import line, panel
+from .ui_common import line, panel, wrap_text
 
 SLOT = 64
 CELL = 78
@@ -132,21 +132,34 @@ async def inventory_screen(screen, hero) -> str:
             clamp()
 
     def draw_tooltip(item, pos):
+        unique = getattr(item, "unique", "")
         lines = [i18n.item_name(item), i18n.t("ui.item.power", power=item.power)]
         if item.two_handed:
             lines.append(i18n.t("ui.item.two_handed"))
         affixes = list(getattr(item, "affixes", ()))
         for a in affixes:
             lines.append(i18n.t("affix.desc." + a, value=affix_value(a, item.tier)))
+        flavor = i18n.t("artifact." + unique + ".flavor") if unique else ""
+        if flavor:
+            lines += wrap_text(small, flavor, 320)
         w = max(small.size(s)[0] for s in lines) + 20
         h = 8 + len(lines) * 20
         x = min(pos[0] + 14, cfg.SCREEN_W - w - 6)
         y = min(pos[1] + 14, cfg.SCREEN_H - h - 6)
         panel(screen, pg.Rect(x, y, w, h))
-        # Name colour signals rarity: white plain, blue one affix, gold two.
-        name_col = [(230, 230, 200), (130, 180, 255), (240, 200, 90)][min(2, len(affixes))]
+        # Name colour signals rarity: gold for a unique artifact, else white /
+        # blue (one affix) / gold-ish (two).
+        if unique:
+            name_col = (255, 200, 70)
+        else:
+            name_col = [(230, 230, 200), (130, 180, 255), (240, 220, 150)][min(2, len(affixes))]
         for j, s in enumerate(lines):
-            line(screen, small, s, x + 10, y + 6 + j * 20, name_col if j == 0 else (230, 230, 200))
+            col = (
+                name_col
+                if j == 0
+                else (180, 175, 150) if flavor and j >= len(lines) - 2 else (230, 230, 200)
+            )
+            line(screen, small, s, x + 10, y + 6 + j * 20, col)
 
     def redraw(mouse):
         screen.fill(cfg.C_BG)

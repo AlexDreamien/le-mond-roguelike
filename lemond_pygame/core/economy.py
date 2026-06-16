@@ -18,7 +18,10 @@ def shop_tier(depth: int) -> int:
 def item_value(item: Item) -> int:
     base = item.tier * 8 + item.power * 6
     # Each affix is a sizeable premium so enchanted finds are worth selling.
-    return base + len(getattr(item, "affixes", ())) * (8 + item.tier * 4)
+    base += len(getattr(item, "affixes", ())) * (8 + item.tier * 4)
+    if getattr(item, "unique", ""):  # legendary gold artifacts command a fortune
+        base += 50 + item.tier * 20
+    return base
 
 
 def buy_price(item: Item) -> int:

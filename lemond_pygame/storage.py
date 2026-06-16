@@ -40,6 +40,7 @@ def _item_to_dict(it: Item) -> dict:
         "power": it.power,
         "two_handed": it.two_handed,
         "affixes": list(getattr(it, "affixes", ())),
+        "unique": getattr(it, "unique", ""),
     }
 
 
@@ -72,6 +73,7 @@ def _item_from_dict(d: dict) -> Item:
         power=d.get("power", 0),
         two_handed=d.get("two_handed", False),
         affixes=list(d.get("affixes", [])),
+        unique=d.get("unique", ""),
     )
 
 

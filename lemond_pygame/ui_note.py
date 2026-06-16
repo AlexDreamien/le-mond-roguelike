@@ -12,22 +12,7 @@ import pygame as pg
 
 from . import fonts, i18n
 from .core import config as cfg
-
-
-def _wrap(font, text: str, max_w: int) -> list[str]:
-    lines: list[str] = []
-    for para in text.split("\n"):
-        words = para.split(" ")
-        cur = ""
-        for w in words:
-            trial = f"{cur} {w}".strip()
-            if font.size(trial)[0] <= max_w or not cur:
-                cur = trial
-            else:
-                lines.append(cur)
-                cur = w
-        lines.append(cur)
-    return lines
+from .ui_common import wrap_text
 
 
 async def note_screen(screen, title: str, body: str, inscription: bool = False) -> None:
@@ -35,7 +20,7 @@ async def note_screen(screen, title: str, body: str, inscription: bool = False) 
     font = fonts.get_font(20)
     w = min(cfg.SCREEN_W - 160, 680)
     inner_w = w - 56
-    body_lines = _wrap(font, body, inner_w)
+    body_lines = wrap_text(font, body, inner_w)
     h = 130 + len(body_lines) * 26
     rect = pg.Rect((cfg.SCREEN_W - w) // 2, (cfg.SCREEN_H - h) // 2, w, h)
 

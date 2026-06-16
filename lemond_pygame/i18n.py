@@ -58,6 +58,9 @@ def t(key: str, **kwargs) -> str:
 
 
 def item_name(item) -> str:
+    unique = getattr(item, "unique", "")
+    if unique:  # named gold artifact; its own name, not the affix-suffix scheme
+        return t("artifact." + unique + ".name")
     base = f"{t('item.' + item.kind)} {item.tier}"
     affixes = list(getattr(item, "affixes", ()))
     # Genitive-style suffixes ("Sword 3 of Sharpness" / "Меч 3 остроты") keep the

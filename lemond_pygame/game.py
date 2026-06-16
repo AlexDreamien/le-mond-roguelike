@@ -218,6 +218,8 @@ async def run_level(
             set_msg(i18n.t("pickup.equipped", status=status))
         elif result.outcome == "stored":
             set_msg(i18n.t("pickup.stored", item=i18n.item_describe(result.item)))
+        if result.item is not None and getattr(result.item, "unique", ""):
+            note_muse("gold")  # a hero musing on finding a legendary gold artifact
         return True
 
     async def _open_npc(nx, ny):

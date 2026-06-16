@@ -41,6 +41,7 @@ class Item:
     power: int = 0
     two_handed: bool = False
     affixes: list = field(default_factory=list)  # affix keys; see core.affixes
+    unique: str = ""  # artifact id if this is a named gold artifact; see core.artifacts
 
 
 @dataclass
@@ -96,6 +97,13 @@ class Hero(Creature):
     def dodge_bonus(self) -> int:
         """Extra dodge-skill points granted by 'swift' gear."""
         return equipment_bonus(self.equipment, "dodge")
+
+    def artifacts_of_will(self) -> int:
+        """How many of Rosmund's will-relics the hero holds (for the E5 ending)."""
+        from .artifacts import WILL_RELICS
+
+        held = list(self.inventory) + [it for it in self.equipment.values() if it]
+        return sum(1 for it in held if getattr(it, "unique", "") in WILL_RELICS)
 
     def weapon_damage(self) -> tuple[int, int]:
         # Only melee weapons add their power to a swing; swinging a bow or staff
